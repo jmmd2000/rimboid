@@ -34,6 +34,7 @@ public partial class Main : Node2D
     Guy _guy;
     Pathing _pathing;
     GuyView _guyView;
+    bool _mineMode;
 
 
     public override void _Ready()
@@ -60,14 +61,32 @@ public partial class Main : Node2D
 
     public override void _UnhandledInput(InputEvent e)
     {
+        if (e is InputEventKey key && key.Pressed && key.Keycode == Key.M)
+        {
+            _mineMode = !_mineMode;
+            GD.Print(_mineMode ? "Mine mode ON" : "Mine mode OFF");
+        }
+
         if (e is InputEventMouseButton mb && mb.Pressed && mb.ButtonIndex == MouseButton.Left)
         {
             Vector2I cell = TerrainLayer.LocalToMap(TerrainLayer.ToLocal(GetGlobalMousePosition()));
-            GD.Print($"Clicked cell: {cell}, Guy at: {_guy.Cell}");
-            var path = _pathing.GetPath(_guy.Cell, cell);
-            GD.Print($"Path: {(path == null ? "null" : path.Length + " steps")}");
-            if (path != null)
-                _guy.StartPath(path);
+
+            if (_mineMode)
+            {
+                if (_map.Terrain[cell.X, cell.Y] == TerrainDefOf.Stone)
+                {
+                    _map.Designations.Add(DesignationType.Mine, cell);
+                    GD.Print($"Designated mine at {cell}");
+                    MapView.MarkDesignation(cell);
+                }
+            }
+            else
+            {
+                var path = _pathing.GetPath(_guy.Cell, cell);
+                if (path != null)
+                    _guy.StartPath(path);
+            }
+
         }
     }
 

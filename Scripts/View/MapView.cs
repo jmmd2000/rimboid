@@ -3,6 +3,7 @@ using Godot;
 public partial class MapView : Node2D
 {
     [Export] public TileMapLayer TerrainLayer;
+    [Export] public TileMapLayer OverlayLayer;
 
     GameMap _map;
 
@@ -27,5 +28,15 @@ public partial class MapView : Node2D
         };
 
         TerrainLayer.SetCell(c, 0, atlas);
+    }
+
+    public void MarkDesignation(Vector2I cell)
+    {
+        OverlayLayer.SetCell(cell, 0, new Vector2I(4, 0));
+    }
+
+    public void ClearDesignation(Vector2I cell)
+    {
+        OverlayLayer.EraseCell(cell);
     }
 }

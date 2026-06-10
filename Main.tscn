@@ -11,6 +11,7 @@ texture = ExtResource("2_uu6xs")
 1:0/0 = 0
 2:0/0 = 0
 3:0/0 = 0
+4:0/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_glv2v"]
 sources/0 = SubResource("TileSetAtlasSource_r0du0")
@@ -23,9 +24,13 @@ TerrainLayer = NodePath("TerrainLayer")
 [node name="TerrainLayer" type="TileMapLayer" parent="." unique_id=957565875]
 tile_set = SubResource("TileSet_glv2v")
 
-[node name="MapView" type="Node2D" parent="." unique_id=220814379 node_paths=PackedStringArray("TerrainLayer")]
+[node name="MapView" type="Node2D" parent="." unique_id=220814379 node_paths=PackedStringArray("TerrainLayer", "OverlayLayer")]
 script = ExtResource("3_r0du0")
 TerrainLayer = NodePath("../TerrainLayer")
+OverlayLayer = NodePath("../OverlayLayer")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1088383381]
 script = ExtResource("4_cm0pq")
+
+[node name="OverlayLayer" type="TileMapLayer" parent="." unique_id=406031737]
+tile_set = SubResource("TileSet_glv2v")
