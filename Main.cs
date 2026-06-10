@@ -79,7 +79,7 @@ public partial class Main : Node2D
 
             if (_mineMode)
             {
-                if (_map.Terrain[cell.X, cell.Y] == TerrainDefOf.Stone)
+                if (_map.Terrain[cell.X, cell.Y] == TerrainDefOf.Stone && _pathing.NearestWalkableNeighbour(cell, _guy.Cell) != null)
                 {
                     _map.Designations.Add(DesignationType.Mine, cell);
                     GD.Print($"Designated mine at {cell}");
