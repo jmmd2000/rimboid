@@ -16,6 +16,7 @@ public class JobDriver_Mine : JobDriver
             {
                 var adjacent = Game.Pathing.NearestWalkableNeighbour(job.TargetCell, guy.Cell);
                 if (adjacent == null) { _pathFailed = true; return; }
+                if (guy.Cell == adjacent.Value) return;  // already adjacent, skip walk
                 var path = Game.Pathing.GetPath(guy.Cell, adjacent.Value);
                 if (path == null || path.Length < 2) { _pathFailed = true; return; }
                 guy.StartPath(path);
