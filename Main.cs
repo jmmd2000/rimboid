@@ -2,10 +2,13 @@ using Godot;
 
 public partial class Main : Node2D
 {
-    // Called when the node enters the scene tree for the first time.
+    [Export] public MapView MapView;
+
     public override void _Ready()
     {
-        GD.Print("loading...");
+        var map = new GameMap(64, 64);
+        WorldGenerator.Generate(map, 12345);
+        MapView.PaintAll(map);
     }
 
     // Called every frame. 'delta' is the elapsed time since the previous frame.

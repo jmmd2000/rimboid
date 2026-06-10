@@ -1,6 +1,26 @@
 [gd_scene format=3 uid="uid://c7a6ggedpx4lp"]
 
 [ext_resource type="Script" uid="uid://bc0jbbmpihq6e" path="res://Main.cs" id="1_glv2v"]
+[ext_resource type="Texture2D" uid="uid://cxwwf6o13gfft" path="res://Assets/terrain_tiles.png" id="2_uu6xs"]
+[ext_resource type="Script" uid="uid://bj1rcpab6f1hf" path="res://Scripts/View/MapView.cs" id="3_r0du0"]
 
-[node name="Node2D" type="Node2D" unique_id=523116754]
+[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_r0du0"]
+texture = ExtResource("2_uu6xs")
+0:0/0 = 0
+1:0/0 = 0
+2:0/0 = 0
+3:0/0 = 0
+
+[sub_resource type="TileSet" id="TileSet_glv2v"]
+sources/0 = SubResource("TileSetAtlasSource_r0du0")
+
+[node name="Main" type="Node2D" unique_id=523116754 node_paths=PackedStringArray("MapView")]
 script = ExtResource("1_glv2v")
+MapView = NodePath("MapView")
+
+[node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=957565875]
+tile_set = SubResource("TileSet_glv2v")
+
+[node name="MapView" type="Node2D" parent="." unique_id=220814379 node_paths=PackedStringArray("TerrainLayer")]
+script = ExtResource("3_r0du0")
+TerrainLayer = NodePath("../TileMapLayer")

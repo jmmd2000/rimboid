@@ -4,6 +4,8 @@ public static class WorldGenerator
 {
     public static void Generate(GameMap map, int seed)
     {
+        TerrainDefOf.Load();
+
         var elevation = new FastNoiseLite();
         elevation.Seed = seed;
         elevation.NoiseType = FastNoiseLite.NoiseTypeEnum.SimplexSmooth;
@@ -28,6 +30,9 @@ public static class WorldGenerator
 
     static TerrainDef PickTerrain(float e, float m)
     {
-        return null;
+        if (e < -0.3f) return TerrainDefOf.Water;
+        if (e > 0.5f) return TerrainDefOf.Stone;
+        if (m > 0.2f) return TerrainDefOf.Grass;
+        return TerrainDefOf.Dirt;
     }
 }
