@@ -3,6 +3,7 @@
 [ext_resource type="Script" uid="uid://bc0jbbmpihq6e" path="res://Main.cs" id="1_glv2v"]
 [ext_resource type="Texture2D" uid="uid://cxwwf6o13gfft" path="res://Assets/terrain_tiles.png" id="2_uu6xs"]
 [ext_resource type="Script" uid="uid://bj1rcpab6f1hf" path="res://Scripts/View/MapView.cs" id="3_r0du0"]
+[ext_resource type="Script" uid="uid://bjrgtn65xi8eu" path="res://Scripts/View/CameraController.cs" id="4_cm0pq"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_r0du0"]
 texture = ExtResource("2_uu6xs")
@@ -17,6 +18,12 @@ sources/0 = SubResource("TileSetAtlasSource_r0du0")
 [node name="Main" type="Node2D" unique_id=523116754 node_paths=PackedStringArray("MapView")]
 script = ExtResource("1_glv2v")
 MapView = NodePath("MapView")
+MapWidth = 256
+MapHeight = 256
+ElevationFrequency = 0.01
+ElevationOctaves = 3
+MoistureFrequency = 0.01
+MoistureOctaves = 3
 
 [node name="TileMapLayer" type="TileMapLayer" parent="." unique_id=957565875]
 tile_set = SubResource("TileSet_glv2v")
@@ -24,3 +31,6 @@ tile_set = SubResource("TileSet_glv2v")
 [node name="MapView" type="Node2D" parent="." unique_id=220814379 node_paths=PackedStringArray("TerrainLayer")]
 script = ExtResource("3_r0du0")
 TerrainLayer = NodePath("../TileMapLayer")
+
+[node name="Camera2D" type="Camera2D" parent="." unique_id=1088383381]
+script = ExtResource("4_cm0pq")
