@@ -5,6 +5,6 @@ public partial class TerrainDef : Resource
 {
     [Export] public string DefName { get; set; }
     [Export] public bool Walkable { get; set; } = true;
-    [Export] public float PathCostMultiplier { get; set; }
+    [Export] public float PathCostMultiplier { get; set; } = 1f;
 
 }

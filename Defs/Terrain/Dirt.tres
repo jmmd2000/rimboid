@@ -1,0 +1,8 @@
+[gd_resource type="Resource" script_class="TerrainDef" format=3 uid="uid://djbbgopwe7ghk"]
+
+[ext_resource type="Script" uid="uid://02inv3eftp2g" path="res://Scripts/Defs/TerrainDef.cs" id="1_im2is"]
+
+[resource]
+script = ExtResource("1_im2is")
+DefName = "Dirt"
+metadata/_custom_type_script = "uid://02inv3eftp2g"
