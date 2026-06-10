@@ -46,6 +46,10 @@ public partial class Main : Node2D
         _pathing = new Pathing();
         _pathing.Init(_map);
 
+        Game.Map = _map;
+        Game.Pathing = _pathing;
+        Game.MapView = MapView;
+
         _guy = new Guy { Position = FindWalkableCell() };
 
         _guyView = new GuyView();
@@ -56,7 +60,7 @@ public partial class Main : Node2D
 
     public override void _Process(double delta)
     {
-        _guy.MoveAlongPath();
+        _guy.Tick();
     }
 
     public override void _UnhandledInput(InputEvent e)
@@ -86,7 +90,6 @@ public partial class Main : Node2D
                 if (path != null)
                     _guy.StartPath(path);
             }
-
         }
     }
 
@@ -97,9 +100,5 @@ public partial class Main : Node2D
                 if (_map.Terrain[x, y].Walkable)
                     return new Vector2(x, y);
         return Vector2.Zero;
-
     }
-
-
-
 }

@@ -1,3 +1,4 @@
+using System.Linq;
 using Godot;
 
 public class Guy
@@ -10,6 +11,7 @@ public class Guy
 
     Vector2[] _path;
     int _pathIndex;
+    JobDriver _driver;
 
     public bool AtPathEnd => _path == null || _pathIndex >= _path.Length;
 
@@ -25,5 +27,28 @@ public class Guy
         Position = Position.MoveToward(_path[_pathIndex], MoveSpeed);
         if (Position.DistanceTo(_path[_pathIndex]) < 0.01f)
             _pathIndex++;
+    }
+
+    public void Tick()
+    {
+        if (_driver == null)
+        {
+            MoveAlongPath();
+
+            var target = Game.Map.Designations.CellsOfType(DesignationType.Mine).FirstOrDefault();
+            if (target != default)
+            {
+                var job = new Job { TargetCell = target };
+                _driver = new JobDriver_Mine();
+                _driver.Init(this, job);
+            }
+        }
+
+        if (_driver != null)
+        {
+            var status = _driver.Tick();
+            if (status != JobStatus.Ongoing)
+                _driver = null;
+        }
     }
 }

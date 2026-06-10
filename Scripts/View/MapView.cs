@@ -15,7 +15,7 @@ public partial class MapView : Node2D
                 PaintCell(new Vector2I(x, y));
     }
 
-    void PaintCell(Vector2I c)
+    public void PaintCell(Vector2I c)
     {
         var terrain = _map.Terrain[c.X, c.Y];
         Vector2I atlas = terrain.DefName switch
