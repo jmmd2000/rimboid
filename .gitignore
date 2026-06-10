@@ -1,0 +1,12 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# C# / .NET build output
+bin/
+obj/
+*.user
+
+docs/
+CLAUDE.md
+.vscode/
