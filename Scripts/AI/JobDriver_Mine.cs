@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 public class JobDriver_Mine : JobDriver
@@ -38,6 +39,9 @@ public class JobDriver_Mine : JobDriver
         {
             OnStart = () =>
             {
+                Game.Map.SpawnItem(ItemDefOf.Stone, job.TargetCell, 2);
+                var item = Game.Map.LooseItems.Last();
+                Game.Main.SpawnItemView(item);
                 Game.Map.Terrain[job.TargetCell.X, job.TargetCell.Y] = TerrainDefOf.Dirt;
                 Game.Map.Designations.Remove(DesignationType.Mine, job.TargetCell);
                 Game.Pathing.RefreshCell(Game.Map, job.TargetCell);

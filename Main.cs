@@ -40,6 +40,7 @@ public partial class Main : Node2D
     public override void _Ready()
     {
         _map = new GameMap(MapWidth, MapHeight);
+        ItemDefOf.Load();
         WorldGenerator.Generate(_map, this);
         MapView.PaintAll(_map);
 
@@ -49,6 +50,7 @@ public partial class Main : Node2D
         Game.Map = _map;
         Game.Pathing = _pathing;
         Game.MapView = MapView;
+        Game.Main = this;
 
         _guy = new Guy { Position = FindWalkableCell() };
 
@@ -100,5 +102,13 @@ public partial class Main : Node2D
                 if (_map.Terrain[x, y].Walkable)
                     return new Vector2(x, y);
         return Vector2.Zero;
+    }
+
+    public void SpawnItemView(Item item)
+    {
+        var view = new ItemView();
+        view.Texture = GD.Load<Texture2D>("res://Assets/stone.png");
+        view.Init(item, 16);
+        AddChild(view);
     }
 }

@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3 uid="uid://dgfuctn0u4xts"]
+
+[ext_resource type="Script" uid="uid://bfkfdeiify8cv" path="res://Scripts/Defs/ItemDef.cs" id="1_ntvhc"]
+
+[resource]
+script = ExtResource("1_ntvhc")
+DefName = "Stone"
+Label = "stone"
+MaxStackSize = 75
+metadata/_custom_type_script = "uid://bfkfdeiify8cv"
