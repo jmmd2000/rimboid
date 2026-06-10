@@ -58,6 +58,10 @@ public partial class Main : Node2D
         _guyView.Texture = GD.Load<Texture2D>("res://Assets/guy.png");
         _guyView.Init(_guy, 16);
         AddChild(_guyView);
+
+        var pathLine = new PathLine();
+        pathLine.Init(_guy, 16);
+        AddChild(pathLine);
     }
 
     public override void _Process(double delta)

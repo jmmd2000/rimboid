@@ -15,6 +15,9 @@ public class Guy
 
     public bool AtPathEnd => _path == null || _pathIndex >= _path.Length;
 
+    public Vector2[] GetPathPoints() => _path;
+    public int GetPathIndex() => _pathIndex;
+
     public void StartPath(Vector2[] path)
     {
         _path = path;
