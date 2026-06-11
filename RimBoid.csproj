@@ -3,5 +3,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <TargetFramework Condition=" '$(GodotTargetPlatform)' == 'android' ">net9.0</TargetFramework>
     <EnableDynamicLoading>true</EnableDynamicLoading>
+    <IsTestProject>true</IsTestProject>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="gdUnit4.api" Version="5.0.0" />
+    <PackageReference Include="gdUnit4.test.adapter" Version="3.0.0" />
+  </ItemGroup>
 </Project>
