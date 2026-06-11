@@ -36,6 +36,8 @@ public partial class Main : Node2D
     Pathing _pathing;
     GuyView _guyView;
     bool _mineMode;
+    bool _stockpileMode;
+    Stockpile _stockpile;
 
 
     public override void _Ready()
@@ -52,6 +54,7 @@ public partial class Main : Node2D
         Game.Pathing = _pathing;
         Game.MapView = MapView;
         Game.Main = this;
+        _stockpile = Game.Map.Stockpiles.Create();
 
         _guy = new Guy { Position = FindWalkableCell() };
 
@@ -76,7 +79,24 @@ public partial class Main : Node2D
         if (e is InputEventKey key && key.Pressed && key.Keycode == Key.M)
         {
             _mineMode = !_mineMode;
+            if (_mineMode)
+            {
+                _stockpileMode = false;
+                GD.Print("Stockpile mode OFF");
+            }
             GD.Print(_mineMode ? "Mine mode ON" : "Mine mode OFF");
+        }
+
+        // toggle stockpile mode with S
+        if (e is InputEventKey sKey && sKey.Pressed && sKey.Keycode == Key.S)
+        {
+            _stockpileMode = !_stockpileMode;
+            if (_stockpileMode)
+            {
+                _mineMode = false;
+                GD.Print("Mining mode OFF");
+            }
+            GD.Print(_stockpileMode ? "Stockpile mode ON" : "Stockpile mode OFF");
         }
 
         // add mining designation on left click
@@ -93,7 +113,7 @@ public partial class Main : Node2D
                     MapView.MarkDesignation(cell);
                 }
             }
-            else
+            else if (!_stockpileMode)
             {
                 var path = _pathing.GetPath(_guy.Cell, cell);
                 if (path != null)
@@ -101,6 +121,7 @@ public partial class Main : Node2D
             }
         }
 
+        // clear mining designation on right click
         if (_mineMode && e is InputEventMouseButton rmb && rmb.Pressed && rmb.ButtonIndex == MouseButton.Right)
         {
             Vector2I cell = TerrainLayer.LocalToMap(TerrainLayer.ToLocal(GetGlobalMousePosition()));
@@ -109,6 +130,23 @@ public partial class Main : Node2D
                 _map.Designations.Remove(DesignationType.Mine, cell);
                 MapView.ClearDesignation(cell);
                 GD.Print($"Cancelled mine at {cell}");
+            }
+        }
+
+        if (_stockpileMode && e is InputEventMouseButton smb && smb.Pressed)
+        {
+            Vector2I cell = TerrainLayer.LocalToMap(TerrainLayer.ToLocal(GetGlobalMousePosition()));
+            if (smb.ButtonIndex == MouseButton.Left && _map.Terrain[cell.X, cell.Y].Walkable)
+            {
+                _stockpile.Cells.Add(cell);
+                MapView.MarkStockpile(cell);
+                GD.Print($"Stockpile cell added at {cell}");
+            }
+            else if (smb.ButtonIndex == MouseButton.Right && _stockpile.Cells.Contains(cell))
+            {
+                _stockpile.Cells.Remove(cell);
+                MapView.ClearStockpile(cell);
+                GD.Print($"Stockpile cell removed at {cell}");
             }
         }
 

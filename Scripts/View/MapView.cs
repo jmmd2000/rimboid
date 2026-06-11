@@ -48,4 +48,18 @@ public partial class MapView : Node2D
     {
         OverlayLayer.EraseCell(cell);
     }
+
+    /// <summary>Places the stockpile overlay on a cell. </summary>
+    /// <param name="cell">The cell to mark.</param>
+    public void MarkStockpile(Vector2I cell)
+    {
+        OverlayLayer.SetCell(cell, 0, new Vector2I(5, 0));
+    }
+
+    /// <summary>Removes the stockpile overlay from a cell.</summary>
+    /// <param name="cell">The cell to clear.</param>
+    public void ClearStockpile(Vector2I cell)
+    {
+        OverlayLayer.EraseCell(cell);
+    }
 }

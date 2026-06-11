@@ -10,6 +10,7 @@ public class GameMap
     public TerrainDef[,] Terrain;
     public DesignationManager Designations = new();
     public List<Item> LooseItems = new();
+    public StockpileManager Stockpiles = new();
 
     /// <summary>Creates a new map with the given dimensions.</summary>
     /// <param name="width">Map width in cells.</param>
@@ -32,5 +33,14 @@ public class GameMap
             existing.Count += count;
         else
             LooseItems.Add(new Item { Def = def, Cell = cell, Count = count });
+    }
+
+    /// <summary>Returns the item at a cell, or null if empty.</summary>
+    /// <param name="cell">The cell to check.</param>
+    /// <param name="def">Optional: only match this item type.</param>
+    /// <returns>The matching item, or null.</returns>
+    public Item ItemAt(Vector2I cell, ItemDef def = null)
+    {
+        return LooseItems.FirstOrDefault(i => i.Cell == cell && (def == null || i.Def == def));
     }
 }
