@@ -2,11 +2,19 @@ using System.Collections.Generic;
 using System.Linq;
 using Godot;
 
+/// <summary>
+/// Job driver for mining a designated stone cell.
+/// Tasks: Walk adjacent -> mine over time -> finish (spawn item, swap terrain, clear designation)
+/// </summary>
 public class JobDriver_Mine : JobDriver
 {
     float _workDone;
     bool _pathFailed;
 
+    /// <summary>
+    /// Yields the three tasks: walk to adjacent cell, mine, then finish up.
+    /// </summary>
+    /// <returns>Sequence of tasks for the job driver to execute.</returns>
     protected override IEnumerable<Task> MakeTasks()
     {
         // walk to the target
@@ -23,7 +31,7 @@ public class JobDriver_Mine : JobDriver
             },
             OnTick = () => guy.MoveAlongPath(),
             IsComplete = () => guy.AtPathEnd,
-            FailOn = () => _pathFailed,
+            FailOn = () => _pathFailed || !Game.Map.Designations.Has(DesignationType.Mine, job.TargetCell),
         };
 
         // mine over time

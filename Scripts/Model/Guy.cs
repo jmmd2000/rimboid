@@ -1,6 +1,9 @@
 using System.Linq;
 using Godot;
 
+/// <summary>
+/// Runtime colonist data. Holds position, movement, pathing state and job execution.
+/// </summary>
 public class Guy
 {
     public int ID;
@@ -15,15 +18,31 @@ public class Guy
 
     public bool AtPathEnd => _path == null || _pathIndex >= _path.Length;
 
+    /// <summary>Returns the current path points array.</summary>
     public Vector2[] GetPathPoints() => _path;
+    /// <summary>Returns the current index along the path.</summary>
     public int GetPathIndex() => _pathIndex;
 
+    /// <summary>Sets the colonist on a new path.</summary>
+    /// <param name="path">Array of world coordinates to follow.</param>
     public void StartPath(Vector2[] path)
     {
         _path = path;
         _pathIndex = 0;
     }
 
+    /// <summary>
+    /// Clears the current path so the colonist stops moving.
+    /// </summary>
+    public void ClearPath()
+    {
+        _path = null;
+        _pathIndex = 0;
+    }
+
+    /// <summary>
+    /// Moves the colonist one step along the current path each tick.
+    /// </summary>
     public void MoveAlongPath()
     {
         if (AtPathEnd) return;
@@ -32,6 +51,9 @@ public class Guy
             _pathIndex++;
     }
 
+    /// <summary>
+    /// Per frame update. Runs the active job or picks up new designations.
+    /// </summary>
     public void Tick()
     {
         if (_driver == null)
@@ -51,7 +73,10 @@ public class Guy
         {
             var status = _driver.Tick();
             if (status != JobStatus.Ongoing)
+            {
+                if (status == JobStatus.Failed) ClearPath();
                 _driver = null;
+            }
         }
     }
 }

@@ -1,7 +1,8 @@
-using System.CodeDom.Compiler;
-using System.Runtime.Serialization.Formatters;
 using Godot;
 
+/// <summary>
+/// Main node. Connects world gen, pathing, colonists, player input.
+/// </summary>
 public partial class Main : Node2D
 {
     [Export] public MapView MapView;
@@ -71,12 +72,14 @@ public partial class Main : Node2D
 
     public override void _UnhandledInput(InputEvent e)
     {
+        // toggle mine mode with M
         if (e is InputEventKey key && key.Pressed && key.Keycode == Key.M)
         {
             _mineMode = !_mineMode;
             GD.Print(_mineMode ? "Mine mode ON" : "Mine mode OFF");
         }
 
+        // add mining designation on left click
         if (e is InputEventMouseButton mb && mb.Pressed && mb.ButtonIndex == MouseButton.Left)
         {
             Vector2I cell = TerrainLayer.LocalToMap(TerrainLayer.ToLocal(GetGlobalMousePosition()));
@@ -97,8 +100,24 @@ public partial class Main : Node2D
                     _guy.StartPath(path);
             }
         }
+
+        if (_mineMode && e is InputEventMouseButton rmb && rmb.Pressed && rmb.ButtonIndex == MouseButton.Right)
+        {
+            Vector2I cell = TerrainLayer.LocalToMap(TerrainLayer.ToLocal(GetGlobalMousePosition()));
+            if (_map.Designations.Has(DesignationType.Mine, cell))
+            {
+                _map.Designations.Remove(DesignationType.Mine, cell);
+                MapView.ClearDesignation(cell);
+                GD.Print($"Cancelled mine at {cell}");
+            }
+        }
+
     }
 
+    /// <summary>
+    /// Finds the first walkable cell on the map for the initial colonist placement.
+    /// </summary>
+    /// <returns>The first walkable cell</returns>
     Vector2 FindWalkableCell()
     {
         for (int x = 0; x < _map.Width; x++)
@@ -108,6 +127,10 @@ public partial class Main : Node2D
         return Vector2.Zero;
     }
 
+    /// <summary>
+    /// Creates a visual node for a loose item on the map.
+    /// </summary>
+    /// <param name="item">The runtime item instance to create a view for.</param>
     public void SpawnItemView(Item item)
     {
         var view = new ItemView();
