@@ -52,7 +52,7 @@ public class JobDriver_Haul : JobDriver
             },
             OnTick = () => guy.MoveAlongPath(),
             IsComplete = () => guy.AtPathEnd,
-            FailOn = () => _pathFailed,
+            FailOn = () => _pathFailed || !Game.Map.Stockpiles.IsStockpileCell(job.DestinationCell),
         };
 
         // drop item
@@ -66,6 +66,7 @@ public class JobDriver_Haul : JobDriver
                 guy.Carrying = null;
             },
             IsComplete = () => true,
+            FailOn = () => !Game.Map.Stockpiles.IsStockpileCell(job.DestinationCell),
         };
     }
 }

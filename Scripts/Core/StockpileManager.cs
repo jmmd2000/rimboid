@@ -37,4 +37,12 @@ public class StockpileManager
         }
         return null;
     }
+
+    /// <summary>Checks whether a cell belongs to any stockpile.</summary>
+    /// <param name="cell">The cell to check.</param>
+    /// <returns>True if any stockpile contains this cell.</returns>
+    public bool IsStockpileCell(Vector2I cell)
+    {
+        return _stockpiles.Any(s => s.Cells.Contains(cell));
+    }
 }

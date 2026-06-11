@@ -91,7 +91,17 @@ public class Guy
             var status = _driver.Tick();
             if (status != JobStatus.Ongoing)
             {
-                if (status == JobStatus.Failed) ClearPath();
+                if (status == JobStatus.Failed)
+                {
+                    ClearPath();
+                    if (Carrying != null)
+                    {
+                        Game.Map.SpawnItem(Carrying.Def, Cell, Carrying.Count);
+                        var dropped = Game.Map.ItemAt(Cell, Carrying.Def);
+                        Game.Main.SpawnItemView(dropped);
+                        Carrying = null;
+                    }
+                }
                 _driver = null;
             }
         }
