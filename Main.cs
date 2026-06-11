@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 /// <summary>
@@ -38,6 +39,7 @@ public partial class Main : Node2D
     bool _mineMode;
     bool _stockpileMode;
     Stockpile _stockpile;
+    readonly Dictionary<Item, ItemView> _itemViews = new();
 
 
     public override void _Ready()
@@ -175,5 +177,17 @@ public partial class Main : Node2D
         view.Texture = GD.Load<Texture2D>("res://Assets/stone.png");
         view.Init(item, 16);
         AddChild(view);
+        _itemViews[item] = view;
+    }
+
+    /// <summary>Removes the visual node for an item that's been picked up.</summary>
+    /// <param name="item">The item whose view to remove.</param>
+    public void RemoveItemView(Item item)
+    {
+        if (_itemViews.TryGetValue(item, out var view))
+        {
+            view.QueueFree();
+            _itemViews.Remove(item);
+        }
     }
 }

@@ -11,6 +11,8 @@ public class Guy
     public Vector2I Cell => new((int)Mathf.Round(Position.X), (int)Mathf.Round(Position.Y));
 
     public float MoveSpeed = 0.05f;
+    /// <summary>The item the colonist is currently carrying, or null.</summary>
+    public Item Carrying;
 
     Vector2[] _path;
     int _pathIndex;
@@ -66,6 +68,21 @@ public class Guy
                 var job = new Job { TargetCell = target };
                 _driver = new JobDriver_Mine();
                 _driver.Init(this, job);
+            }
+
+            if (_driver == null)
+            {
+                var item = Game.Map.LooseItems.FirstOrDefault(i => !Game.Map.Stockpiles.IsInStockpile(i));
+                if (item != null)
+                {
+                    var dest = Game.Map.Stockpiles.BestCellFor(item.Def);
+                    if (dest != null)
+                    {
+                        var job = new Job { TargetCell = item.Cell, TargetItem = item, DestinationCell = dest.Value };
+                        _driver = new JobDriver_Haul();
+                        _driver.Init(this, job);
+                    }
+                }
             }
         }
 
