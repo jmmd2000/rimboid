@@ -1,5 +1,6 @@
 using Godot;
 
+/// <summary>Definition resource for an item type. Holds name, stack size, and graphic.</summary>
 [GlobalClass]
 public partial class ItemDef : Resource
 {

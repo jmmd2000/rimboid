@@ -1,5 +1,6 @@
 using Godot;
 
+/// <summary>Paints terrain and overlay tile layers from map data.</summary>
 public partial class MapView : Node2D
 {
     [Export] public TileMapLayer TerrainLayer;
@@ -7,6 +8,8 @@ public partial class MapView : Node2D
 
     GameMap _map;
 
+    /// <summary>Repaints every cell on the map.</summary>
+    /// <param name="map">The game map to read terrain from.</param>
     public void PaintAll(GameMap map)
     {
         _map = map;
@@ -15,6 +18,8 @@ public partial class MapView : Node2D
                 PaintCell(new Vector2I(x, y));
     }
 
+    /// <summary>Repaints a single terrain cell.</summary>
+    /// <param name="c">The cell to repaint.</param>
     public void PaintCell(Vector2I c)
     {
         var terrain = _map.Terrain[c.X, c.Y];
@@ -30,11 +35,15 @@ public partial class MapView : Node2D
         TerrainLayer.SetCell(c, 0, atlas);
     }
 
+    /// <summary>Places the designation overlay icon on a cell.</summary>
+    /// <param name="cell">The cell to mark.</param>
     public void MarkDesignation(Vector2I cell)
     {
         OverlayLayer.SetCell(cell, 0, new Vector2I(4, 0));
     }
 
+    /// <summary>Removes the designation overlay from a cell.</summary>
+    /// <param name="cell">The cell to clear.</param>
     public void ClearDesignation(Vector2I cell)
     {
         OverlayLayer.EraseCell(cell);

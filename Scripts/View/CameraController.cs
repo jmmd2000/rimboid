@@ -1,5 +1,6 @@
 using Godot;
 
+/// <summary>Camera with middle-mouse drag panning and scroll wheel zoom.</summary>
 public partial class CameraController : Camera2D
 {
     [Export] public float ZoomSpeed = 0.1f;

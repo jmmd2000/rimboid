@@ -1,7 +1,11 @@
 using Godot;
 
+/// <summary>Procedural terrain generator using two SimplexSmooth noise layers (elevation + moisture).</summary>
 public static class WorldGenerator
 {
+    /// <summary>Fills the map's terrain grid.</summary>
+    /// <param name="map">The map to populate.</param>
+    /// <param name="settings">Main node holding noise and threshold exports.</param>
     public static void Generate(GameMap map, Main settings)
     {
         TerrainDefOf.Load();
@@ -36,6 +40,12 @@ public static class WorldGenerator
     // ele between thresholds && moisture > GrassMT => Grass
     // ele between thresholds && moisture <= GrassMT => Dirt
     // TLDR: Stone always on high elevation, water at low elevation + wet, everything else is grass if it's wet enough or dirt if not.
+
+    /// <summary>Determines terrain type from elevation and moisture values.</summary>
+    /// <param name="e">Elevation noise value (-1 to 1).</param>
+    /// <param name="m">Moisture noise value (-1 to 1).</param>
+    /// <param name="settings">Threshold settings.</param>
+    /// <returns>The terrain def for this cell.</returns>
     static TerrainDef PickTerrain(float e, float m, Main settings)
     {
         if (e < settings.WaterElevationThreshold && m > settings.WaterMoistureThreshold)

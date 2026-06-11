@@ -1,10 +1,14 @@
 using Godot;
 
+/// <summary>Sprite that follows a Guy's position each frame.</summary>
 public partial class GuyView : Sprite2D
 {
     Guy _guy;
     int _tileSize;
 
+    /// <summary>Binds this view to a colonist.</summary>
+    /// <param name="guy">The colonist to follow.</param>
+    /// <param name="tileSize">Pixel size of one tile.</param>
     public void Init(Guy guy, int tileSize)
     {
         _guy = guy;

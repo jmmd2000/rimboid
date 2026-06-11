@@ -1,10 +1,14 @@
 using Godot;
 
+/// <summary>Line2D that draws the colonist's remaining path each frame.</summary>
 public partial class PathLine : Line2D
 {
     Guy _guy;
     int _tileSize;
 
+    /// <summary>Binds this line to a colonist and configures appearance.</summary>
+    /// <param name="guy">The colonist whose path to draw.</param>
+    /// <param name="tileSize">Pixel size of one tile.</param>
     public void Init(Guy guy, int tileSize)
     {
         _guy = guy;

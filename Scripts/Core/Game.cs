@@ -1,3 +1,4 @@
+/// <summary>Static global access to shared game systems.</summary>
 public static class Game
 {
     public static GameMap Map;

@@ -1,5 +1,6 @@
 using Godot;
 
+/// <summary>Definition resource for a terrain type. Holds walkability and path cost.</summary>
 [GlobalClass]
 public partial class TerrainDef : Resource
 {
