@@ -1,9 +1,6 @@
-using System.Linq;
 using Godot;
 
-/// <summary>
-/// Runtime colonist data. Holds position, movement, pathing state and job execution.
-/// </summary>
+/// <summary>Runtime colonist data. Holds position, movement, pathing state and job execution.</summary>
 public class Guy
 {
     public int ID;
@@ -17,6 +14,7 @@ public class Guy
     Vector2[] _path;
     int _pathIndex;
     JobDriver _driver;
+    readonly ThinkTree _think = new();
 
     public bool AtPathEnd => _path == null || _pathIndex >= _path.Length;
 
@@ -33,18 +31,14 @@ public class Guy
         _pathIndex = 0;
     }
 
-    /// <summary>
-    /// Clears the current path so the colonist stops moving.
-    /// </summary>
+    /// <summary>Clears the current path so the colonist stops moving.</summary>
     public void ClearPath()
     {
         _path = null;
         _pathIndex = 0;
     }
 
-    /// <summary>
-    /// Moves the colonist one step along the current path each tick.
-    /// </summary>
+    /// <summary>Moves the colonist one step along the current path each tick.</summary>
     public void MoveAlongPath()
     {
         if (AtPathEnd) return;
@@ -53,36 +47,16 @@ public class Guy
             _pathIndex++;
     }
 
-    /// <summary>
-    /// Per frame update. Runs the active job or picks up new designations.
-    /// </summary>
+    /// <summary>Per frame update. Runs the active job, or asks the think tree for a new one.</summary>
     public void Tick()
     {
         if (_driver == null)
         {
-            MoveAlongPath();
-
-            var target = Game.Map.Designations.CellsOfType(DesignationType.Mine).FirstOrDefault();
-            if (target != default)
+            var job = _think.FindJob(this);
+            if (job != null)
             {
-                var job = new Job { TargetCell = target };
-                _driver = new JobDriver_Mine();
+                _driver = MakeDriver(job.Type);
                 _driver.Init(this, job);
-            }
-
-            if (_driver == null)
-            {
-                var item = Game.Map.LooseItems.FirstOrDefault(i => !Game.Map.Stockpiles.IsInStockpile(i));
-                if (item != null)
-                {
-                    var dest = Game.Map.Stockpiles.BestCellFor(item.Def);
-                    if (dest != null)
-                    {
-                        var job = new Job { TargetCell = item.Cell, TargetItem = item, DestinationCell = dest.Value };
-                        _driver = new JobDriver_Haul();
-                        _driver.Init(this, job);
-                    }
-                }
             }
         }
 
@@ -106,4 +80,15 @@ public class Guy
             }
         }
     }
+
+    /// <summary>Builds the driver that executes a job of the given type.</summary>
+    /// <param name="type">The job type to build a driver for.</param>
+    /// <returns>A new, uninitialised job driver.</returns>
+    static JobDriver MakeDriver(JobType type) => type switch
+    {
+        JobType.Mine => new JobDriver_Mine(),
+        JobType.Haul => new JobDriver_Haul(),
+        JobType.Wander => new JobDriver_Wander(),
+        _ => throw new System.ArgumentOutOfRangeException(nameof(type)),
+    };
 }

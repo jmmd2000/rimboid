@@ -14,7 +14,6 @@ public abstract class JobDriver
 
     IEnumerator<Task> _tasks;
     Task _current;
-    bool _started;
 
     /// <summary>Binds this driver to a colonist and job intent.</summary>
     /// <param name="guy">The colonist running the job.</param>
