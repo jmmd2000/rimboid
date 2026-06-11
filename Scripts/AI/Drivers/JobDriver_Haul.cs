@@ -60,9 +60,8 @@ public class JobDriver_Haul : JobDriver
         {
             OnStart = () =>
             {
-                Game.Map.SpawnItem(guy.Carrying.Def, job.DestinationCell, guy.Carrying.Count);
-                var dropped = Game.Map.ItemAt(job.DestinationCell, guy.Carrying.Def);
-                Game.Main.SpawnItemView(dropped);
+                var (dropped, isNew) = Game.Map.SpawnItem(guy.Carrying.Def, job.DestinationCell, guy.Carrying.Count);
+                if (isNew) Game.Main.SpawnItemView(dropped);
                 guy.Carrying = null;
             },
             IsComplete = () => true,

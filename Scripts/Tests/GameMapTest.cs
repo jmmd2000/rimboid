@@ -66,4 +66,15 @@ public class GameMapTest
         var item = map.ItemAt(new Vector2I(3, 3), ItemDefOf.Stone);
         AssertObject(item).IsNotNull();
     }
+
+    [TestCase]
+    public void SpawnItemReportsNewVersusMerged()
+    {
+        var map = new GameMap(10, 10);
+        var first = map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), 5);
+        var second = map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), 3);
+
+        AssertBool(first.isNew).IsTrue();
+        AssertBool(second.isNew).IsFalse();
+    }
 }

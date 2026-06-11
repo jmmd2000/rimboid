@@ -26,13 +26,19 @@ public class GameMap
     /// <param name="def">The item definition.</param>
     /// <param name="cell">The map cell to spawn at.</param>
     /// <param name="count">Number of items to add.</param>
-    public void SpawnItem(ItemDef def, Vector2I cell, int count)
+    /// <returns>The item, and true if a new pile was created (false if merged onto an existing one).</returns>
+    public (Item item, bool isNew) SpawnItem(ItemDef def, Vector2I cell, int count)
     {
         var existing = LooseItems.FirstOrDefault(i => i.Def == def && i.Cell == cell);
         if (existing != null)
+        {
             existing.Count += count;
-        else
-            LooseItems.Add(new Item { Def = def, Cell = cell, Count = count });
+            return (existing, false);
+        }
+
+        var item = new Item { Def = def, Cell = cell, Count = count };
+        LooseItems.Add(item);
+        return (item, true);
     }
 
     /// <summary>Returns the item at a cell, or null if empty.</summary>

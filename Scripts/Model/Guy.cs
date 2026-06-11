@@ -70,9 +70,8 @@ public class Guy
                     ClearPath();
                     if (Carrying != null)
                     {
-                        Game.Map.SpawnItem(Carrying.Def, Cell, Carrying.Count);
-                        var dropped = Game.Map.ItemAt(Cell, Carrying.Def);
-                        Game.Main.SpawnItemView(dropped);
+                        var (dropped, isNew) = Game.Map.SpawnItem(Carrying.Def, Cell, Carrying.Count);
+                        if (isNew) Game.Main.SpawnItemView(dropped);
                         Carrying = null;
                     }
                 }
