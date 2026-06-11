@@ -77,4 +77,20 @@ public class GameMapTest
         AssertBool(first.isNew).IsTrue();
         AssertBool(second.isNew).IsFalse();
     }
+
+    [TestCase]
+    public void InBoundsTrueInsideGrid()
+    {
+        var map = new GameMap(10, 10);
+        AssertBool(map.InBounds(new Vector2I(0, 0))).IsTrue();
+        AssertBool(map.InBounds(new Vector2I(9, 9))).IsTrue();
+    }
+
+    [TestCase]
+    public void InBoundsFalseOutsideGrid()
+    {
+        var map = new GameMap(10, 10);
+        AssertBool(map.InBounds(new Vector2I(-1, 0))).IsFalse();
+        AssertBool(map.InBounds(new Vector2I(10, 10))).IsFalse();
+    }
 }

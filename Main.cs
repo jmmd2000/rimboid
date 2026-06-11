@@ -104,7 +104,8 @@ public partial class Main : Node2D
         // add mining designation on left click
         if (e is InputEventMouseButton mb && mb.Pressed && mb.ButtonIndex == MouseButton.Left)
         {
-            Vector2I cell = TerrainLayer.LocalToMap(TerrainLayer.ToLocal(GetGlobalMousePosition()));
+            Vector2I cell = CellUnderMouse();
+            if (!_map.InBounds(cell)) return;
 
             if (_mineMode)
             {
@@ -126,7 +127,7 @@ public partial class Main : Node2D
         // clear mining designation on right click
         if (_mineMode && e is InputEventMouseButton rmb && rmb.Pressed && rmb.ButtonIndex == MouseButton.Right)
         {
-            Vector2I cell = TerrainLayer.LocalToMap(TerrainLayer.ToLocal(GetGlobalMousePosition()));
+            Vector2I cell = CellUnderMouse();
             if (_map.Designations.Has(DesignationType.Mine, cell))
             {
                 _map.Designations.Remove(DesignationType.Mine, cell);
@@ -137,7 +138,9 @@ public partial class Main : Node2D
 
         if (_stockpileMode && e is InputEventMouseButton smb && smb.Pressed)
         {
-            Vector2I cell = TerrainLayer.LocalToMap(TerrainLayer.ToLocal(GetGlobalMousePosition()));
+            Vector2I cell = CellUnderMouse();
+            if (!_map.InBounds(cell)) return;
+
             if (smb.ButtonIndex == MouseButton.Left && _map.Terrain[cell.X, cell.Y].Walkable)
             {
                 _stockpile.Cells.Add(cell);
@@ -166,6 +169,8 @@ public partial class Main : Node2D
                     return new Vector2(x, y);
         return Vector2.Zero;
     }
+
+    Vector2I CellUnderMouse() => TerrainLayer.LocalToMap(TerrainLayer.ToLocal(GetGlobalMousePosition()));
 
     /// <summary>
     /// Creates a visual node for a loose item on the map.

@@ -22,6 +22,10 @@ public class GameMap
         Terrain = new TerrainDef[width, height];
     }
 
+    /// <summary>Returns true if the cell lies within the map grid.</summary>
+    /// <param name="cell">The cell to test.</param>
+    public bool InBounds(Vector2I cell) => cell.X >= 0 && cell.X < Width && cell.Y >= 0 && cell.Y < Height;
+
     /// <summary>Spawns an item at a cell, stacking onto an existing pile if possible.</summary>
     /// <param name="def">The item definition.</param>
     /// <param name="cell">The map cell to spawn at.</param>
