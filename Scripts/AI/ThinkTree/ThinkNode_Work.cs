@@ -7,6 +7,7 @@ public class ThinkNode_Work : IThinkNode
     {
         new WorkGiver_Mine(),
         new WorkGiver_Haul(),
+        new WorkGiver_Consolidate(),
     };
 
     public Job TryGiveJob(Guy guy)
