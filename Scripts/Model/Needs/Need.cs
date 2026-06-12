@@ -9,8 +9,9 @@ public abstract class Need
     /// <summary>How much the need falls each tick.</summary>
     public abstract float FallPerTick { get; }
 
-    /// <summary>Decays the need by one tick, clamped at 0.</summary>
-    public virtual void Tick() => Level = Mathf.Max(0f, Level - FallPerTick);
+    /// <summary>Decays the need by one tick, scaled by an exertion rate, clamped at 0.</summary>
+    /// <param name="rate">Fall-rate multiplier: 1 = normal, > 1 = faster.</param>
+    public virtual void Tick(float rate = 1f) => Level = Mathf.Max(0f, Level - FallPerTick * rate);
 
     /// <summary>Raises the need, clamped at 1.</summary>
     /// <param name="amount">How much to add.</param>
@@ -28,5 +29,7 @@ public class Needs
 {
     public Need_Rest Rest = new();
 
-    public void Tick() => Rest.Tick();
+    /// <summary>Decays every need by one tick. Exertion scales how fast rest drains.</summary>
+    /// <param name="exertion">How hard the colonist is working: 1 = idle/resting.</param>
+    public void Tick(float exertion) => Rest.Tick(exertion);
 }

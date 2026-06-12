@@ -53,7 +53,7 @@ public class Guy
     /// <summary>Per sim tick update. Runs the active job, or asks the think tree for a new one.</summary>
     public void Tick()
     {
-        Needs.Tick();
+        Needs.Tick(Exertion);
 
         if (_driver == null)
         {
@@ -84,6 +84,14 @@ public class Guy
             }
         }
     }
+
+    /// <summary>How hard the current job works the colonist, scaling need decay.</summary>
+    float Exertion => _driver?.JobType switch
+    {
+        JobType.Mine => 2f,
+        JobType.Haul => 1.5f,
+        _ => 1f,
+    };
 
     /// <summary>Builds the driver that executes a job of the given type.</summary>
     /// <param name="type">The job type to build a driver for.</param>

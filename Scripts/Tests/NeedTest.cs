@@ -48,4 +48,12 @@ public class NeedTest
         need.Add(0.25f);
         AssertFloat(need.Level).IsEqual(1f);
     }
+
+    [TestCase]
+    public void TickScalesWithRate()
+    {
+        var need = new TestNeed();
+        need.Tick(2f);
+        AssertFloat(need.Level).IsEqual(0.5f);
+    }
 }
