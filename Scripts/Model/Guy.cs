@@ -55,6 +55,11 @@ public class Guy
     {
         Needs.Tick(Exertion);
 
+        if (_driver != null && !IsSleeping && Needs.Rest.Level <= CollapseThreshold)
+        {
+            EndJob(dropCarry: true);
+        }
+
         if (_driver == null)
         {
             var job = _think.FindJob(this);
@@ -70,19 +75,25 @@ public class Guy
             var status = _driver.Tick();
             if (status != JobStatus.Ongoing)
             {
-                if (status == JobStatus.Failed)
-                {
-                    ClearPath();
-                    if (Carrying != null)
-                    {
-                        var (dropped, isNew) = Game.Map.SpawnItem(Carrying.Def, Cell, Carrying.Count);
-                        if (isNew) Game.Main.SpawnItemView(dropped);
-                        Carrying = null;
-                    }
-                }
-                _driver = null;
+                EndJob(dropCarry: status == JobStatus.Failed);
             }
         }
+    }
+
+    const float CollapseThreshold = 0.05f;
+
+    /// <summary>Ends the current job, optionally dropping any carried item where the colonist stands.</summary>
+    /// <param name="dropCarry">True to drop the carried item (job abandoned or failed).</param>
+    void EndJob(bool dropCarry)
+    {
+        ClearPath();
+        if (dropCarry && Carrying != null)
+        {
+            var (dropped, isNew) = Game.Map.SpawnItem(Carrying.Def, Cell, Carrying.Count);
+            if (isNew) Game.Main.SpawnItemView(dropped);
+            Carrying = null;
+        }
+        _driver = null;
     }
 
     /// <summary>How hard the current job works the colonist, scaling need decay.</summary>
