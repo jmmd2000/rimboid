@@ -82,6 +82,10 @@ public partial class Main : Node2D
         var needsPanel = new NeedsPanel();
         needsPanel.Init(_guy);
         AddChild(needsPanel);
+
+        var zzz = new SleepZZZ();
+        zzz.Init(_guy, 16);
+        AddChild(zzz);
     }
 
     public override void _UnhandledInput(InputEvent e)
@@ -119,6 +123,7 @@ public partial class Main : Node2D
                 case Key.Key1: _tick.SetSpeed(1); break;
                 case Key.Key2: _tick.SetSpeed(3); break;
                 case Key.Key3: _tick.SetSpeed(6); break;
+                case Key.Key9: _tick.SetSpeed(25); break;
                 case Key.Period: if (_tick.SpeedMultiplier == 0) _tick.DoSingleTick(); break;
             }
         }
