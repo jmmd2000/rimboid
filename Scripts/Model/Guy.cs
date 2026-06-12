@@ -11,6 +11,9 @@ public class Guy
     /// <summary>The item the colonist is currently carrying, or null.</summary>
     public Item Carrying;
 
+    public Needs Needs = new();
+    public bool IsSleeping;
+
     Vector2[] _path;
     int _pathIndex;
     JobDriver _driver;
@@ -47,9 +50,11 @@ public class Guy
             _pathIndex++;
     }
 
-    /// <summary>Per frame update. Runs the active job, or asks the think tree for a new one.</summary>
+    /// <summary>Per sim tick update. Runs the active job, or asks the think tree for a new one.</summary>
     public void Tick()
     {
+        Needs.Tick();
+
         if (_driver == null)
         {
             var job = _think.FindJob(this);
@@ -88,6 +93,7 @@ public class Guy
         JobType.Mine => new JobDriver_Mine(),
         JobType.Haul => new JobDriver_Haul(),
         JobType.Wander => new JobDriver_Wander(),
+        JobType.Sleep => new JobDriver_Sleep(),
         _ => throw new System.ArgumentOutOfRangeException(nameof(type)),
     };
 }

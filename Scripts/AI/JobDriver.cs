@@ -5,7 +5,7 @@ public enum JobStatus { Ongoing, Completed, Failed };
 
 /// <summary>
 /// Abstract base for job execution. Iterates through tasks yielded by MakeTasks,
-/// calling OnStart/OnTick/IsComplete/FailOn each frame.
+/// calling OnStart/OnTick/IsComplete/FailOn each tick.
 /// </summary>
 public abstract class JobDriver
 {
@@ -28,7 +28,7 @@ public abstract class JobDriver
     /// <returns>An enumerable of tasks to execute in order.</returns>
     protected abstract IEnumerable<Task> MakeTasks();
 
-    /// <summary>Advances the job by one frame. Returns the current status.</summary>
+    /// <summary>Advances the job by one tick. Returns the current status.</summary>
     /// <returns>Ongoing, Completed, or Failed.</returns>
     public JobStatus Tick()
     {

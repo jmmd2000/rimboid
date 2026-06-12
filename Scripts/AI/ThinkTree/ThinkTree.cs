@@ -5,6 +5,7 @@ public class ThinkTree
 {
     readonly List<IThinkNode> _nodes = new()
     {
+        new ThinkNode_Sleep(),
         new ThinkNode_Work(),
         new ThinkNode_Wander(),
     };

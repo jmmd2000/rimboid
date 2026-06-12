@@ -19,6 +19,8 @@ public partial class GuyView : Sprite2D
     {
         if (_guy == null) return;
         Position = _guy.Position * _tileSize + new Vector2(_tileSize / 2f, _tileSize / 2f);
+        // Lie down while sleeping
+        Rotation = _guy.IsSleeping ? Mathf.Pi / 2f : 0f;
     }
 
 

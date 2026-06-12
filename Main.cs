@@ -78,12 +78,16 @@ public partial class Main : Node2D
         var timeBar = new TimeControlBar();
         timeBar.Init(_tick);
         AddChild(timeBar);
+
+        var needsPanel = new NeedsPanel();
+        needsPanel.Init(_guy);
+        AddChild(needsPanel);
     }
 
     public override void _UnhandledInput(InputEvent e)
     {
         // toggle mine mode with M
-        if (e is InputEventKey key && key.Pressed && key.Keycode == Key.M)
+        if (e is InputEventKey key && key.Pressed && key.Keycode == Key.M && !key.Echo)
         {
             _mineMode = !_mineMode;
             if (_mineMode)
@@ -95,7 +99,7 @@ public partial class Main : Node2D
         }
 
         // toggle stockpile mode with S
-        if (e is InputEventKey sKey && sKey.Pressed && sKey.Keycode == Key.S)
+        if (e is InputEventKey sKey && sKey.Pressed && sKey.Keycode == Key.S && !sKey.Echo)
         {
             _stockpileMode = !_stockpileMode;
             if (_stockpileMode)
