@@ -36,6 +36,7 @@ public partial class Main : Node2D
     Guy _guy;
     Pathing _pathing;
     GuyView _guyView;
+    TickManager _tick;
     bool _mineMode;
     bool _stockpileMode;
     Stockpile _stockpile;
@@ -68,11 +69,15 @@ public partial class Main : Node2D
         var pathLine = new PathLine();
         pathLine.Init(_guy, 16);
         AddChild(pathLine);
-    }
 
-    public override void _Process(double delta)
-    {
-        _guy.Tick();
+        GameTime.Reset();
+        _tick = new TickManager();
+        _tick.Tick += _guy.Tick;
+        AddChild(_tick);
+
+        var timeBar = new TimeControlBar();
+        timeBar.Init(_tick);
+        AddChild(timeBar);
     }
 
     public override void _UnhandledInput(InputEvent e)
@@ -99,6 +104,19 @@ public partial class Main : Node2D
                 GD.Print("Mining mode OFF");
             }
             GD.Print(_stockpileMode ? "Stockpile mode ON" : "Stockpile mode OFF");
+        }
+
+        // time controls
+        if (e is InputEventKey tKey && tKey.Pressed && !tKey.Echo)
+        {
+            switch (tKey.Keycode)
+            {
+                case Key.Space: _tick.TogglePause(); break;
+                case Key.Key1: _tick.SetSpeed(1); break;
+                case Key.Key2: _tick.SetSpeed(2); break;
+                case Key.Key3: _tick.SetSpeed(3); break;
+                case Key.Period: if (_tick.SpeedMultiplier == 0) _tick.DoSingleTick(); break;
+            }
         }
 
         // add mining designation on left click

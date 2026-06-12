@@ -26,7 +26,7 @@ public class WorkGiverHaulTest
         AssertObject(job).IsNotNull();
         AssertBool(job.Type == JobType.Haul).IsTrue();
         AssertBool(job.TargetCell == new Vector2I(5, 5)).IsTrue();
-        AssertBool(job.DestinationCell == new Vector2I(0, 0)).IsTrue();
+        AssertBool(job.Count == 3).IsTrue(); // empty stockpile has room for the whole pile
     }
 
     [TestCase]

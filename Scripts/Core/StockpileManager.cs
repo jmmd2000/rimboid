@@ -45,4 +45,22 @@ public class StockpileManager
     {
         return _stockpiles.Any(s => s.Cells.Contains(cell));
     }
+
+    /// <summary>Sums the free space for an item type across all accepting stockpiles.</summary>
+    /// <param name="def">The item def to measure room for.</param>
+    /// <returns>Total units of this def that could still be stored.</returns>
+    public int TotalRoomFor(ItemDef def)
+    {
+        int room = 0;
+        foreach (var s in _stockpiles)
+        {
+            if (!s.WouldAccept(def)) continue;
+            foreach (var cell in s.Cells)
+            {
+                var existing = Game.Map.ItemAt(cell, def);
+                room += existing == null ? def.MaxStackSize : def.MaxStackSize - existing.Count;
+            }
+        }
+        return room;
+    }
 }

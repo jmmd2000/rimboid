@@ -10,8 +10,8 @@ public class Job
     public JobType Type;
     /// <summary>Primary target cell (e.g. rock to mine, item to pick up).</summary>
     public Vector2I TargetCell;
-    /// <summary>Secondary destination cell (e.g. stockpile drop-off).</summary>
-    public Vector2I DestinationCell;
     /// <summary>The item this job acts on, if any.</summary>
     public Item TargetItem;
+    /// <summary>How many units to act on (e.g. amount to haul). 0 = unset / whole stack.</summary>
+    public int Count;
 }
