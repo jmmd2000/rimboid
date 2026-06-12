@@ -118,4 +118,53 @@ public class StockpileTest
         var mgr = new StockpileManager();
         AssertObject(mgr.BestCellFor(ItemDefOf.Stone)).IsNull();
     }
+
+    [TestCase]
+    public void FreeCellForPrefersPartialOverEmpty()
+    {
+        var sp = new Stockpile();
+        sp.Cells.Add(new Vector2I(0, 0));// empty
+        sp.Cells.Add(new Vector2I(1, 0));// partial
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(1, 0), 5);
+
+        // should top off the partial stack, not start a fresh pile on the empty cell
+        AssertBool(sp.FreeCellFor(ItemDefOf.Stone) == new Vector2I(1, 0)).IsTrue();
+    }
+
+    [TestCase]
+    public void TotalRoomForEmptyStockpile()
+    {
+        var mgr = new StockpileManager();
+        var sp = mgr.Create();
+        sp.Cells.Add(new Vector2I(0, 0));
+        sp.Cells.Add(new Vector2I(1, 0));
+        AssertInt(mgr.TotalRoomFor(ItemDefOf.Stone)).IsEqual(2 * ItemDefOf.Stone.MaxStackSize);
+    }
+
+    [TestCase]
+    public void TotalRoomForSubtractsExistingStacks()
+    {
+        var mgr = new StockpileManager();
+        var sp = mgr.Create();
+        sp.Cells.Add(new Vector2I(0, 0));
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(0, 0), 5);
+        AssertInt(mgr.TotalRoomFor(ItemDefOf.Stone)).IsEqual(ItemDefOf.Stone.MaxStackSize - 5);
+    }
+
+    [TestCase]
+    public void TotalRoomForFullStockpileIsZero()
+    {
+        var mgr = new StockpileManager();
+        var sp = mgr.Create();
+        sp.Cells.Add(new Vector2I(0, 0));
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(0, 0), ItemDefOf.Stone.MaxStackSize);
+        AssertInt(mgr.TotalRoomFor(ItemDefOf.Stone)).IsEqual(0);
+    }
+
+    [TestCase]
+    public void TotalRoomForNoStockpilesIsZero()
+    {
+        var mgr = new StockpileManager();
+        AssertInt(mgr.TotalRoomFor(ItemDefOf.Stone)).IsEqual(0);
+    }
 }

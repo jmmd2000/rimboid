@@ -48,4 +48,35 @@ public class WorkGiverHaulTest
 
         AssertObject(new WorkGiver_Haul().TryGiveJob(guy)).IsNull();
     }
+
+    [TestCase]
+    public void CapsHaulAmountToStockpileRoom()
+    {
+        var sp = Game.Map.Stockpiles.Create();
+        sp.Cells.Add(new Vector2I(0, 0));
+        // only the one cell, filled to one below max -> room for exactly 1
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(0, 0), ItemDefOf.Stone.MaxStackSize - 1);
+        // a loose pile of 2 sitting outside
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(5, 5), 2);
+        var guy = new Guy { Position = Vector2.Zero };
+
+        var job = new WorkGiver_Haul().TryGiveJob(guy);
+
+        AssertObject(job).IsNotNull();
+        AssertBool(job.TargetCell == new Vector2I(5, 5)).IsTrue();
+        AssertInt(job.Count).IsEqual(1);// only 1 fits, so only 1 gets hauled
+    }
+
+    [TestCase]
+    public void ReturnsNullWhenStockpileFull()
+    {
+        var sp = Game.Map.Stockpiles.Create();
+        sp.Cells.Add(new Vector2I(0, 0));
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(0, 0), ItemDefOf.Stone.MaxStackSize); // full
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(5, 5), 2);// loose
+        var guy = new Guy { Position = Vector2.Zero };
+
+        // no room anywhere -> never pick it up
+        AssertObject(new WorkGiver_Haul().TryGiveJob(guy)).IsNull();
+    }
 }
