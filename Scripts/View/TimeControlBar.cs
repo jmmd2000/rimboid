@@ -38,7 +38,7 @@ public partial class TimeControlBar : CanvasLayer
         Highlight(_faster, _tick.SpeedMultiplier == 3);
         Highlight(_fastest, _tick.SpeedMultiplier == 6);
 
-        _clock.Text = $"Day {GameTime.Day} - {GameTime.HourOfDay:00}:00";
+        _clock.Text = $"Day {GameTime.Day} - {GameTime.HourOfDay:00}:{GameTime.MinuteOfHour:00}";
     }
 
     Button AddButton(HBoxContainer row, string text, string tooltip, Action onPressed)

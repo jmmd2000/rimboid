@@ -113,8 +113,8 @@ public partial class Main : Node2D
             {
                 case Key.Space: _tick.TogglePause(); break;
                 case Key.Key1: _tick.SetSpeed(1); break;
-                case Key.Key2: _tick.SetSpeed(2); break;
-                case Key.Key3: _tick.SetSpeed(3); break;
+                case Key.Key2: _tick.SetSpeed(3); break;
+                case Key.Key3: _tick.SetSpeed(6); break;
                 case Key.Period: if (_tick.SpeedMultiplier == 0) _tick.DoSingleTick(); break;
             }
         }
