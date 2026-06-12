@@ -10,7 +10,15 @@ public class ThinkNodeWorkTest
     public void Setup()
     {
         ItemDefOf.Load();
+        TerrainDefOf.Load();
+
         Game.Map = new GameMap(10, 10);
+        for (int x = 0; x < Game.Map.Width; x++)
+            for (int y = 0; y < Game.Map.Height; y++)
+                Game.Map.Terrain[x, y] = TerrainDefOf.Dirt;
+
+        Game.Pathing = new Pathing();
+        Game.Pathing.Init(Game.Map);
     }
 
     [TestCase]
