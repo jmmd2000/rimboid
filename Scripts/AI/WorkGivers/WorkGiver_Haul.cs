@@ -1,7 +1,7 @@
 using System.Linq;
 using Godot;
 
-/// <summary>Finds the nearest loose item outside any stockpile and returns a hauling job.</summary>
+/// <summary>Finds the nearest reachable loose item outside any stockpile and returns a hauling job.</summary>
 public class WorkGiver_Haul : WorkGiver
 {
     public override Job TryGiveJob(Guy guy)
@@ -9,7 +9,7 @@ public class WorkGiver_Haul : WorkGiver
         var item = Game.Map.LooseItems
             .Where(i => !Game.Map.Stockpiles.IsInStockpile(i))
             .OrderBy(i => guy.Cell.DistanceTo(i.Cell))
-            .FirstOrDefault();
+            .FirstOrDefault(i => Game.Pathing.IsReachable(guy.Cell, i.Cell));
         if (item == null) return null;
 
         int room = Game.Map.Stockpiles.TotalRoomFor(item.Def);

@@ -33,6 +33,16 @@ public class Pathing
         return _astar.GetPointPath(from, to);
     }
 
+    /// <summary>Returns true if a path exists from one cell to another.</summary>
+    /// <param name="from">Start cell.</param>
+    /// <param name="to">Destination cell.</param>
+    public bool IsReachable(Vector2I from, Vector2I to)
+    {
+        if (from == to) return true;
+        var path = GetPath(from, to);
+        return path != null && path.Length >= 2;
+    }
+
     /// <summary>Updates a single cell's walkability and cost after terrain changes.</summary>
     /// <param name="map">The game map.</param>
     /// <param name="cell">The cell to refresh.</param>

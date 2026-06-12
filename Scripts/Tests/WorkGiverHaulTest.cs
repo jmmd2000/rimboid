@@ -10,7 +10,15 @@ public class WorkGiverHaulTest
     public void Setup()
     {
         ItemDefOf.Load();
+        TerrainDefOf.Load();
+
         Game.Map = new GameMap(10, 10);
+        for (int x = 0; x < Game.Map.Width; x++)
+            for (int y = 0; y < Game.Map.Height; y++)
+                Game.Map.Terrain[x, y] = TerrainDefOf.Dirt;
+
+        Game.Pathing = new Pathing();
+        Game.Pathing.Init(Game.Map);
     }
 
     [TestCase]
@@ -77,6 +85,25 @@ public class WorkGiverHaulTest
         var guy = new Guy { Position = Vector2.Zero };
 
         // no room anywhere -> never pick it up
+        AssertObject(new WorkGiver_Haul().TryGiveJob(guy)).IsNull();
+    }
+
+    [TestCase]
+    public void SkipsUnreachableItem()
+    {
+        var sp = Game.Map.Stockpiles.Create();
+        sp.Cells.Add(new Vector2I(0, 0));
+
+        // wall off (5,5) so the guy can't path to it
+        Game.Map.Terrain[5, 4] = TerrainDefOf.Stone;
+        Game.Map.Terrain[5, 6] = TerrainDefOf.Stone;
+        Game.Map.Terrain[4, 5] = TerrainDefOf.Stone;
+        Game.Map.Terrain[6, 5] = TerrainDefOf.Stone;
+        Game.Pathing.Init(Game.Map);
+
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(5, 5), 3);
+        var guy = new Guy { Position = Vector2.Zero };
+
         AssertObject(new WorkGiver_Haul().TryGiveJob(guy)).IsNull();
     }
 }
