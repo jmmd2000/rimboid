@@ -136,7 +136,7 @@ public partial class Main : Node2D
 
             if (_mineMode)
             {
-                if (_map.Terrain[cell.X, cell.Y] == TerrainDefOf.Stone && _pathing.NearestWalkableNeighbour(cell, _guy.Cell) != null)
+                if (_map.Terrain[cell.X, cell.Y] == TerrainDefOf.Stone && _map.Designations.WouldBeReachable(_map, cell))
                 {
                     _map.Designations.Add(DesignationType.Mine, cell);
                     GD.Print($"Designated mine at {cell}");
@@ -160,6 +160,13 @@ public partial class Main : Node2D
                 _map.Designations.Remove(DesignationType.Mine, cell);
                 MapView.ClearDesignation(cell);
                 GD.Print($"Cancelled mine at {cell}");
+
+                // anything only reachable through that cell is now orphaned
+                foreach (var orphan in _map.Designations.PruneUnreachable(_map))
+                {
+                    MapView.ClearDesignation(orphan);
+                }
+
             }
         }
 
