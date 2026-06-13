@@ -41,6 +41,9 @@ public partial class Main : Node2D
     bool _stockpileMode;
     Stockpile _stockpile;
     readonly Dictionary<Item, ItemView> _itemViews = new();
+    Vector2I? _dragStart;
+    MouseButton _dragButton;
+    SelectionBox _selectionBox;
 
 
     public override void _Ready()
@@ -86,6 +89,10 @@ public partial class Main : Node2D
         var zzz = new SleepZZZ();
         zzz.Init(_guy, 16);
         AddChild(zzz);
+
+        _selectionBox = new SelectionBox();
+        _selectionBox.Init(16);
+        AddChild(_selectionBox);
     }
 
     public override void _UnhandledInput(InputEvent e)
@@ -128,64 +135,21 @@ public partial class Main : Node2D
             }
         }
 
-        // add mining designation on left click
-        if (e is InputEventMouseButton mb && mb.Pressed && mb.ButtonIndex == MouseButton.Left)
+        // drag select in mine or stockpile mode, otherwise left click walks
+        if (_mineMode || _stockpileMode)
+        {
+            HandleDrag(e);
+        }
+        else if (e is InputEventMouseButton wmb && wmb.Pressed && wmb.ButtonIndex == MouseButton.Left)
         {
             Vector2I cell = CellUnderMouse();
-            if (!_map.InBounds(cell)) return;
-
-            if (_mineMode)
-            {
-                if (_map.Terrain[cell.X, cell.Y] == TerrainDefOf.Stone && _map.Designations.WouldBeReachable(_map, cell))
-                {
-                    _map.Designations.Add(DesignationType.Mine, cell);
-                    GD.Print($"Designated mine at {cell}");
-                    MapView.MarkDesignation(cell);
-                }
-            }
-            else if (!_stockpileMode)
+            if (_map.InBounds(cell))
             {
                 var path = _pathing.GetPath(_guy.Cell, cell);
                 if (path != null)
-                    _guy.StartPath(path);
-            }
-        }
-
-        // clear mining designation on right click
-        if (_mineMode && e is InputEventMouseButton rmb && rmb.Pressed && rmb.ButtonIndex == MouseButton.Right)
-        {
-            Vector2I cell = CellUnderMouse();
-            if (_map.Designations.Has(DesignationType.Mine, cell))
-            {
-                _map.Designations.Remove(DesignationType.Mine, cell);
-                MapView.ClearDesignation(cell);
-                GD.Print($"Cancelled mine at {cell}");
-
-                // anything only reachable through that cell is now orphaned
-                foreach (var orphan in _map.Designations.PruneUnreachable(_map))
                 {
-                    MapView.ClearDesignation(orphan);
+                    _guy.StartPath(path);
                 }
-
-            }
-        }
-
-        if (_stockpileMode && e is InputEventMouseButton smb && smb.Pressed)
-        {
-            Vector2I cell = CellUnderMouse();
-            if (!_map.InBounds(cell)) return;
-
-            if (smb.ButtonIndex == MouseButton.Left && _map.Terrain[cell.X, cell.Y].Walkable)
-            {
-                _stockpile.Cells.Add(cell);
-                MapView.MarkStockpile(cell);
-                GD.Print($"Stockpile cell added at {cell}");
-            }
-            else if (smb.ButtonIndex == MouseButton.Right && _stockpile.Cells.Contains(cell))
-            {
-                _stockpile.Cells.Remove(cell);
-                MapView.ClearStockpile(cell);
-                GD.Print($"Stockpile cell removed at {cell}");
             }
         }
 
@@ -217,6 +181,125 @@ public partial class Main : Node2D
         view.Init(item, 16);
         AddChild(view);
         _itemViews[item] = view;
+    }
+
+    /// <summary>Tracks a press/drag/release selection and updates the preview outline.</summary>
+    /// <param name="e">The input event being handled.</param>
+    void HandleDrag(InputEvent e)
+    {
+        if (e is InputEventMouseButton mb && (mb.ButtonIndex == MouseButton.Left || mb.ButtonIndex == MouseButton.Right))
+        {
+            Vector2I cell = CellUnderMouse();
+            if (mb.Pressed)
+            {
+                _dragStart = _map.InBounds(cell) ? cell : (Vector2I?)null;
+                _dragButton = mb.ButtonIndex;
+                if (_dragStart != null) _selectionBox.SetSelection(cell, cell);
+            }
+            else if (_dragStart != null && mb.ButtonIndex == _dragButton)
+            {
+                if (_map.InBounds(cell))
+                {
+                    ApplyDrag(_dragStart.Value, cell, _dragButton);
+                }
+                _dragStart = null;
+                _selectionBox.Clear();
+            }
+        }
+        else if (e is InputEventMouseMotion && _dragStart != null)
+        {
+            Vector2I cell = CellUnderMouse();
+            if (_map.InBounds(cell))
+            {
+                _selectionBox.SetSelection(_dragStart.Value, cell);
+            }
+        }
+    }
+
+    /// <summary>Applies a finished drag rectangle based on the active mode and button.</summary>
+    /// <param name="a">The cell where the drag began.</param>
+    /// <param name="b">The cell where the drag ended.</param>
+    /// <param name="button">The mouse button used: left adds, right removes.</param>
+    void ApplyDrag(Vector2I a, Vector2I b, MouseButton button)
+    {
+        if (_mineMode)
+        {
+            if (button == MouseButton.Left) DesignateMineRectangle(a, b);
+            else CancelMineRectangle(a, b);
+        }
+        else // stockpile mode
+        {
+            if (button == MouseButton.Left) AddStockpileRectangle(a, b);
+            else RemoveStockpileRectangle(a, b);
+        }
+    }
+
+    /// <summary>Designates every reachable stone cell in the rectangle for mining.</summary>
+    /// <param name="a">The cell where the drag began.</param>
+    /// <param name="b">The cell where the drag ended.</param>
+    void DesignateMineRectangle(Vector2I a, Vector2I b)
+    {
+        foreach (var cell in Grid.CellsInRect(a, b))
+        {
+            if (_map.Terrain[cell.X, cell.Y] == TerrainDefOf.Stone && !_map.Designations.Has(DesignationType.Mine, cell))
+            {
+                _map.Designations.Add(DesignationType.Mine, cell);
+                MapView.MarkDesignation(cell);
+            }
+        }
+        foreach (var orphan in _map.Designations.PruneUnreachable(_map))
+        {
+            MapView.MarkDesignation(orphan);
+        }
+    }
+
+    /// <summary>Cancels every mine designation in the rectangle.</summary>
+    /// <param name="a">The cell where the drag began.</param>
+    /// <param name="b">The cell where the drag ended.</param>
+    void CancelMineRectangle(Vector2I a, Vector2I b)
+    {
+        foreach (var cell in Grid.CellsInRect(a, b))
+        {
+            if (_map.Designations.Has(DesignationType.Mine, cell))
+            {
+                _map.Designations.Remove(DesignationType.Mine, cell);
+                MapView.ClearDesignation(cell);
+            }
+        }
+
+        // removing cells could strand others so prune the rest
+        foreach (var orphan in _map.Designations.PruneUnreachable(_map))
+        {
+            MapView.ClearDesignation(orphan);
+        }
+    }
+
+    /// <summary>Adds every walkable cell in the rectangle to the stockpile.</summary>
+    /// <param name="a">The cell where the drag began.</param>
+    /// <param name="b">The cell where the drag ended.</param>
+    void AddStockpileRectangle(Vector2I a, Vector2I b)
+    {
+        foreach (var cell in Grid.CellsInRect(a, b))
+        {
+            if (_map.Terrain[cell.X, cell.Y].Walkable && _stockpile.Cells.Add(cell))
+            {
+                MapView.MarkStockpile(cell);
+            }
+        }
+    }
+
+    /// <summary>Removes every stockpile cell in the rectangle.</summary>
+    /// <param name="a">The cell where the drag began.</param>
+    /// <param name="b">The cell where the drag ended.</param>
+    void RemoveStockpileRectangle(Vector2I a, Vector2I b)
+    {
+        foreach (var cell in Grid.CellsInRect(a, b))
+        {
+            if (_stockpile.Cells.Remove(cell))
+            {
+                MapView.ClearStockpile(cell);
+            }
+        }
     }
 
     /// <summary>Removes the visual node for an item that's been picked up.</summary>
