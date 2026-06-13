@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="ItemDef" format=3 uid="uid://d26oeyl7yfa73"]
+
+[ext_resource type="Script" uid="uid://bfkfdeiify8cv" path="res://Scripts/Defs/ItemDef.cs" id="2_5unmo"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_b6tc1"]
+load_path = "res://.godot/imported/berries.png-7884ca8d938980e1eb50b3c9edf3523f.ctex"
+
+[resource]
+script = ExtResource("2_5unmo")
+DefName = "Berries"
+Label = "berries"
+Graphic = SubResource("CompressedTexture2D_b6tc1")
+Nutrition = 0.3
+metadata/_custom_type_script = "uid://bfkfdeiify8cv"

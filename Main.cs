@@ -93,6 +93,10 @@ public partial class Main : Node2D
         _selectionBox = new SelectionBox();
         _selectionBox.Init(16);
         AddChild(_selectionBox);
+
+        // TEMP: spawn berries
+        var (berries, _) = Game.Map.SpawnItem(ItemDefOf.Berries, new Vector2I(3, 3), 10);
+        SpawnItemView(berries);
     }
 
     public override void _UnhandledInput(InputEvent e)
@@ -155,9 +159,7 @@ public partial class Main : Node2D
 
     }
 
-    /// <summary>
-    /// Finds the first walkable cell on the map for the initial colonist placement.
-    /// </summary>
+    /// <summary>Finds the first walkable cell on the map for the initial colonist placement.</summary>
     /// <returns>The first walkable cell</returns>
     Vector2 FindWalkableCell()
     {
@@ -170,14 +172,12 @@ public partial class Main : Node2D
 
     Vector2I CellUnderMouse() => TerrainLayer.LocalToMap(TerrainLayer.ToLocal(GetGlobalMousePosition()));
 
-    /// <summary>
-    /// Creates a visual node for a loose item on the map.
-    /// </summary>
+    /// <summary>Creates a visual node for a loose item on the map.</summary>
     /// <param name="item">The runtime item instance to create a view for.</param>
     public void SpawnItemView(Item item)
     {
         var view = new ItemView();
-        view.Texture = GD.Load<Texture2D>("res://Assets/stone.png");
+        view.Texture = item.Def.Graphic;
         view.Init(item, 16);
         AddChild(view);
         _itemViews[item] = view;

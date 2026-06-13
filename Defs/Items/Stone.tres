@@ -1,10 +1,11 @@
 [gd_resource type="Resource" script_class="ItemDef" format=3 uid="uid://dgfuctn0u4xts"]
 
 [ext_resource type="Script" uid="uid://bfkfdeiify8cv" path="res://Scripts/Defs/ItemDef.cs" id="1_ntvhc"]
+[ext_resource type="Texture2D" uid="uid://cg03fj3451kvb" path="res://Assets/stone.png" id="1_pnv3p"]
 
 [resource]
 script = ExtResource("1_ntvhc")
 DefName = "Stone"
 Label = "stone"
-MaxStackSize = 75
+Graphic = ExtResource("1_pnv3p")
 metadata/_custom_type_script = "uid://bfkfdeiify8cv"
