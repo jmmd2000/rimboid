@@ -1,0 +1,66 @@
+using System.Collections.Generic;
+using Godot;
+
+/// <summary>
+/// Builds a stocked frame into a finished building.
+/// Tasks: walk adjacent -> construction work over time -> raise the building
+/// (spawn it, drop the frame, refresh pathing so the cell blocks movement).
+/// </summary>
+public class JobDriver_Build : JobDriver
+{
+    bool _pathFailed;
+
+    protected override IEnumerable<Task> MakeTasks()
+    {
+        // walk to a cell adjacent to the frame
+        yield return new Task
+        {
+            OnStart = () =>
+            {
+                var adjacent = Game.Pathing.NearestWalkableNeighbour(job.TargetCell, guy.Cell);
+                if (adjacent == null) { _pathFailed = true; return; }
+                if (guy.Cell == adjacent.Value) return;
+                var path = Game.Pathing.GetPath(guy.Cell, adjacent.Value);
+                if (path == null || path.Length < 2) { _pathFailed = true; return; }
+                guy.StartPath(path);
+            },
+            OnTick = () => guy.MoveAlongPath(),
+            IsComplete = () => guy.AtPathEnd,
+            FailOn = () => _pathFailed || !Game.Map.HasFrame(job.TargetCell),
+        };
+
+        // construction work over time
+        yield return new Task
+        {
+            OnTick = () =>
+            {
+                var frame = Game.Map.FrameAt(job.TargetCell);
+                if (frame != null) frame.WorkDone += 1f;
+            },
+            IsComplete = () =>
+            {
+                var frame = Game.Map.FrameAt(job.TargetCell);
+                return frame == null || frame.WorkComplete;
+            },
+            FailOn = () => !Game.Map.HasFrame(job.TargetCell),
+        };
+
+        // frame -> real wall
+        yield return new Task
+        {
+            OnStart = () =>
+            {
+                var frame = Game.Map.FrameAt(job.TargetCell);
+                if (frame == null) return;
+
+                var building = Game.Map.SpawnBuilding(frame.Def, frame.Cell);
+                Game.Map.Frames.Remove(frame);
+                Game.Main.RemoveFrameView(frame);
+                Game.Main.SpawnBuildingView(building);
+                // now blocks movement
+                Game.Pathing.RefreshCell(Game.Map, frame.Cell);
+            },
+            IsComplete = () => true,
+        };
+    }
+}

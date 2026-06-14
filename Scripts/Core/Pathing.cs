@@ -18,7 +18,8 @@ public class Pathing
             {
                 var terrain = map.Terrain[x, y];
                 var cell = new Vector2I(x, y);
-                _astar.SetPointSolid(cell, !terrain.Walkable);
+                bool solid = !terrain.Walkable || map.BlocksMovementAt(cell);
+                _astar.SetPointSolid(cell, solid);
                 _astar.SetPointWeightScale(cell, terrain.PathCostMultiplier);
             }
     }
@@ -49,7 +50,8 @@ public class Pathing
     public void RefreshCell(GameMap map, Vector2I cell)
     {
         var terrain = map.Terrain[cell.X, cell.Y];
-        _astar.SetPointSolid(cell, !terrain.Walkable);
+        bool solid = !terrain.Walkable || map.BlocksMovementAt(cell);
+        _astar.SetPointSolid(cell, solid);
         _astar.SetPointWeightScale(cell, terrain.PathCostMultiplier);
     }
 

@@ -12,6 +12,7 @@ public class GameMap
     public List<Item> LooseItems = new();
     public StockpileManager Stockpiles = new();
     public List<Frame> Frames = new();
+    public Dictionary<Vector2I, Building> Buildings = new();
 
     /// <summary>Creates a new map with the given dimensions.</summary>
     /// <param name="width">Map width in cells.</param>
@@ -62,4 +63,22 @@ public class GameMap
     /// <summary>True if a construction frame already occupies the cell.</summary>
     /// <param name="cell">The cell to check.</param>
     public bool HasFrame(Vector2I cell) => Frames.Any(f => f.Cell == cell);
+
+    /// <summary>Returns the building at a cell, or null if none.</summary>
+    /// <param name="cell">The cell to check.</param>
+    public Building BuildingAt(Vector2I cell) => Buildings.GetValueOrDefault(cell);
+
+    /// <summary>True if a movement-blocking building occupies the cell.</summary>
+    /// <param name="cell">The cell to check.</param>
+    public bool BlocksMovementAt(Vector2I cell) => Buildings.TryGetValue(cell, out var b) && b.Def.BlocksMovement;
+
+    /// <summary>Spawns a finished building at a cell and returns it.</summary>
+    /// <param name="def">The building definition.</param>
+    /// <param name="cell">The cell to place it on.</param>
+    public Building SpawnBuilding(BuildingDef def, Vector2I cell)
+    {
+        var building = new Building { Def = def, Cell = cell };
+        Buildings[cell] = building;
+        return building;
+    }
 }

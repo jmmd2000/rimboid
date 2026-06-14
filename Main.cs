@@ -38,6 +38,7 @@ public partial class Main : Node2D
     Stockpile _stockpile;
     readonly Dictionary<Item, ItemView> _itemViews = new();
     readonly Dictionary<Frame, FrameView> _frameViews = new();
+    readonly Dictionary<Building, BuildingView> _buildingViews = new();
     Vector2I? _dragStart;
     MouseButton _dragButton;
     SelectionBox _selectionBox;
@@ -206,6 +207,16 @@ public partial class Main : Node2D
         }
     }
 
+    /// <summary>Creates a visual node for a finished building.</summary>
+    /// <param name="building">The building to create a view for.</param>
+    public void SpawnBuildingView(Building building)
+    {
+        var view = new BuildingView();
+        view.Init(building, 16);
+        AddChild(view);
+        _buildingViews[building] = view;
+    }
+
     /// <summary>Tracks a press/drag/release selection and updates the preview outline.</summary>
     /// <param name="e">The input event being handled.</param>
     void HandleDrag(InputEvent e)
@@ -348,7 +359,7 @@ public partial class Main : Node2D
     /// <param name="cell">The candidate cell.</param>
     bool CanPlaceWall(Vector2I cell)
     {
-        return _map.Terrain[cell.X, cell.Y].Walkable && !_map.HasFrame(cell);
+        return _map.Terrain[cell.X, cell.Y].Walkable && !_map.HasFrame(cell) && _map.BuildingAt(cell) == null;
     }
 
     /// <summary>Removes any wall blueprint frames in the rectangle.</summary>

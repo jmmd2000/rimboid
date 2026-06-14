@@ -1,3 +1,4 @@
+using System;
 using System.Linq;
 using Godot;
 
@@ -16,7 +17,10 @@ public class WorkGiver_Construct : WorkGiver
             .FirstOrDefault();
         if (frame == null) return null;
 
-        if (frame.MaterialsComplete) return null;
+        if (frame.MaterialsComplete)
+        {
+            return new Job { Type = JobType.Build, TargetCell = frame.Cell };
+        }
 
         var materials = Game.Map.LooseItems
             .Where(i => i.Def == frame.Def.Materials && Game.Pathing.IsReachable(guy.Cell, i.Cell))

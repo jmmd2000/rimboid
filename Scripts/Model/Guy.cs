@@ -103,8 +103,9 @@ public class Guy
     float Exertion => _driver?.JobType switch
     {
         JobType.Mine => 2f,
-        JobType.Haul => 1.5f,
-        JobType.HaulToFrame => 1.5f,
+        JobType.Haul => 1.2f,
+        JobType.HaulToFrame => 1.2f,
+        JobType.Build => 1.6f,
         _ => 1f,
     };
 
@@ -116,6 +117,7 @@ public class Guy
         JobType.Mine => new JobDriver_Mine(),
         JobType.Haul => new JobDriver_Haul(),
         JobType.HaulToFrame => new JobDriver_HaulToFrame(),
+        JobType.Build => new JobDriver_Build(),
         JobType.Wander => new JobDriver_Wander(),
         JobType.Sleep => new JobDriver_Sleep(),
         JobType.Eat => new JobDriver_Eat(),

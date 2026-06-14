@@ -63,13 +63,16 @@ public class WorkGiverConstructTest
     }
 
     [TestCase]
-    public void NoJobWhenMaterialsComplete()
+    public void BuildsFrameWhenMaterialsComplete()
     {
         var frame = AddFrame(new Vector2I(5, 5));
         frame.MaterialsDelivered = frame.Def.MaterialCost;
-        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(2, 2), 10);
         var guy = new Guy { Position = Vector2.Zero };
 
-        AssertObject(new WorkGiver_Construct().TryGiveJob(guy)).IsNull();
+        var job = new WorkGiver_Construct().TryGiveJob(guy);
+
+        AssertObject(job).IsNotNull();
+        AssertBool(job.Type == JobType.Build).IsTrue();
+        AssertBool(job.TargetCell == new Vector2I(5, 5)).IsTrue();
     }
 }
