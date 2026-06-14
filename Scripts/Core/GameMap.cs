@@ -56,6 +56,10 @@ public class GameMap
     }
 
     /// <summary>Returns the construction frame at a cell, or null if none.</summary>
-    /// <param name="cell">The cell to check</param>
+    /// <param name="cell">The cell to check.</param>
+    public Frame FrameAt(Vector2I cell) => Frames.FirstOrDefault(f => f.Cell == cell);
+
+    /// <summary>True if a construction frame already occupies the cell.</summary>
+    /// <param name="cell">The cell to check.</param>
     public bool HasFrame(Vector2I cell) => Frames.Any(f => f.Cell == cell);
 }

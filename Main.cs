@@ -1,9 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-/// <summary>
-/// Main node. Connects world gen, pathing, colonists, player input.
-/// </summary>
+/// <summary>Main node. Connects world gen, pathing, colonists, player input.</summary>
 public partial class Main : Node2D
 {
     [Export] public MapView MapView;
@@ -37,13 +35,22 @@ public partial class Main : Node2D
     Pathing _pathing;
     GuyView _guyView;
     TickManager _tick;
-    bool _mineMode;
-    bool _stockpileMode;
     Stockpile _stockpile;
     readonly Dictionary<Item, ItemView> _itemViews = new();
+    readonly Dictionary<Frame, FrameView> _frameViews = new();
     Vector2I? _dragStart;
     MouseButton _dragButton;
     SelectionBox _selectionBox;
+
+    enum ToolMode { None, Mine, Stockpile, Build }
+    ToolMode _toolMode = ToolMode.None;
+
+    static readonly Dictionary<Key, ToolMode> ModeKeys = new()
+    {
+        [Key.M] = ToolMode.Mine,
+        [Key.S] = ToolMode.Stockpile,
+        [Key.B] = ToolMode.Build,
+    };
 
 
     public override void _Ready()
@@ -102,28 +109,11 @@ public partial class Main : Node2D
 
     public override void _UnhandledInput(InputEvent e)
     {
-        // toggle mine mode with M
-        if (e is InputEventKey key && key.Pressed && key.Keycode == Key.M && !key.Echo)
+        // tool mode toggle
+        if (e is InputEventKey key && key.Pressed && !key.Echo && ModeKeys.TryGetValue(key.Keycode, out var mode))
         {
-            _mineMode = !_mineMode;
-            if (_mineMode)
-            {
-                _stockpileMode = false;
-                GD.Print("Stockpile mode OFF");
-            }
-            GD.Print(_mineMode ? "Mine mode ON" : "Mine mode OFF");
-        }
-
-        // toggle stockpile mode with S
-        if (e is InputEventKey sKey && sKey.Pressed && sKey.Keycode == Key.S && !sKey.Echo)
-        {
-            _stockpileMode = !_stockpileMode;
-            if (_stockpileMode)
-            {
-                _mineMode = false;
-                GD.Print("Mining mode OFF");
-            }
-            GD.Print(_stockpileMode ? "Stockpile mode ON" : "Stockpile mode OFF");
+            _toolMode = _toolMode == mode ? ToolMode.None : mode;
+            GD.Print($"Tool mode: {_toolMode}");
         }
 
         // time controls
@@ -140,8 +130,8 @@ public partial class Main : Node2D
             }
         }
 
-        // drag select in mine or stockpile mode, otherwise left click walks
-        if (_mineMode || _stockpileMode)
+        // any tool mode drag selects, with no tool left-click walks
+        if (_toolMode != ToolMode.None)
         {
             HandleDrag(e);
         }
@@ -184,6 +174,38 @@ public partial class Main : Node2D
         _itemViews[item] = view;
     }
 
+    /// <summary>Removes the visual node for an item that's been picked up.</summary>
+    /// <param name="item">The item whose view to remove.</param>
+    public void RemoveItemView(Item item)
+    {
+        if (_itemViews.TryGetValue(item, out var view))
+        {
+            view.QueueFree();
+            _itemViews.Remove(item);
+        }
+    }
+
+    /// <summary>Creates a visual node for a construction frame.</summary>
+    /// <param name="frame">The frame to create a view for.</param>
+    public void SpawnFrameView(Frame frame)
+    {
+        var view = new FrameView();
+        view.Init(frame, 16);
+        AddChild(view);
+        _frameViews[frame] = view;
+    }
+
+    /// <summary>Removes the visual node for a frame that's been cancelled or built.</summary>
+    /// <param name="frame">The frame whose view to remove.</param>
+    public void RemoveFrameView(Frame frame)
+    {
+        if (_frameViews.TryGetValue(frame, out var view))
+        {
+            view.QueueFree();
+            _frameViews.Remove(frame);
+        }
+    }
+
     /// <summary>Tracks a press/drag/release selection and updates the preview outline.</summary>
     /// <param name="e">The input event being handled.</param>
     void HandleDrag(InputEvent e)
@@ -223,15 +245,20 @@ public partial class Main : Node2D
     /// <param name="button">The mouse button used: left adds, right removes.</param>
     void ApplyDrag(Vector2I a, Vector2I b, MouseButton button)
     {
-        if (_mineMode)
+        switch (_toolMode)
         {
-            if (button == MouseButton.Left) DesignateMineRectangle(a, b);
-            else CancelMineRectangle(a, b);
-        }
-        else // stockpile mode
-        {
-            if (button == MouseButton.Left) AddStockpileRectangle(a, b);
-            else RemoveStockpileRectangle(a, b);
+            case ToolMode.Mine:
+                if (button == MouseButton.Left) DesignateMineRectangle(a, b);
+                else CancelMineRectangle(a, b);
+                break;
+            case ToolMode.Stockpile:
+                if (button == MouseButton.Left) AddStockpileRectangle(a, b);
+                else RemoveStockpileRectangle(a, b);
+                break;
+            case ToolMode.Build:
+                if (button == MouseButton.Left) PlaceWallRectangle(a, b);
+                else CancelWallRectangle(a, b);
+                break;
         }
     }
 
@@ -303,14 +330,38 @@ public partial class Main : Node2D
         }
     }
 
-    /// <summary>Removes the visual node for an item that's been picked up.</summary>
-    /// <param name="item">The item whose view to remove.</param>
-    public void RemoveItemView(Item item)
+    /// <summary>Places a wall blueprint frame on every valid cell in the rectangle.</summary>
+    /// <param name="a">The cell where the drag began.</param>
+    /// <param name="b">The cell where the drag ended.</param>
+    void PlaceWallRectangle(Vector2I a, Vector2I b)
     {
-        if (_itemViews.TryGetValue(item, out var view))
+        foreach (var cell in Grid.CellsInRect(a, b))
         {
-            view.QueueFree();
-            _itemViews.Remove(item);
+            if (!CanPlaceWall(cell)) continue;
+            var frame = new Frame { Def = BuildingDefOf.WallStone, Cell = cell };
+            _map.Frames.Add(frame);
+            SpawnFrameView(frame);
+        }
+    }
+
+    /// <summary>True if a wall blueprint can be placed on the cell.</summary>
+    /// <param name="cell">The candidate cell.</param>
+    bool CanPlaceWall(Vector2I cell)
+    {
+        return _map.Terrain[cell.X, cell.Y].Walkable && !_map.HasFrame(cell);
+    }
+
+    /// <summary>Removes any wall blueprint frames in the rectangle.</summary>
+    /// <param name="a">The cell where the drag began.</param>
+    /// <param name="b">The cell where the drag ended.</param>
+    void CancelWallRectangle(Vector2I a, Vector2I b)
+    {
+        foreach (var cell in Grid.CellsInRect(a, b))
+        {
+            var frame = _map.FrameAt(cell);
+            if (frame == null) continue;
+            _map.Frames.Remove(frame);
+            RemoveFrameView(frame);
         }
     }
 }
