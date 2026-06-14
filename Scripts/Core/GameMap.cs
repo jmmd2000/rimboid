@@ -11,6 +11,7 @@ public class GameMap
     public DesignationManager Designations = new();
     public List<Item> LooseItems = new();
     public StockpileManager Stockpiles = new();
+    public List<Frame> Frames = new();
 
     /// <summary>Creates a new map with the given dimensions.</summary>
     /// <param name="width">Map width in cells.</param>
@@ -53,4 +54,8 @@ public class GameMap
     {
         return LooseItems.FirstOrDefault(i => i.Cell == cell && (def == null || i.Def == def));
     }
+
+    /// <summary>Returns the construction frame at a cell, or null if none.</summary>
+    /// <param name="cell">The cell to check</param>
+    public bool HasFrame(Vector2I cell) => Frames.Any(f => f.Cell == cell);
 }
