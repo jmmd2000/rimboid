@@ -104,6 +104,7 @@ public class Guy
     {
         JobType.Mine => 2f,
         JobType.Haul => 1.5f,
+        JobType.HaulToFrame => 1.5f,
         _ => 1f,
     };
 
@@ -114,6 +115,7 @@ public class Guy
     {
         JobType.Mine => new JobDriver_Mine(),
         JobType.Haul => new JobDriver_Haul(),
+        JobType.HaulToFrame => new JobDriver_HaulToFrame(),
         JobType.Wander => new JobDriver_Wander(),
         JobType.Sleep => new JobDriver_Sleep(),
         JobType.Eat => new JobDriver_Eat(),
