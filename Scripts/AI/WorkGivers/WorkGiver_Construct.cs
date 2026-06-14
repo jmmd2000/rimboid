@@ -9,10 +9,14 @@ public class WorkGiver_Construct : WorkGiver
 {
     public override Job TryGiveJob(Guy guy)
     {
+        bool Workable(Frame frame) => frame.MaterialsComplete
+        ? Game.Pathing.NearestSafeWorkCell(frame.Cell, guy.Cell) != null
+        : Game.Pathing.NearestReachableWorkCell(frame.Cell, guy.Cell) != null;
+
         // nearest frame with a walkable neighbour
         var frame = Game.Map.Frames
             .OrderBy(f => guy.Cell.DistanceTo(f.Cell))
-            .FirstOrDefault(f => Game.Pathing.NearestReachableWorkCell(f.Cell, guy.Cell) != null);
+            .FirstOrDefault(Workable);
         if (frame == null) return null;
 
         if (frame.MaterialsComplete)

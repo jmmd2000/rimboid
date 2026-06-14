@@ -113,4 +113,32 @@ public class WorkGiverConstructTest
 
         AssertObject(new WorkGiver_Construct().TryGiveJob(guy)).IsNull();
     }
+
+    [TestCase]
+    public void SafeWorkCellAvoidsTheTrappedCentre()
+    {
+        Wall(new Vector2I(5, 4));
+        Wall(new Vector2I(5, 6));
+        Wall(new Vector2I(4, 5));
+        var cell = Game.Pathing.NearestSafeWorkCell(new Vector2I(6, 5), new Vector2I(5, 5));
+
+        AssertObject(cell).IsNotNull();
+        AssertBool(cell.Value == new Vector2I(5, 5)).IsFalse();
+    }
+
+    [TestCase]
+    public void OffersBuildForEnclosingWallFromOutside()
+    {
+        Wall(new Vector2I(5, 4));
+        Wall(new Vector2I(5, 6));
+        Wall(new Vector2I(4, 5));
+        var frame = AddFrame(new Vector2I(6, 5));
+        frame.MaterialsDelivered = frame.Def.MaterialCost;
+        var guy = new Guy { Position = new Vector2(5, 5) };
+
+        var job = new WorkGiver_Construct().TryGiveJob(guy);
+
+        AssertObject(job).IsNotNull();
+        AssertBool(job.Type == JobType.Build).IsTrue();
+    }
 }

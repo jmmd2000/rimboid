@@ -17,7 +17,7 @@ public class JobDriver_Build : JobDriver
         {
             OnStart = () =>
             {
-                var adjacent = Game.Pathing.NearestReachableWorkCell(job.TargetCell, guy.Cell);
+                var adjacent = Game.Pathing.NearestSafeWorkCell(job.TargetCell, guy.Cell);
                 if (adjacent == null) { _pathFailed = true; return; }
                 if (guy.Cell == adjacent.Value) return;
                 var path = Game.Pathing.GetPath(guy.Cell, adjacent.Value);
