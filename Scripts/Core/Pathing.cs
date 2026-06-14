@@ -91,4 +91,24 @@ public class Pathing
         return cell.X >= r.Position.X && cell.X < r.Position.X + r.Size.X
             && cell.Y >= r.Position.Y && cell.Y < r.Position.Y + r.Size.Y;
     }
+
+    /// <summary>
+    /// Nearest of a cell's 8 neighbours that is walkable AND reachable from the origin —
+    /// the cell a pawn stands on to work it. Diagonals included, so corner/pocket targets
+    /// stay workable. Returns null when the cell is sealed off.
+    /// </summary>
+    public Vector2I? NearestReachableWorkCell(Vector2I cell, Vector2I from)
+    {
+        Vector2I? best = null;
+        float bestDist = float.MaxValue;
+        foreach (var d in Grid.Adjacent8)
+        {
+            var n = cell + d;
+            if (!InBounds(n) || _astar.IsPointSolid(n)) continue;
+            if (!IsReachable(from, n)) continue;
+            float dist = from.DistanceTo(n);
+            if (dist < bestDist) { best = n; bestDist = dist; }
+        }
+        return best;
+    }
 }

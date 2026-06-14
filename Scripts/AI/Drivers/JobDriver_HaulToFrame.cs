@@ -54,7 +54,7 @@ public class JobDriver_HaulToFrame : JobDriver
         {
             OnStart = () =>
             {
-                var adjacent = Game.Pathing.NearestWalkableNeighbour(job.TargetCell, guy.Cell);
+                var adjacent = Game.Pathing.NearestReachableWorkCell(job.TargetCell, guy.Cell);
                 if (adjacent == null) { _pathFailed = true; return; }
                 // already adjacent
                 if (guy.Cell == adjacent.Value) return;

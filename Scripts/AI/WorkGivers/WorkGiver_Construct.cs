@@ -1,4 +1,3 @@
-using System;
 using System.Linq;
 using Godot;
 
@@ -12,9 +11,8 @@ public class WorkGiver_Construct : WorkGiver
     {
         // nearest frame with a walkable neighbour
         var frame = Game.Map.Frames
-            .Where(f => Game.Pathing.NearestWalkableNeighbour(f.Cell, guy.Cell) != null)
             .OrderBy(f => guy.Cell.DistanceTo(f.Cell))
-            .FirstOrDefault();
+            .FirstOrDefault(f => Game.Pathing.NearestReachableWorkCell(f.Cell, guy.Cell) != null);
         if (frame == null) return null;
 
         if (frame.MaterialsComplete)

@@ -29,6 +29,12 @@ public class WorkGiverConstructTest
         return frame;
     }
 
+    static void Wall(Vector2I cell)
+    {
+        Game.Map.SpawnBuilding(BuildingDefOf.WallStone, cell);
+        Game.Pathing.RefreshCell(Game.Map, cell);
+    }
+
     [TestCase]
     public void HaulsStoneToFrameNeedingMaterials()
     {
@@ -74,5 +80,37 @@ public class WorkGiverConstructTest
         AssertObject(job).IsNotNull();
         AssertBool(job.Type == JobType.Build).IsTrue();
         AssertBool(job.TargetCell == new Vector2I(5, 5)).IsTrue();
+    }
+
+    [TestCase]
+    public void BuildsFrameReachableOnlyDiagonally()
+    {
+        var frame = AddFrame(new Vector2I(5, 5));
+        frame.MaterialsDelivered = frame.Def.MaterialCost;
+        Wall(new Vector2I(5, 4));
+        Wall(new Vector2I(5, 6));
+        Wall(new Vector2I(4, 5));
+        Wall(new Vector2I(6, 5));
+        var guy = new Guy { Position = Vector2.Zero };
+
+        var job = new WorkGiver_Construct().TryGiveJob(guy);
+
+        AssertObject(job).IsNotNull();
+        AssertBool(job.Type == JobType.Build).IsTrue();
+    }
+
+    [TestCase]
+    public void SkipsFrameSealedInPocket()
+    {
+        var frame = AddFrame(new Vector2I(5, 5));
+        // would build if reachable
+        frame.MaterialsDelivered = frame.Def.MaterialCost;
+        // wall a 5x5 ring: (5,5) and its 8 neighbours stay open, but the pocket is sealed off
+        foreach (var c in Grid.CellsInRect(new Vector2I(3, 3), new Vector2I(7, 7)))
+            if (c.X == 3 || c.X == 7 || c.Y == 3 || c.Y == 7)
+                Wall(c);
+        var guy = new Guy { Position = Vector2.Zero };
+
+        AssertObject(new WorkGiver_Construct().TryGiveJob(guy)).IsNull();
     }
 }

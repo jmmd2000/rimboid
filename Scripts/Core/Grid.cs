@@ -15,4 +15,12 @@ public static class Grid
             for (int y = minY; y <= maxY; y++)
                 yield return new Vector2I(x, y);
     }
+
+    public static readonly Vector2I[] Adjacent8 =
+    {
+        // cardinals
+        new(1, 0), new(-1, 0), new(0, 1), new(0, -1),
+        // diagonals
+        new(1, 1), new(1, -1), new(-1, 1), new(-1, -1),
+    };
 }
