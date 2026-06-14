@@ -1,11 +1,15 @@
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using Godot;
 
 /// <summary>Wrapper around AStarGrid2D for map pathfinding.</summary>
 public class Pathing
 {
     AStarGrid2D _astar = new();
+
+    // every cell the colonist can currently walk to
+    HashSet<Vector2I> _reachable = new();
+    // false = grid changed, must re-flood
+    bool _reachableValid;
 
     /// <summary>Builds the pathfinding grid from the map's terrain data.</summary>
     /// <param name="map">The game map to read terrain from.</param>
@@ -24,6 +28,7 @@ public class Pathing
                 _astar.SetPointSolid(cell, solid);
                 _astar.SetPointWeightScale(cell, terrain.PathCostMultiplier);
             }
+        Invalidate();
     }
 
     /// <summary>Returns a path between two cells, or null if the target is solid.</summary>
@@ -35,6 +40,48 @@ public class Pathing
         if (_astar.IsPointSolid(to)) return null;
         return _astar.GetPointPath(from, to);
     }
+
+    /// <summary>
+    /// All cells reachable from an origin, as a set you can test membership on in O(1).
+    /// Cached: rebuilt only when the grid's walkability changes, reused otherwise.
+    /// Treat the returned set as read-only.
+    /// </summary>
+    public HashSet<Vector2I> ReachableCells(Vector2I from)
+    {
+        if (_reachableValid && _reachable.Contains(from)) return _reachable;
+        _reachable = Flood(from);
+        _reachableValid = true;
+        return _reachable;
+    }
+
+    /// <summary>Flood-fills the connected region of walkable cells containing 'from'.</summary>
+    HashSet<Vector2I> Flood(Vector2I from)
+    {
+        var cells = new HashSet<Vector2I>();
+        if (!Free(from)) return cells;
+        cells.Add(from);
+        var queue = new Queue<Vector2I>();
+        queue.Enqueue(from);
+        while (queue.Count > 0)
+        {
+            var c = queue.Dequeue();
+            foreach (var d in Grid.Adjacent8)
+            {
+                var n = c + d;
+                if (cells.Contains(n) || !Free(n)) continue;
+                // no diagonal
+                if (d.X != 0 && d.Y != 0 && (!Free(new Vector2I(n.X, c.Y)) || !Free(new Vector2I(c.X, n.Y)))) continue;
+                cells.Add(n);
+                queue.Enqueue(n);
+            }
+        }
+        return cells;
+    }
+
+    /// <summary>Marks the cached reachable set stale, it re-floods on next use.</summary>
+    void Invalidate() => _reachableValid = false;
+
+    bool Free(Vector2I cell) => InBounds(cell) && !_astar.IsPointSolid(cell);
 
     /// <summary>Returns true if a path exists from one cell to another.</summary>
     /// <param name="from">Start cell.</param>
@@ -58,6 +105,7 @@ public class Pathing
         bool solid = !terrain.Walkable || map.BlocksMovementAt(cell);
         _astar.SetPointSolid(cell, solid);
         _astar.SetPointWeightScale(cell, terrain.PathCostMultiplier);
+        Invalidate();
     }
 
     /// <summary>Finds the walkable cardinal neighbour of a cell closest to the given origin.</summary>
@@ -162,7 +210,7 @@ public class Pathing
         return true;
     }
 
-    bool Passable(Vector2I cell, Vector2I wall) => InBounds(cell) && cell != wall && !_astar.IsPointSolid(cell);
+    bool Passable(Vector2I cell, Vector2I wall) => cell != wall && Free(cell);
 
     bool IsBorder(Vector2I cell)
     {
