@@ -56,14 +56,31 @@ public class WorkGiverMineTest
     [TestCase]
     public void SkipsUnreachableDesignation()
     {
-        // wall off (5,5) — Stone is unwalkable, so it has no reachable neighbour
-        Game.Map.Terrain[5, 4] = TerrainDefOf.Stone;
-        Game.Map.Terrain[5, 6] = TerrainDefOf.Stone;
-        Game.Map.Terrain[4, 5] = TerrainDefOf.Stone;
-        Game.Map.Terrain[6, 5] = TerrainDefOf.Stone;
+        // wall off (5,5) on all 8 sides, stone is unwalkable, so no neighbour is reachable
+        foreach (var d in Grid.Adjacent8)
+        {
+            var n = new Vector2I(5, 5) + d;
+            Game.Map.Terrain[n.X, n.Y] = TerrainDefOf.Stone;
+        }
         Game.Pathing.Init(Game.Map); // rebuild the grid with the walls
 
         Game.Map.Designations.Add(DesignationType.Mine, new Vector2I(5, 5));
+        var guy = new Guy { Position = Vector2.Zero };
+
+        AssertObject(new WorkGiver_Mine().TryGiveJob(guy)).IsNull();
+    }
+
+    [TestCase]
+    public void SkipsDesignationInSealedRegion()
+    {
+        // a solid stone wall down column 5 splits the map, the guy starts on the left
+        for (int y = 0; y < Game.Map.Height; y++)
+            Game.Map.Terrain[5, y] = TerrainDefOf.Stone;
+        Game.Pathing.Init(Game.Map);
+
+        // designation sits in the sealed-off right region, it HAS open floor
+        // neighbours, but none the guy can actually path to
+        Game.Map.Designations.Add(DesignationType.Mine, new Vector2I(8, 8));
         var guy = new Guy { Position = Vector2.Zero };
 
         AssertObject(new WorkGiver_Mine().TryGiveJob(guy)).IsNull();

@@ -108,35 +108,6 @@ public class Pathing
         Invalidate();
     }
 
-    /// <summary>Finds the walkable cardinal neighbour of a cell closest to the given origin.</summary>
-    /// <param name="cell">The target cell to find a neighbour of.</param>
-    /// <param name="from">The origin to measure distance from.</param>
-    /// <returns>The nearest walkable neighbour, or null if none exist.</returns>
-    public Vector2I? NearestWalkableNeighbour(Vector2I cell, Vector2I from)
-    {
-        Vector2I[] neighbours =
-        {
-            cell + Vector2I.Up,
-            cell + Vector2I.Down,
-            cell + Vector2I.Left,
-            cell + Vector2I.Right,
-        };
-
-        Vector2I? best = null;
-        float bestDist = float.MaxValue;
-        foreach (var n in neighbours)
-        {
-            if (!InBounds(n) || _astar.IsPointSolid(n)) continue;
-            float dist = from.DistanceTo(n);
-            if (dist < bestDist)
-            {
-                best = n;
-                bestDist = dist;
-            }
-        }
-        return best;
-    }
-
     /// <summary>Checks whether a cell is within the pathfinding grid bounds.</summary>
     bool InBounds(Vector2I cell)
     {
