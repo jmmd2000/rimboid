@@ -15,12 +15,5 @@ public class JobDriver_Sleep : JobDriver
             OnTick = () => guy.Needs.Rest.Add(RefillPerTick),
             IsComplete = () => guy.Needs.Rest.Level >= 0.99f,
         };
-
-        // wake up
-        yield return new Task
-        {
-            OnStart = () => guy.IsSleeping = false,
-            IsComplete = () => true,
-        };
     }
 }

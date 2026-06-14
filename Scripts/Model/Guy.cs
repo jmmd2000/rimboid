@@ -55,10 +55,14 @@ public class Guy
     {
         Needs.Tick(Exertion);
 
-        if (_driver != null && !IsSleeping && Needs.Rest.Level <= CollapseThreshold)
+        // a critical need pre-empts the current job, but only if it actually has a job to offer
+        if (_driver != null)
         {
-            EndJob(dropCarry: true);
+            var urgent = _think.FindInterruptingJob(this);
+            if (urgent != null && urgent.Type != _driver.JobType)
+                EndJob(dropCarry: true);
         }
+
 
         if (_driver == null)
         {
@@ -80,13 +84,12 @@ public class Guy
         }
     }
 
-    const float CollapseThreshold = 0.05f;
-
     /// <summary>Ends the current job, optionally dropping any carried item where the colonist stands.</summary>
     /// <param name="dropCarry">True to drop the carried item (job abandoned or failed).</param>
     void EndJob(bool dropCarry)
     {
         ClearPath();
+        IsSleeping = false;
         if (dropCarry && Carrying != null)
         {
             var (dropped, isNew) = Game.Map.SpawnItem(Carrying.Def, Cell, Carrying.Count);
@@ -113,6 +116,7 @@ public class Guy
         JobType.Haul => new JobDriver_Haul(),
         JobType.Wander => new JobDriver_Wander(),
         JobType.Sleep => new JobDriver_Sleep(),
+        JobType.Eat => new JobDriver_Eat(),
         _ => throw new System.ArgumentOutOfRangeException(nameof(type)),
     };
 }

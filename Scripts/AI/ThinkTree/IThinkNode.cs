@@ -2,4 +2,7 @@
 public interface IThinkNode
 {
     Job TryGiveJob(Guy guy);
+
+    /// <summary>True if this node may pre-empt an active job (a critical need). Default, only runs when idle.</summary>
+    bool Interrupts => false;
 }

@@ -22,12 +22,18 @@ public abstract class Need
 public class Need_Rest : Need
 {
     public override float FallPerTick => 1f / (GameTime.TicksPerDay * 0.66f);
+
+    public float TiredThreshold = 0.30f;
+    public float CollapseThreshold = 0.05f;
 }
 
 /// <summary>Food need. Empties over roughly a day before the colonist starves.</summary>
 public class Need_Food : Need
 {
     public override float FallPerTick => 1f / (GameTime.TicksPerDay * 0.9f);
+
+    public float HungryThreshold = 0.30f;
+    public float StarvingThreshold = 0.05f;
 }
 
 /// <summary>Holds a colonist's needs and ticks them together.</summary>
@@ -41,6 +47,6 @@ public class Needs
     public void Tick(float exertion)
     {
         Rest.Tick(exertion);
-        Food.Tick();
+        Food.Tick(exertion);
     }
 }
