@@ -285,14 +285,14 @@ public partial class Main : Node2D
         }
     }
 
-    /// <summary>Designates every reachable stone cell in the rectangle for mining.</summary>
+    /// <summary>Designates every reachable, mineable cell in the rectangle for mining.</summary>
     /// <param name="a">The cell where the drag began.</param>
     /// <param name="b">The cell where the drag ended.</param>
     void DesignateMineRectangle(Vector2I a, Vector2I b)
     {
         foreach (var cell in Grid.CellsInRect(a, b))
         {
-            if (_map.Terrain[cell.X, cell.Y] == TerrainDefOf.Stone && !_map.Designations.Has(DesignationType.Mine, cell))
+            if (_map.Terrain[cell.X, cell.Y].Mineable && !_map.Designations.Has(DesignationType.Mine, cell))
             {
                 _map.Designations.Add(DesignationType.Mine, cell);
                 MapView.MarkDesignation(cell);

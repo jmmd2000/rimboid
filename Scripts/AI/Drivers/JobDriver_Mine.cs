@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using Godot;
 
 /// <summary>
-/// Job driver for mining a designated stone cell.
-/// Tasks: Walk adjacent -> mine over time -> finish (spawn item, swap terrain, clear designation)
+/// Job driver for mining a designated mineable cell.
+/// Tasks: Walk adjacent -> mine over time -> finish (drop the terrain's yield, swap terrain, clear designation)
 /// </summary>
 public class JobDriver_Mine : JobDriver
 {
@@ -16,6 +16,8 @@ public class JobDriver_Mine : JobDriver
     /// <returns>Sequence of tasks for the job driver to execute.</returns>
     protected override IEnumerable<Task> MakeTasks()
     {
+        var terrain = Game.Map.Terrain[job.TargetCell.X, job.TargetCell.Y];
+
         // walk to the target
         yield return new Task
         {
@@ -38,7 +40,7 @@ public class JobDriver_Mine : JobDriver
         {
             OnStart = () => _workDone = 0,
             OnTick = () => _workDone += 1f,
-            IsComplete = () => _workDone >= 80f,
+            IsComplete = () => _workDone >= terrain.WorkToMine,
             FailOn = () => !Game.Map.Designations.Has(DesignationType.Mine, job.TargetCell),
         };
 
@@ -47,10 +49,13 @@ public class JobDriver_Mine : JobDriver
         {
             OnStart = () =>
             {
-                var (item, isNew, _) = Game.Map.SpawnItem(ItemDefOf.Stone, job.TargetCell, 2);
-                if (isNew) Game.Main.SpawnItemView(item);
+                if (terrain.MinedItem != null)
+                {
+                    var (item, isNew, _) = Game.Map.SpawnItem(terrain.MinedItem, job.TargetCell, 2);
+                    if (isNew) Game.Main.SpawnItemView(item);
+                }
 
-                Game.Map.Terrain[job.TargetCell.X, job.TargetCell.Y] = TerrainDefOf.Dirt;
+                Game.Map.Terrain[job.TargetCell.X, job.TargetCell.Y] = terrain.TerrainAfterMined ?? TerrainDefOf.Dirt;
                 Game.Map.Designations.Remove(DesignationType.Mine, job.TargetCell);
                 Game.Pathing.RefreshCell(Game.Map, job.TargetCell);
                 Game.MapView.PaintCell(job.TargetCell);
