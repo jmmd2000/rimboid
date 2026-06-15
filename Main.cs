@@ -362,7 +362,7 @@ public partial class Main : Node2D
         {
             if (!CanPlaceWall(cell)) continue;
             var frame = new Frame { Def = BuildingDefOf.WallStone, Cell = cell };
-            _map.Frames.Add(frame);
+            _map.AddFrame(frame);
             SpawnFrameView(frame);
         }
     }
@@ -383,7 +383,7 @@ public partial class Main : Node2D
         {
             var frame = _map.FrameAt(cell);
             if (frame == null) continue;
-            _map.Frames.Remove(frame);
+            _map.RemoveFrame(frame);
             RemoveFrameView(frame);
         }
     }

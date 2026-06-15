@@ -25,7 +25,7 @@ public class WorkGiverConstructTest
     static Frame AddFrame(Vector2I cell)
     {
         var frame = new Frame { Def = BuildingDefOf.WallStone, Cell = cell };
-        Game.Map.Frames.Add(frame);
+        Game.Map.AddFrame(frame);
         return frame;
     }
 

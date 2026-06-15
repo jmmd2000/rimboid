@@ -1,18 +1,25 @@
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 
-/// <summary>Simulation model for the map. Holds terrain grid, designations, and loose items.</summary>
+/// <summary>Simulation model for the map. Holds terrain grid, designations, loose items, frames and buildings.</summary>
 public class GameMap
 {
     public int Width;
     public int Height;
     public TerrainDef[,] Terrain;
     public DesignationManager Designations = new();
-    public List<Item> LooseItems = new();
     public StockpileManager Stockpiles = new();
-    public List<Frame> Frames = new();
     public Dictionary<Vector2I, Building> Buildings = new();
+
+    // a flat list for iteration, plus a per-cell index for quicker lookup
+    readonly List<Item> _looseItems = new();
+    readonly Dictionary<Vector2I, List<Item>> _itemsByCell = new();
+    public IReadOnlyList<Item> LooseItems => _looseItems;
+
+    readonly List<Frame> _frames = new();
+    readonly Dictionary<Vector2I, Frame> _frameByCell = new();
+    public IReadOnlyList<Frame> Frames => _frames;
+
 
     /// <summary>Creates a new map with the given dimensions.</summary>
     /// <param name="width">Map width in cells.</param>
@@ -25,8 +32,9 @@ public class GameMap
     }
 
     /// <summary>Returns true if the cell lies within the map grid.</summary>
-    /// <param name="cell">The cell to test.</param>
     public bool InBounds(Vector2I cell) => cell.X >= 0 && cell.X < Width && cell.Y >= 0 && cell.Y < Height;
+
+    // ---------- items ----------
 
     /// <summary>Spawns an item at a cell, merging onto an existing pile of the same def.
     /// The pile is capped at the def's max stack size, any amount that doesn't fit
@@ -37,7 +45,7 @@ public class GameMap
     /// <returns>The pile, whether it was newly created, and the overflow that didn't fit.</returns>
     public (Item item, bool isNew, int overflow) SpawnItem(ItemDef def, Vector2I cell, int count)
     {
-        var existing = LooseItems.FirstOrDefault(i => i.Def == def && i.Cell == cell);
+        var existing = ItemAt(cell, def);
         if (existing != null)
         {
             int space = Mathf.Max(0, def.MaxStackSize - existing.Count);
@@ -48,7 +56,8 @@ public class GameMap
 
         int initial = Mathf.Min(count, def.MaxStackSize);
         var item = new Item { Def = def, Cell = cell, Count = initial };
-        LooseItems.Add(item);
+        _looseItems.Add(item);
+        IndexItem(item);
         return (item, true, count - initial);
     }
 
@@ -80,29 +89,65 @@ public class GameMap
         return newPiles;
     }
 
-    /// <summary>Returns the item at a cell, or null if empty.</summary>
-    /// <param name="cell">The cell to check.</param>
-    /// <param name="def">Optional: only match this item type.</param>
-    /// <returns>The matching item, or null.</returns>
+    /// <summary>Removes a loose item from the map (picked up, eaten etc.)</summary>
+    public void RemoveItem(Item item)
+    {
+        _looseItems.Remove(item);
+        if (_itemsByCell.TryGetValue(item.Cell, out var list))
+        {
+            list.Remove(item);
+            if (list.Count == 0) _itemsByCell.Remove(item.Cell);
+        }
+    }
+
+    /// <summary>Returns the item at a cell, or null if none. Optionally filters to one def.</summary>
     public Item ItemAt(Vector2I cell, ItemDef def = null)
     {
-        return LooseItems.FirstOrDefault(i => i.Cell == cell && (def == null || i.Def == def));
+        if (!_itemsByCell.TryGetValue(cell, out var list)) return null;
+        if (def == null) return list.Count > 0 ? list[0] : null;
+        return list.Find(i => i.Def == def);
+    }
+
+    /// <summary>True if this exact item is still on the map.</summary>
+    public bool HasItem(Item item) => _itemsByCell.TryGetValue(item.Cell, out var list) && list.Contains(item);
+
+    void IndexItem(Item item)
+    {
+        if (!_itemsByCell.TryGetValue(item.Cell, out var list))
+        {
+            _itemsByCell[item.Cell] = list = new List<Item>();
+        }
+        list.Add(item);
+    }
+
+    // ---------- frames ----------
+
+    /// <summary>Places a construction frame on the map. Assumes the cell has no frame already (callers check HasFrame).</summary>
+    public void AddFrame(Frame frame)
+    {
+        _frames.Add(frame);
+        _frameByCell[frame.Cell] = frame;
+    }
+
+    /// <summary>Removes a construction frame (cancelled or finished).</summary>
+    public void RemoveFrame(Frame frame)
+    {
+        _frames.Remove(frame);
+        _frameByCell.Remove(frame.Cell);
     }
 
     /// <summary>Returns the construction frame at a cell, or null if none.</summary>
-    /// <param name="cell">The cell to check.</param>
-    public Frame FrameAt(Vector2I cell) => Frames.FirstOrDefault(f => f.Cell == cell);
+    public Frame FrameAt(Vector2I cell) => _frameByCell.GetValueOrDefault(cell);
 
     /// <summary>True if a construction frame already occupies the cell.</summary>
-    /// <param name="cell">The cell to check.</param>
-    public bool HasFrame(Vector2I cell) => Frames.Any(f => f.Cell == cell);
+    public bool HasFrame(Vector2I cell) => _frameByCell.ContainsKey(cell);
+
+    // ---------- buildings ----------
 
     /// <summary>Returns the building at a cell, or null if none.</summary>
-    /// <param name="cell">The cell to check.</param>
     public Building BuildingAt(Vector2I cell) => Buildings.GetValueOrDefault(cell);
 
     /// <summary>True if a movement-blocking building occupies the cell.</summary>
-    /// <param name="cell">The cell to check.</param>
     public bool BlocksMovementAt(Vector2I cell) => Buildings.TryGetValue(cell, out var b) && b.Def.BlocksMovement;
 
     /// <summary>Spawns a finished building at a cell and returns it.</summary>

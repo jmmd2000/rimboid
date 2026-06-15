@@ -1,6 +1,7 @@
 using Godot;
 using GdUnit4;
 using static GdUnit4.Assertions;
+using System.Linq;
 
 [TestSuite]
 [RequireGodotRuntime]
@@ -132,7 +133,7 @@ public class GameMapTest
 
         AssertInt(map.ItemAt(new Vector2I(5, 5)).Count).IsEqual(max);
         AssertInt(newPiles.Count).IsEqual(2);
-        var spill = map.LooseItems.Find(i => i.Cell != new Vector2I(5, 5));
+        var spill = map.LooseItems.First(i => i.Cell != new Vector2I(5, 5));
         AssertInt(spill.Count).IsEqual(10);
     }
 }

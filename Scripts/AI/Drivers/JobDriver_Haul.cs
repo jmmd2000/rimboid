@@ -38,7 +38,7 @@ public class JobDriver_Haul : JobDriver
                 if (job.Count >= src.Count)
                 {
                     guy.Carrying = src;
-                    Game.Map.LooseItems.Remove(src);
+                    Game.Map.RemoveItem(src);
                     Game.Main.RemoveItemView(src);
                 }
                 else

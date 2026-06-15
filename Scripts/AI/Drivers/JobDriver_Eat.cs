@@ -26,7 +26,7 @@ public class JobDriver_Eat : JobDriver
             },
             OnTick = () => guy.MoveAlongPath(),
             IsComplete = () => guy.AtPathEnd,
-            FailOn = () => _pathFailed || !Game.Map.LooseItems.Contains(job.TargetItem),
+            FailOn = () => _pathFailed || !Game.Map.HasItem(job.TargetItem),
         };
 
         // eat one unit at a time until full or the food is gone
@@ -42,11 +42,11 @@ public class JobDriver_Eat : JobDriver
                 job.TargetItem.Count--;
                 if (job.TargetItem.Count <= 0)
                 {
-                    Game.Map.LooseItems.Remove(job.TargetItem);
+                    Game.Map.RemoveItem(job.TargetItem);
                     Game.Main.RemoveItemView(job.TargetItem);
                 }
             },
-            IsComplete = () => guy.Needs.Food.Level >= 0.99f || !Game.Map.LooseItems.Contains(job.TargetItem),
+            IsComplete = () => guy.Needs.Food.Level >= 0.99f || !Game.Map.HasItem(job.TargetItem),
         };
     }
 }
