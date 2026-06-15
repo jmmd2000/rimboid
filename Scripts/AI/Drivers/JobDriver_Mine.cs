@@ -39,7 +39,7 @@ public class JobDriver_Mine : JobDriver
             {
                 if (terrain.MinedItem != null)
                 {
-                    var (item, isNew, _) = Game.Map.SpawnItem(terrain.MinedItem, job.TargetCell, 2);
+                    var (item, isNew, _) = Game.Map.SpawnItem(terrain.MinedItem, job.TargetCell, terrain.MineYield);
                     if (isNew) Game.Views.SpawnItemView(item);
                 }
 
