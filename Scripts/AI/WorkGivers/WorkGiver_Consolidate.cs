@@ -4,6 +4,8 @@ public class WorkGiver_Consolidate : WorkGiver
 {
     public override Job TryGiveJob(Guy guy)
     {
+        var reachable = Game.Pathing.ReachableCells(guy.Cell);
+
         var byDef = Game.Map.LooseItems
             .Where(i => i.Count < i.Def.MaxStackSize && Game.Map.Stockpiles.IsInStockpile(i))
             .GroupBy(i => i.Def);
@@ -18,7 +20,7 @@ public class WorkGiver_Consolidate : WorkGiver
             int otherRoom = piles.Where(p => p != source).Sum(p => p.Def.MaxStackSize - p.Count);
             // if it wouldnt empty a cell if you moved it, skip
             if (source.Count > otherRoom) continue;
-            if (!Game.Pathing.IsReachable(guy.Cell, source.Cell)) continue;
+            if (!reachable.Contains(source.Cell)) continue;
 
             return new Job { Type = JobType.Haul, TargetCell = source.Cell, TargetItem = source, Count = source.Count };
         }

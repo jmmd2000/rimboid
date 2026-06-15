@@ -30,7 +30,7 @@ public class WorkGiver_Construct : WorkGiver
         }
 
         var materials = Game.Map.LooseItems
-            .Where(i => i.Def == frame.Def.Materials && Game.Pathing.IsReachable(guy.Cell, i.Cell))
+            .Where(i => i.Def == frame.Def.Materials && reachable.Contains(i.Cell))
             .OrderBy(i => guy.Cell.DistanceTo(i.Cell))
             .FirstOrDefault();
         if (materials == null) return null;

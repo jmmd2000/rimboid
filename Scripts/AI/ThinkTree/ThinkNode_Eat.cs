@@ -16,10 +16,11 @@ public class ThinkNode_Eat : IThinkNode
         float threshold = _urgent ? guy.Needs.Food.StarvingThreshold : guy.Needs.Food.HungryThreshold;
         if (guy.Needs.Food.Level >= threshold) return null;
 
+        var reachable = Game.Pathing.ReachableCells(guy.Cell);
         var food = Game.Map.LooseItems
             .Where(i => i.Def.IsFood)
             .OrderBy(i => guy.Cell.DistanceTo(i.Cell))
-            .FirstOrDefault(i => Game.Pathing.IsReachable(guy.Cell, i.Cell));
+            .FirstOrDefault(i => reachable.Contains(i.Cell));
         if (food == null) return null;
 
         return new Job { Type = JobType.Eat, TargetCell = food.Cell, TargetItem = food };
