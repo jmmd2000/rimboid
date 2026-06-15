@@ -40,7 +40,7 @@ public class JobDriver_Mine : JobDriver
                 if (terrain.MinedItem != null)
                 {
                     var (item, isNew, _) = Game.Map.SpawnItem(terrain.MinedItem, job.TargetCell, 2);
-                    if (isNew) Game.Main.SpawnItemView(item);
+                    if (isNew) Game.Views.SpawnItemView(item);
                 }
 
                 Game.Map.Terrain[job.TargetCell.X, job.TargetCell.Y] = terrain.TerrainAfterMined ?? TerrainDefOf.Dirt;

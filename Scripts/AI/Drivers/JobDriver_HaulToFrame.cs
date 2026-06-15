@@ -23,7 +23,7 @@ public class JobDriver_HaulToFrame : JobDriver
                 {
                     guy.Carrying = src;
                     Game.Map.RemoveItem(src);
-                    Game.Main.RemoveItemView(src);
+                    Game.Views.RemoveItemView(src);
                 }
                 else
                 {

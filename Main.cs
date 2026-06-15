@@ -36,9 +36,7 @@ public partial class Main : Node2D
     GuyView _guyView;
     TickManager _tick;
     Stockpile _stockpile;
-    readonly Dictionary<Item, ItemView> _itemViews = new();
-    readonly Dictionary<Frame, FrameView> _frameViews = new();
-    readonly Dictionary<Building, BuildingView> _buildingViews = new();
+
     Vector2I? _dragStart;
     MouseButton _dragButton;
     SelectionBox _selectionBox;
@@ -68,7 +66,10 @@ public partial class Main : Node2D
         Game.Map = _map;
         Game.Pathing = _pathing;
         Game.MapView = MapView;
-        Game.Main = this;
+        var views = new ViewManager();
+        AddChild(views);
+        Game.Views = views;
+
         _stockpile = Game.Map.Stockpiles.Create();
 
         _guy = new Guy { Position = FindWalkableCell() };
@@ -105,7 +106,7 @@ public partial class Main : Node2D
 
         // TEMP: spawn berries
         var (berries, _, _) = Game.Map.SpawnItem(ItemDefOf.Berries, new Vector2I(3, 3), 10);
-        SpawnItemView(berries);
+        Game.Views.SpawnItemView(berries);
     }
 
     public override void _UnhandledInput(InputEvent e)
@@ -164,70 +165,6 @@ public partial class Main : Node2D
 
     Vector2I CellUnderMouse() => TerrainLayer.LocalToMap(TerrainLayer.ToLocal(GetGlobalMousePosition()));
 
-    /// <summary>Creates a visual node for a loose item on the map.</summary>
-    /// <param name="item">The runtime item instance to create a view for.</param>
-    public void SpawnItemView(Item item)
-    {
-        var view = new ItemView();
-        view.Texture = item.Def.Graphic;
-        view.Init(item, Game.TileSize);
-        AddChild(view);
-        _itemViews[item] = view;
-    }
-
-    /// <summary>Removes the visual node for an item that's been picked up.</summary>
-    /// <param name="item">The item whose view to remove.</param>
-    public void RemoveItemView(Item item)
-    {
-        if (_itemViews.TryGetValue(item, out var view))
-        {
-            view.QueueFree();
-            _itemViews.Remove(item);
-        }
-    }
-
-    /// <summary>Drops items on the map (capping and spilling as needed) and creates their views.</summary>
-    /// <param name="def">The item definition to drop.</param>
-    /// <param name="cell">The preferred cell to drop on.</param>
-    /// <param name="count">Total units to drop.</param>
-    public void DropItems(ItemDef def, Vector2I cell, int count)
-    {
-        foreach (var pile in _map.DropItems(def, cell, count))
-        {
-            SpawnItemView(pile);
-        }
-    }
-
-    /// <summary>Creates a visual node for a construction frame.</summary>
-    /// <param name="frame">The frame to create a view for.</param>
-    public void SpawnFrameView(Frame frame)
-    {
-        var view = new FrameView();
-        view.Init(frame, Game.TileSize);
-        AddChild(view);
-        _frameViews[frame] = view;
-    }
-
-    /// <summary>Removes the visual node for a frame that's been cancelled or built.</summary>
-    /// <param name="frame">The frame whose view to remove.</param>
-    public void RemoveFrameView(Frame frame)
-    {
-        if (_frameViews.TryGetValue(frame, out var view))
-        {
-            view.QueueFree();
-            _frameViews.Remove(frame);
-        }
-    }
-
-    /// <summary>Creates a visual node for a finished building.</summary>
-    /// <param name="building">The building to create a view for.</param>
-    public void SpawnBuildingView(Building building)
-    {
-        var view = new BuildingView();
-        view.Init(building, Game.TileSize);
-        AddChild(view);
-        _buildingViews[building] = view;
-    }
 
     /// <summary>Tracks a press/drag/release selection and updates the preview outline.</summary>
     /// <param name="e">The input event being handled.</param>
@@ -363,7 +300,7 @@ public partial class Main : Node2D
             if (!CanPlaceWall(cell)) continue;
             var frame = new Frame { Def = BuildingDefOf.WallStone, Cell = cell };
             _map.AddFrame(frame);
-            SpawnFrameView(frame);
+            Game.Views.SpawnFrameView(frame);
         }
     }
 
@@ -384,7 +321,7 @@ public partial class Main : Node2D
             var frame = _map.FrameAt(cell);
             if (frame == null) continue;
             _map.RemoveFrame(frame);
-            RemoveFrameView(frame);
+            Game.Views.RemoveFrameView(frame);
         }
     }
 }

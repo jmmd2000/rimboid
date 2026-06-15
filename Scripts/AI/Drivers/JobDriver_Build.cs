@@ -42,8 +42,8 @@ public class JobDriver_Build : JobDriver
 
                 var building = Game.Map.SpawnBuilding(frame.Def, frame.Cell);
                 Game.Map.RemoveFrame(frame);
-                Game.Main.RemoveFrameView(frame);
-                Game.Main.SpawnBuildingView(building);
+                Game.Views.RemoveFrameView(frame);
+                Game.Views.SpawnBuildingView(building);
                 // now blocks movement
                 Game.Pathing.RefreshCell(Game.Map, frame.Cell);
             },
