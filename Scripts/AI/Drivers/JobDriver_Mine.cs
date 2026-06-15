@@ -8,7 +8,6 @@ using Godot;
 public class JobDriver_Mine : JobDriver
 {
     float _workDone;
-    bool _pathFailed;
 
     /// <summary>
     /// Yields the three tasks: walk to adjacent cell, mine, then finish up.
@@ -18,22 +17,11 @@ public class JobDriver_Mine : JobDriver
     {
         var terrain = Game.Map.Terrain[job.TargetCell.X, job.TargetCell.Y];
 
-        // walk to the target
-        yield return new Task
-        {
-            OnStart = () =>
-            {
-                var adjacent = Game.Pathing.NearestReachableWorkCell(job.TargetCell, guy.Cell);
-                if (adjacent == null) { _pathFailed = true; return; }
-                if (guy.Cell == adjacent.Value) return;  // already adjacent, skip walk
-                var path = Game.Pathing.GetPath(guy.Cell, adjacent.Value);
-                if (path == null || path.Length < 2) { _pathFailed = true; return; }
-                guy.StartPath(path);
-            },
-            OnTick = () => guy.MoveAlongPath(),
-            IsComplete = () => guy.AtPathEnd,
-            FailOn = () => _pathFailed || !Game.Map.Designations.Has(DesignationType.Mine, job.TargetCell),
-        };
+        // walk to a cell adjacent to the target
+        yield return WalkTo(
+            () => Game.Pathing.NearestReachableWorkCell(job.TargetCell, guy.Cell),
+            failIf: () => !Game.Map.Designations.Has(DesignationType.Mine, job.TargetCell)
+        );
 
         // mine over time
         yield return new Task

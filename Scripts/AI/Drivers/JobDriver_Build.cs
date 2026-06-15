@@ -8,26 +8,13 @@ using Godot;
 /// </summary>
 public class JobDriver_Build : JobDriver
 {
-    bool _pathFailed;
-
     protected override IEnumerable<Task> MakeTasks()
     {
         // walk to a cell adjacent to the frame
-        yield return new Task
-        {
-            OnStart = () =>
-            {
-                var adjacent = Game.Pathing.NearestSafeWorkCell(job.TargetCell, guy.Cell);
-                if (adjacent == null) { _pathFailed = true; return; }
-                if (guy.Cell == adjacent.Value) return;
-                var path = Game.Pathing.GetPath(guy.Cell, adjacent.Value);
-                if (path == null || path.Length < 2) { _pathFailed = true; return; }
-                guy.StartPath(path);
-            },
-            OnTick = () => guy.MoveAlongPath(),
-            IsComplete = () => guy.AtPathEnd,
-            FailOn = () => _pathFailed || !Game.Map.HasFrame(job.TargetCell),
-        };
+        yield return WalkTo(
+            () => Game.Pathing.NearestSafeWorkCell(job.TargetCell, guy.Cell),
+            failIf: () => !Game.Map.HasFrame(job.TargetCell)
+        );
 
         // construction work over time
         yield return new Task

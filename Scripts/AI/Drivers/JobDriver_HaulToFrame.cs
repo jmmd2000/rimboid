@@ -8,24 +8,10 @@ using Godot;
 /// </summary>
 public class JobDriver_HaulToFrame : JobDriver
 {
-    bool _pathFailed;
-
     protected override IEnumerable<Task> MakeTasks()
     {
         // walk to the material pile
-        yield return new Task
-        {
-            OnStart = () =>
-            {
-                if (guy.Cell == job.TargetItem.Cell) return;
-                var path = Game.Pathing.GetPath(guy.Cell, job.TargetItem.Cell);
-                if (path == null || path.Length < 2) { _pathFailed = true; return; }
-                guy.StartPath(path);
-            },
-            OnTick = () => guy.MoveAlongPath(),
-            IsComplete = () => guy.AtPathEnd,
-            FailOn = () => _pathFailed || !Game.Map.HasFrame(job.TargetCell),
-        };
+        yield return WalkTo(job.TargetItem.Cell, failIf: () => !Game.Map.HasFrame(job.TargetCell));
 
         // pick up the load (only what the frame still needs)
         yield return new Task
@@ -50,22 +36,10 @@ public class JobDriver_HaulToFrame : JobDriver
         };
 
         // walk to a cell adjacent to the frame
-        yield return new Task
-        {
-            OnStart = () =>
-            {
-                var adjacent = Game.Pathing.NearestReachableWorkCell(job.TargetCell, guy.Cell);
-                if (adjacent == null) { _pathFailed = true; return; }
-                // already adjacent
-                if (guy.Cell == adjacent.Value) return;
-                var path = Game.Pathing.GetPath(guy.Cell, adjacent.Value);
-                if (path == null || path.Length < 2) { _pathFailed = true; return; }
-                guy.StartPath(path);
-            },
-            OnTick = () => guy.MoveAlongPath(),
-            IsComplete = () => guy.AtPathEnd,
-            FailOn = () => _pathFailed || !Game.Map.HasFrame(job.TargetCell),
-        };
+        yield return WalkTo(
+            () => Game.Pathing.NearestReachableWorkCell(job.TargetCell, guy.Cell),
+            failIf: () => !Game.Map.HasFrame(job.TargetCell)
+        );
 
         // deposit into the frame
         yield return new Task

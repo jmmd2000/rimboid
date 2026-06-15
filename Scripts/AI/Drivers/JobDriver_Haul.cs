@@ -8,26 +8,12 @@ using Godot;
 /// </summary>
 public class JobDriver_Haul : JobDriver
 {
-    bool _pathFailed;
-
     /// <summary>Yields the walk, pick-up, and one-or-more deposit tasks.</summary>
     /// <returns>Sequence of tasks for the job driver to execute.</returns>
     protected override IEnumerable<Task> MakeTasks()
     {
-        // walk to the target
-        yield return new Task
-        {
-            OnStart = () =>
-            {
-                if (guy.Cell == job.TargetCell) return;
-                var path = Game.Pathing.GetPath(guy.Cell, job.TargetCell);
-                if (path == null || path.Length < 2) { _pathFailed = true; return; }
-                guy.StartPath(path);
-            },
-            OnTick = () => guy.MoveAlongPath(),
-            IsComplete = () => guy.AtPathEnd,
-            FailOn = () => _pathFailed,
-        };
+        // walk to the item
+        yield return WalkTo(job.TargetCell);
 
         // pick up only as much as the stockpile can hold
         yield return new Task
@@ -60,19 +46,7 @@ public class JobDriver_Haul : JobDriver
             var target = dest.Value;
 
             // walk to this stockpile cell
-            yield return new Task
-            {
-                OnStart = () =>
-                {
-                    if (guy.Cell == target) return;
-                    var path = Game.Pathing.GetPath(guy.Cell, target);
-                    if (path == null || path.Length < 2) { _pathFailed = true; return; }
-                    guy.StartPath(path);
-                },
-                OnTick = () => guy.MoveAlongPath(),
-                IsComplete = () => guy.AtPathEnd,
-                FailOn = () => _pathFailed || !Game.Map.Stockpiles.IsStockpileCell(target),
-            };
+            yield return WalkTo(target, failIf: () => !Game.Map.Stockpiles.IsStockpileCell(target));
 
             // drop as much as fits here, keep the rest
             yield return new Task

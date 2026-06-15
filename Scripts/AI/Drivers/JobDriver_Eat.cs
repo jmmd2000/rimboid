@@ -9,25 +9,12 @@ public class JobDriver_Eat : JobDriver
     // how long one unit takes to eat
     const float TicksPerBite = 20f;
 
-    bool _pathFailed;
     float _biteProgress;
 
     protected override IEnumerable<Task> MakeTasks()
     {
         // walk to the food
-        yield return new Task
-        {
-            OnStart = () =>
-            {
-                if (guy.Cell == job.TargetCell) return;
-                var path = Game.Pathing.GetPath(guy.Cell, job.TargetCell);
-                if (path == null || path.Length < 2) { _pathFailed = true; return; }
-                guy.StartPath(path);
-            },
-            OnTick = () => guy.MoveAlongPath(),
-            IsComplete = () => guy.AtPathEnd,
-            FailOn = () => _pathFailed || !Game.Map.HasItem(job.TargetItem),
-        };
+        yield return WalkTo(job.TargetCell, failIf: () => !Game.Map.HasItem(job.TargetItem));
 
         // eat one unit at a time until full or the food is gone
         yield return new Task

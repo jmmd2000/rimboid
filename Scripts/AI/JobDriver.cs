@@ -1,4 +1,6 @@
+using System;
 using System.Collections.Generic;
+using Godot;
 
 /// <summary>Possible outcomes of a job driver tick.</summary>
 public enum JobStatus { Ongoing, Completed, Failed };
@@ -11,6 +13,9 @@ public abstract class JobDriver
 {
     protected Guy guy;
     protected Job job;
+
+    // set by WalkTo when a destination is missing or unreachable, fails the job
+    protected bool pathFailed;
 
     IEnumerator<Task> _tasks;
     Task _current;
@@ -30,6 +35,40 @@ public abstract class JobDriver
     /// <summary>Yields the sequence of tasks that make up this job.</summary>
     /// <returns>An enumerable of tasks to execute in order.</returns>
     protected abstract IEnumerable<Task> MakeTasks();
+
+    /// <summary>
+    /// A standard "walk to a cell" task: paths to the destination, steps along it each tick,
+    /// and completes on arrival. Sets pathFailed (which fails the job) if the cell is unreachable.
+    /// </summary>
+    /// <param name="cell">The destination cell.</param>
+    /// <param name="failIf">Optional extra per-tick failure check (e.g. the target became invalid).</param>
+    protected Task WalkTo(Vector2I cell, Func<bool> failIf = null) => WalkTo(() => cell, failIf);
+
+    /// <summary>
+    /// As the cell overload, but the destination is computed when the walk starts i.e the nearest
+    /// work cell beside a target, which may not be known until the guy gets there. A null
+    /// destination fails the job.
+    /// </summary>
+    /// <param name="destination">Returns where to walk, evaluated at task start, null means fail.</param>
+    /// <param name="failIf">Optional extra per-tick failure check.</param>
+    protected Task WalkTo(Func<Vector2I?> destination, Func<bool> failIf = null)
+    {
+        return new Task
+        {
+            OnStart = () =>
+            {
+                var dest = destination();
+                if (dest == null) { pathFailed = true; return; }
+                if (guy.Cell == dest.Value) return; //already there
+                var path = Game.Pathing.GetPath(guy.Cell, dest.Value);
+                if (path == null || path.Length < 2) { pathFailed = true; return; }
+                guy.StartPath(path);
+            },
+            OnTick = () => guy.MoveAlongPath(),
+            IsComplete = () => guy.AtPathEnd,
+            FailOn = () => pathFailed || (failIf != null && failIf()),
+        };
+    }
 
     /// <summary>Advances the job by one tick. Returns the current status.</summary>
     /// <returns>Ongoing, Completed, or Failed.</returns>
