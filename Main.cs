@@ -75,11 +75,11 @@ public partial class Main : Node2D
 
         _guyView = new GuyView();
         _guyView.Texture = GD.Load<Texture2D>("res://Assets/guy.png");
-        _guyView.Init(_guy, 16);
+        _guyView.Init(_guy, Game.TileSize);
         AddChild(_guyView);
 
         var pathLine = new PathLine();
-        pathLine.Init(_guy, 16);
+        pathLine.Init(_guy, Game.TileSize);
         AddChild(pathLine);
 
         GameTime.Reset();
@@ -96,11 +96,11 @@ public partial class Main : Node2D
         AddChild(needsPanel);
 
         var zzz = new SleepZZZ();
-        zzz.Init(_guy, 16);
+        zzz.Init(_guy, Game.TileSize);
         AddChild(zzz);
 
         _selectionBox = new SelectionBox();
-        _selectionBox.Init(16);
+        _selectionBox.Init(Game.TileSize);
         AddChild(_selectionBox);
 
         // TEMP: spawn berries
@@ -170,7 +170,7 @@ public partial class Main : Node2D
     {
         var view = new ItemView();
         view.Texture = item.Def.Graphic;
-        view.Init(item, 16);
+        view.Init(item, Game.TileSize);
         AddChild(view);
         _itemViews[item] = view;
     }
@@ -203,7 +203,7 @@ public partial class Main : Node2D
     public void SpawnFrameView(Frame frame)
     {
         var view = new FrameView();
-        view.Init(frame, 16);
+        view.Init(frame, Game.TileSize);
         AddChild(view);
         _frameViews[frame] = view;
     }
@@ -224,7 +224,7 @@ public partial class Main : Node2D
     public void SpawnBuildingView(Building building)
     {
         var view = new BuildingView();
-        view.Init(building, 16);
+        view.Init(building, Game.TileSize);
         AddChild(view);
         _buildingViews[building] = view;
     }
