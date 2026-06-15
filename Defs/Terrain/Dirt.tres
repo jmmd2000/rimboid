@@ -5,4 +5,5 @@
 [resource]
 script = ExtResource("1_im2is")
 DefName = "Dirt"
+AtlasCoords = Vector2i(3, 0)
 metadata/_custom_type_script = "uid://02inv3eftp2g"

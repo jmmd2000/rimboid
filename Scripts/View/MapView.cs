@@ -6,6 +6,9 @@ public partial class MapView : Node2D
     [Export] public TileMapLayer TerrainLayer;
     [Export] public TileMapLayer OverlayLayer;
 
+    static readonly Vector2I DesignationAtlas = new(4, 0);
+    static readonly Vector2I StockpileAtlas = new(5, 0);
+
     GameMap _map;
 
     /// <summary>Repaints every cell on the map.</summary>
@@ -18,28 +21,20 @@ public partial class MapView : Node2D
                 PaintCell(new Vector2I(x, y));
     }
 
-    /// <summary>Repaints a single terrain cell.</summary>
+    /// <summary>Repaints a single terrain cell from its def's tile.</summary>
     /// <param name="c">The cell to repaint.</param>
     public void PaintCell(Vector2I c)
     {
         var terrain = _map.Terrain[c.X, c.Y];
-        Vector2I atlas = terrain.DefName switch
-        {
-            "Water" => new Vector2I(0, 0),
-            "Stone" => new Vector2I(1, 0),
-            "Grass" => new Vector2I(2, 0),
-            "Dirt" => new Vector2I(3, 0),
-            _ => new Vector2I(0, 0)
-        };
 
-        TerrainLayer.SetCell(c, 0, atlas);
+        TerrainLayer.SetCell(c, 0, terrain.AtlasCoords);
     }
 
     /// <summary>Places the designation overlay icon on a cell.</summary>
     /// <param name="cell">The cell to mark.</param>
     public void MarkDesignation(Vector2I cell)
     {
-        OverlayLayer.SetCell(cell, 0, new Vector2I(4, 0));
+        OverlayLayer.SetCell(cell, 0, DesignationAtlas);
     }
 
     /// <summary>Removes the designation overlay from a cell.</summary>
@@ -53,7 +48,7 @@ public partial class MapView : Node2D
     /// <param name="cell">The cell to mark.</param>
     public void MarkStockpile(Vector2I cell)
     {
-        OverlayLayer.SetCell(cell, 0, new Vector2I(5, 0));
+        OverlayLayer.SetCell(cell, 0, StockpileAtlas);
     }
 
     /// <summary>Removes the stockpile overlay from a cell.</summary>

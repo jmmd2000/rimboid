@@ -8,6 +8,8 @@ public partial class TerrainDef : Resource
     [Export] public bool Walkable { get; set; } = true;
     [Export] public float PathCostMultiplier { get; set; } = 1f;
 
+    [Export] public Vector2I AtlasCoords { get; set; }
+
     [ExportGroup("Mining")]
     [Export] public bool Mineable { get; set; }
     //optional
