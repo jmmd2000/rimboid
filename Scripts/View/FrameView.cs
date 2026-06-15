@@ -1,5 +1,4 @@
 using System;
-using System.Net.NetworkInformation;
 using Godot;
 
 /// <summary>Draws a construction frame, a translucent ghost that solidifies as materials and work arrive.</summary>
