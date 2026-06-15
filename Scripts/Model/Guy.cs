@@ -92,8 +92,7 @@ public class Guy
         IsSleeping = false;
         if (dropCarry && Carrying != null)
         {
-            var (dropped, isNew) = Game.Map.SpawnItem(Carrying.Def, Cell, Carrying.Count);
-            if (isNew) Game.Main.SpawnItemView(dropped);
+            Game.Main.DropItems(Carrying.Def, Cell, Carrying.Count);
             Carrying = null;
         }
         _driver = null;

@@ -16,6 +16,25 @@ public static class Grid
                 yield return new Vector2I(x, y);
     }
 
+    /// <summary>
+    /// Yields the cells forming the square ring at a given Chebyshev distance from a centre.
+    /// Radius 0 yields just the centre, radius 1 the 8 surrounding cells, and so on outwards.
+    /// </summary>
+    /// <param name="centre">The centre cell.</param>
+    /// <param name="radius">Ring distance from the centre.</param>
+    public static IEnumerable<Vector2I> CellsInRing(Vector2I centre, int radius)
+    {
+        if (radius <= 0)
+        {
+            yield return centre;
+            yield break;
+        }
+        for (int x = centre.X - radius; x <= centre.X + radius; x++)
+            for (int y = centre.Y - radius; y <= centre.Y + radius; y++)
+                if (Mathf.Abs(x - centre.X) == radius || Mathf.Abs(y - centre.Y) == radius)
+                    yield return new Vector2I(x, y);
+    }
+
     public static readonly Vector2I[] Adjacent8 =
     {
         // cardinals

@@ -93,4 +93,46 @@ public class GameMapTest
         AssertBool(map.InBounds(new Vector2I(-1, 0))).IsFalse();
         AssertBool(map.InBounds(new Vector2I(10, 10))).IsFalse();
     }
+
+    [TestCase]
+    public void SpawnItemCapsMergedStackAndReportsOverflow()
+    {
+        var map = new GameMap(10, 10);
+        int max = ItemDefOf.Stone.MaxStackSize;
+        map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), max - 5);
+        var (item, isNew, overflow) = map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), 20);
+
+        AssertInt(item.Count).IsEqual(max);
+        AssertInt(overflow).IsEqual(15);
+        AssertBool(isNew).IsFalse();
+    }
+
+    [TestCase]
+    public void SpawnItemCapsNewPileAtMaxStackSize()
+    {
+        var map = new GameMap(10, 10);
+        int max = ItemDefOf.Stone.MaxStackSize;
+        var (item, _, overflow) = map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), max + 30);
+
+        AssertInt(item.Count).IsEqual(max);
+        AssertInt(overflow).IsEqual(30);
+    }
+
+    [TestCase]
+    public void DropItemsCapsOriginAndSpillsRemainder()
+    {
+        TerrainDefOf.Load();
+        var map = new GameMap(10, 10);
+        for (int x = 0; x < map.Width; x++)
+            for (int y = 0; y < map.Height; y++)
+                map.Terrain[x, y] = TerrainDefOf.Dirt;
+
+        int max = ItemDefOf.Stone.MaxStackSize;
+        var newPiles = map.DropItems(ItemDefOf.Stone, new Vector2I(5, 5), max + 10);
+
+        AssertInt(map.ItemAt(new Vector2I(5, 5)).Count).IsEqual(max);
+        AssertInt(newPiles.Count).IsEqual(2);
+        var spill = map.LooseItems.Find(i => i.Cell != new Vector2I(5, 5));
+        AssertInt(spill.Count).IsEqual(10);
+    }
 }

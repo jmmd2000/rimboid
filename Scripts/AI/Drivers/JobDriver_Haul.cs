@@ -85,7 +85,7 @@ public class JobDriver_Haul : JobDriver
                         : guy.Carrying.Def.MaxStackSize - existing.Count;
                     int amount = Mathf.Min(guy.Carrying.Count, room);
 
-                    var (pile, isNew) = Game.Map.SpawnItem(guy.Carrying.Def, target, amount);
+                    var (pile, isNew, _) = Game.Map.SpawnItem(guy.Carrying.Def, target, amount);
                     if (isNew) Game.Main.SpawnItemView(pile);
 
                     guy.Carrying.Count -= amount;
@@ -103,8 +103,7 @@ public class JobDriver_Haul : JobDriver
             {
                 OnStart = () =>
                 {
-                    var (pile, isNew) = Game.Map.SpawnItem(guy.Carrying.Def, guy.Cell, guy.Carrying.Count);
-                    if (isNew) Game.Main.SpawnItemView(pile);
+                    Game.Main.DropItems(guy.Carrying.Def, guy.Cell, guy.Carrying.Count);
                     guy.Carrying = null;
                 },
                 IsComplete = () => true,

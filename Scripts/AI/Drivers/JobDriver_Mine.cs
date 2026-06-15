@@ -47,8 +47,9 @@ public class JobDriver_Mine : JobDriver
         {
             OnStart = () =>
             {
-                var (item, isNew) = Game.Map.SpawnItem(ItemDefOf.Stone, job.TargetCell, 2);
+                var (item, isNew, _) = Game.Map.SpawnItem(ItemDefOf.Stone, job.TargetCell, 2);
                 if (isNew) Game.Main.SpawnItemView(item);
+
                 Game.Map.Terrain[job.TargetCell.X, job.TargetCell.Y] = TerrainDefOf.Dirt;
                 Game.Map.Designations.Remove(DesignationType.Mine, job.TargetCell);
                 Game.Pathing.RefreshCell(Game.Map, job.TargetCell);

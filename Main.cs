@@ -104,7 +104,7 @@ public partial class Main : Node2D
         AddChild(_selectionBox);
 
         // TEMP: spawn berries
-        var (berries, _) = Game.Map.SpawnItem(ItemDefOf.Berries, new Vector2I(3, 3), 10);
+        var (berries, _, _) = Game.Map.SpawnItem(ItemDefOf.Berries, new Vector2I(3, 3), 10);
         SpawnItemView(berries);
     }
 
@@ -183,6 +183,18 @@ public partial class Main : Node2D
         {
             view.QueueFree();
             _itemViews.Remove(item);
+        }
+    }
+
+    /// <summary>Drops items on the map (capping and spilling as needed) and creates their views.</summary>
+    /// <param name="def">The item definition to drop.</param>
+    /// <param name="cell">The preferred cell to drop on.</param>
+    /// <param name="count">Total units to drop.</param>
+    public void DropItems(ItemDef def, Vector2I cell, int count)
+    {
+        foreach (var pile in _map.DropItems(def, cell, count))
+        {
+            SpawnItemView(pile);
         }
     }
 

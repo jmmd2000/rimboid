@@ -42,7 +42,7 @@ public class Needs
     public Need_Rest Rest = new();
     public Need_Food Food = new();
 
-    /// <summary>Decays every need by one tick. Exertion scales how fast rest drains.</summary>
+    /// <summary>Decays every need by one tick. Exertion scales how fast they drain.</summary>
     /// <param name="exertion">How hard the colonist is working: 1 = idle/resting.</param>
     public void Tick(float exertion)
     {

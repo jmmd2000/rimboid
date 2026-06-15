@@ -34,4 +34,12 @@ public class GridTest
         foreach (var c in forward)
             AssertBool(reversed.Contains(c)).IsTrue();
     }
+
+    [TestCase]
+    public void CellsInRingRadiusOneGivesEightNeighbours()
+    {
+        var ring = new System.Collections.Generic.List<Vector2I>(Grid.CellsInRing(new Vector2I(5, 5), 1));
+        AssertInt(ring.Count).IsEqual(8);
+        AssertBool(ring.Contains(new Vector2I(5, 6))).IsTrue();
+    }
 }
