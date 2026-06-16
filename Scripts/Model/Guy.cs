@@ -17,6 +17,7 @@ public class Guy
 
     Vector2[] _path;
     int _pathIndex;
+    bool _commanded;
     JobDriver _driver;
     readonly ThinkTree _think = new();
 
@@ -26,6 +27,14 @@ public class Guy
     public Vector2[] GetPathPoints() => _path;
     /// <summary>Returns the current index along the path.</summary>
     public int GetPathIndex() => _pathIndex;
+
+    ///<summary>Player order, drop the current job and walk this path, ignoring the think tree until arrival.
+    public void GoTo(Vector2[] path)
+    {
+        if (_driver != null) EndJob(dropCarry: true);
+        _commanded = true;
+        StartPath(path);
+    }
 
     /// <summary>Sets the colonist on a new path.</summary>
     /// <param name="path">Array of world coordinates to follow.</param>
@@ -55,6 +64,14 @@ public class Guy
     public void Tick()
     {
         Needs.Tick(Exertion);
+
+        if (_commanded)
+        {
+            MoveAlongPath();
+            if (AtPathEnd) _commanded = false;
+            return;
+        }
+
         DropJobForUrgentNeed();
         StartJobIfIdle();
         RunCurrentJob();

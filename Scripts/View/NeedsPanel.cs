@@ -3,28 +3,27 @@ using Godot;
 /// <summary>HUD panel showing a colonist's needs as bars.</summary>
 public partial class NeedsPanel : CanvasLayer
 {
-    Guy _guy;
+    VBoxContainer _box;
     ProgressBar _rest;
     ProgressBar _food;
 
-    /// <summary>Binds the panel to the colonist whose needs it shows.</summary>
-    /// <param name="guy">The colonist to read needs from.</param>
-    public void Init(Guy guy) => _guy = guy;
-
     public override void _Ready()
     {
-        var box = new VBoxContainer { Position = new Vector2(10, 80) };
-        AddChild(box);
+        _box = new VBoxContainer { Position = new Vector2(10, 80) };
+        AddChild(_box);
 
-        _rest = AddBar(box, "Rest");
-        _food = AddBar(box, "Food");
+        _rest = AddBar(_box, "Rest");
+        _food = AddBar(_box, "Food");
     }
 
     public override void _Process(double delta)
     {
-        if (_guy == null) return;
-        UpdateBar(_rest, _guy.Needs.Rest.Level);
-        UpdateBar(_food, _guy.Needs.Food.Level);
+        var guy = Game.SelectedGuy;
+        _box.Visible = guy != null;
+        if (guy == null) return;
+
+        UpdateBar(_rest, guy.Needs.Rest.Level);
+        UpdateBar(_food, guy.Needs.Food.Level);
     }
 
     static ProgressBar AddBar(VBoxContainer box, string label)

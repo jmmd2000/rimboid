@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Godot;
 
 /// <summary>
@@ -7,7 +8,6 @@ using Godot;
 /// </summary>
 public partial class ToolController : Node2D
 {
-    Guy _guy;
     Stockpile _stockpile;
     TileMapLayer _terrainLayer;
     SelectionBox _selectionBox;
@@ -29,9 +29,8 @@ public partial class ToolController : Node2D
     /// <param name="guy">The guy that click-to-move drives.</param>
     /// <param name="stockpile">The stockpile the stockpile tool edits.</param>
     /// <param name="terrainLayer">The tilemap used to convert the mouse position to a cell.</param>
-    public void Init(Guy guy, Stockpile stockpile, TileMapLayer terrainLayer)
+    public void Init(Stockpile stockpile, TileMapLayer terrainLayer)
     {
-        _guy = guy;
         _stockpile = stockpile;
         _terrainLayer = terrainLayer;
 
@@ -54,17 +53,22 @@ public partial class ToolController : Node2D
         {
             HandleDrag(e);
         }
-        else if (e is InputEventMouseButton wmb && wmb.Pressed && wmb.ButtonIndex == MouseButton.Left)
+        else if (e is InputEventMouseButton mb && mb.Pressed)
         {
             Vector2I cell = CellUnderMouse();
-            if (Game.Map.InBounds(cell))
+            if (!Game.Map.InBounds(cell)) return;
+
+            if (mb.ButtonIndex == MouseButton.Left)
             {
-                var path = Game.Pathing.GetPath(_guy.Cell, cell);
-                if (path != null)
-                {
-                    _guy.StartPath(path);
-                }
+                Game.SelectedGuy = Game.Map.Guys.FirstOrDefault(g => g.Cell == cell);
+
             }
+            else if (mb.ButtonIndex == MouseButton.Right && Game.SelectedGuy != null)
+            {
+                var path = Game.Pathing.GetPath(Game.SelectedGuy.Cell, cell);
+                if (path != null) Game.SelectedGuy.GoTo(path);
+            }
+
         }
     }
 

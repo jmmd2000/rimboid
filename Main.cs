@@ -32,7 +32,6 @@ public partial class Main : Node2D
     [Export] public float GrassMoistureThreshold = -0.1f;
 
     GameMap _map;
-    Guy _guy;
     Pathing _pathing;
     TickManager _tick;
     Stockpile _stockpile;
@@ -67,7 +66,7 @@ public partial class Main : Node2D
             Game.Views.SpawnGuyViews(guy);
         }
 
-        _guy = Game.Map.Guys[0];
+        Game.SelectedGuy = Game.Map.Guys[0];
 
         GameTime.Reset();
         _tick = new TickManager();
@@ -79,11 +78,10 @@ public partial class Main : Node2D
         AddChild(timeBar);
 
         var needsPanel = new NeedsPanel();
-        needsPanel.Init(_guy);
         AddChild(needsPanel);
 
         var tools = new ToolController();
-        tools.Init(_guy, _stockpile, TerrainLayer);
+        tools.Init(_stockpile, TerrainLayer);
         AddChild(tools);
 
         // TEMP: spawn berries

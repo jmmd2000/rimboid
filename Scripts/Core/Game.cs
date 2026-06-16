@@ -8,4 +8,5 @@ public static class Game
     public static Pathing Pathing;
     public static MapView MapView;
     public static ViewManager Views;
+    public static Guy SelectedGuy;
 }
