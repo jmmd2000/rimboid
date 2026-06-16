@@ -73,4 +73,35 @@ public partial class ViewManager : Node2D
         _buildingViews[building] = view;
     }
 
+    // ------------ guys ------------
+
+    readonly Dictionary<Guy, Node2D[]> _guyViews = new();
+
+    /// <summary>Creates a guy's visual nodes: sprite, path line, and sleep particles.</summary>
+    public void SpawnGuyViews(Guy guy)
+    {
+        var sprite = new GuyView { Texture = GD.Load<Texture2D>("res://Assets/guy.png") };
+        sprite.Init(guy, Game.TileSize);
+
+        var path = new PathLine();
+        path.Init(guy, Game.TileSize);
+
+        var zzz = new SleepZZZ();
+        zzz.Init(guy, Game.TileSize);
+
+        var views = new Node2D[] { sprite, path, zzz };
+        foreach (var v in views) AddChild(v);
+        _guyViews[guy] = views;
+    }
+
+    /// <summary>Removes a pawn's visual nodes</summary>
+    public void RemovePawnViews(Guy guy)
+    {
+        if (_guyViews.TryGetValue(guy, out var views))
+        {
+            foreach (var v in views) v.QueueFree();
+            _guyViews.Remove(guy);
+        }
+    }
+
 }

@@ -10,6 +10,7 @@ public class GameMap
     public DesignationManager Designations = new();
     public StockpileManager Stockpiles = new();
     public Dictionary<Vector2I, Building> Buildings = new();
+    public List<Guy> Guys = new();
 
     // a flat list for iteration, plus a per-cell index for quicker lookup
     readonly List<Item> _looseItems = new();
@@ -33,6 +34,15 @@ public class GameMap
 
     /// <summary>Returns true if the cell lies within the map grid.</summary>
     public bool InBounds(Vector2I cell) => cell.X >= 0 && cell.X < Width && cell.Y >= 0 && cell.Y < Height;
+
+    /// <summary>Advances every pawn on this map by one sim tick</summary>
+    public void Tick()
+    {
+        foreach (var guy in Guys)
+        {
+            guy.Tick();
+        }
+    }
 
     // ---------- items ----------
 

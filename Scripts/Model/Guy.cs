@@ -12,6 +12,7 @@ public class Guy
     public Item Carrying;
 
     public Needs Needs = new();
+    public Social Social = new();
     public bool IsSleeping;
 
     Vector2[] _path;

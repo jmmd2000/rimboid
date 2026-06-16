@@ -32,7 +32,6 @@ public partial class Main : Node2D
     GameMap _map;
     Guy _guy;
     Pathing _pathing;
-    GuyView _guyView;
     TickManager _tick;
     Stockpile _stockpile;
 
@@ -58,11 +57,8 @@ public partial class Main : Node2D
         _stockpile = Game.Map.Stockpiles.Create();
 
         _guy = new Guy { Position = FindWalkableCell() };
-
-        _guyView = new GuyView();
-        _guyView.Texture = GD.Load<Texture2D>("res://Assets/guy.png");
-        _guyView.Init(_guy, Game.TileSize);
-        AddChild(_guyView);
+        Game.Map.Guys.Add(_guy);
+        Game.Views.SpawnGuyViews(_guy);
 
         var pathLine = new PathLine();
         pathLine.Init(_guy, Game.TileSize);
