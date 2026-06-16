@@ -55,40 +55,42 @@ public class Guy
     public void Tick()
     {
         Needs.Tick(Exertion);
+        DropJobForUrgentNeed();
+        StartJobIfIdle();
+        RunCurrentJob();
+    }
 
-        // a critical need pre-empts the current job, but only if it actually has a job to offer
-        if (_driver != null)
-        {
-            var urgent = _think.FindInterruptingJob(this);
-            if (urgent != null && urgent.Type != _driver.JobType)
-                EndJob(dropCarry: true);
-        }
+    void DropJobForUrgentNeed()
+    {
+        if (_driver == null) return;
+        var urgent = _think.FindInterruptingJob(this);
+        if (urgent != null && urgent.Type != _driver.JobType)
+            EndJob(dropCarry: true);
+    }
 
+    void StartJobIfIdle()
+    {
+        if (_driver != null) return;
+        var job = _think.FindJob(this);
+        if (job == null) return;
+        Reserve(job);
+        _driver = MakeDriver(job.Type);
+        _driver.Init(this, job);
+    }
 
-        if (_driver == null)
-        {
-            var job = _think.FindJob(this);
-            if (job != null)
-            {
-                _driver = MakeDriver(job.Type);
-                _driver.Init(this, job);
-            }
-        }
-
-        if (_driver != null)
-        {
-            var status = _driver.Tick();
-            if (status != JobStatus.Ongoing)
-            {
-                EndJob(dropCarry: status == JobStatus.Failed);
-            }
-        }
+    void RunCurrentJob()
+    {
+        if (_driver == null) return;
+        var status = _driver.Tick();
+        if (status != JobStatus.Ongoing)
+            EndJob(dropCarry: status == JobStatus.Failed);
     }
 
     /// <summary>Ends the current job, optionally dropping any carried item where the colonist stands.</summary>
     /// <param name="dropCarry">True to drop the carried item (job abandoned or failed).</param>
     void EndJob(bool dropCarry)
     {
+        Game.Map.Reservations.ReleaseAll(this);
         ClearPath();
         IsSleeping = false;
         if (dropCarry && Carrying != null)
@@ -123,4 +125,11 @@ public class Guy
         JobType.Eat => new JobDriver_Eat(),
         _ => throw new System.ArgumentOutOfRangeException(nameof(type)),
     };
+
+    /// <summary>Claims the targets a job will work, so other Guys skip them.</summary>
+    void Reserve(Job job)
+    {
+        Game.Map.Reservations.Reserve(job.TargetItem, this);
+        if (job.ClaimsCell) Game.Map.Reservations.Reserve(job.TargetCell, this);
+    }
 }

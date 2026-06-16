@@ -11,6 +11,7 @@ public class GameMap
     public StockpileManager Stockpiles = new();
     public Dictionary<Vector2I, Building> Buildings = new();
     public List<Guy> Guys = new();
+    public ReservationManager Reservations = new();
 
     // a flat list for iteration, plus a per-cell index for quicker lookup
     readonly List<Item> _looseItems = new();

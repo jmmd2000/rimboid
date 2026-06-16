@@ -14,4 +14,6 @@ public class Job
     public Item TargetItem;
     /// <summary>How many units to act on (e.g. amount to haul). 0 = unset / whole stack.</summary>
     public int Count;
+    ///<summary>Whether the job claims a cell, for reservations</summary>
+    public bool ClaimsCell;
 }

@@ -14,11 +14,12 @@ public class WorkGiver_Mine : WorkGiver
 
         List<Vector2I> candidates = Game.Map.Designations.CellsOfType(DesignationType.Mine)
             .Where(CanReach)
+            .Where(c => Game.Map.Reservations.Available(c, guy))
             .OrderBy(c => guy.Cell.DistanceTo(c))
             .ToList();
 
         if (candidates.Count == 0) return null;
 
-        return new Job { Type = JobType.Mine, TargetCell = candidates[0] };
+        return new Job { Type = JobType.Mine, TargetCell = candidates[0], ClaimsCell = true };
     }
 }

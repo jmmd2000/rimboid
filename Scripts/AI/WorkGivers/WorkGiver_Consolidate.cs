@@ -21,6 +21,7 @@ public class WorkGiver_Consolidate : WorkGiver
             // if it wouldnt empty a cell if you moved it, skip
             if (source.Count > otherRoom) continue;
             if (!reachable.Contains(source.Cell)) continue;
+            if (!Game.Map.Reservations.Available(source, guy)) continue;
 
             return new Job { Type = JobType.Haul, TargetCell = source.Cell, TargetItem = source, Count = source.Count };
         }

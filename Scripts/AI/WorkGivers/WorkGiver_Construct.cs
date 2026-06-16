@@ -15,6 +15,7 @@ public class WorkGiver_Construct : WorkGiver
         bool CanReach(Frame frame) => Grid.Adjacent8.Any(d => reachable.Contains(frame.Cell + d));
 
         bool Workable(Frame f) =>
+            Game.Map.Reservations.Available(f.Cell, guy) &&
             CanReach(f) &&
             (!f.MaterialsComplete || Game.Pathing.NearestSafeWorkCell(f.Cell, guy.Cell) != null);
 
@@ -26,17 +27,17 @@ public class WorkGiver_Construct : WorkGiver
 
         if (frame.MaterialsComplete)
         {
-            return new Job { Type = JobType.Build, TargetCell = frame.Cell };
+            return new Job { Type = JobType.Build, TargetCell = frame.Cell, ClaimsCell = true };
         }
 
         var materials = Game.Map.LooseItems
-            .Where(i => i.Def == frame.Def.Materials && reachable.Contains(i.Cell))
+            .Where(i => i.Def == frame.Def.Materials && reachable.Contains(i.Cell) && Game.Map.Reservations.Available(i, guy))
             .OrderBy(i => guy.Cell.DistanceTo(i.Cell))
             .FirstOrDefault();
         if (materials == null) return null;
 
         int needed = frame.Def.MaterialCost - frame.MaterialsDelivered;
         int amount = Mathf.Min(materials.Count, needed);
-        return new Job { Type = JobType.HaulToFrame, TargetCell = frame.Cell, TargetItem = materials, Count = amount };
+        return new Job { Type = JobType.HaulToFrame, TargetCell = frame.Cell, TargetItem = materials, Count = amount, ClaimsCell = true };
     }
 }

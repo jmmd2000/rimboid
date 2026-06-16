@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 /// <summary>Main node. Connects world gen, pathing, colonists, player input, ui.</summary>
@@ -8,8 +9,9 @@ public partial class Main : Node2D
 
     [ExportGroup("World Gen")]
     [Export] public int Seed = 12345;
-    [Export] public int MapWidth = 256;
-    [Export] public int MapHeight = 256;
+    [Export] public int MapWidth = 250;
+    [Export] public int MapHeight = 250;
+    [Export] public int StartingGuys = 3;
 
     [ExportGroup("Elevation Noise")]
     [Export] public float ElevationFrequency = 0.01f;
@@ -56,17 +58,20 @@ public partial class Main : Node2D
 
         _stockpile = Game.Map.Stockpiles.Create();
 
-        _guy = new Guy { Position = FindWalkableCell() };
-        Game.Map.Guys.Add(_guy);
-        Game.Views.SpawnGuyViews(_guy);
+        var taken = new HashSet<Vector2I>();
+        for (int i = 0; i < StartingGuys; i++)
+        {
+            var guy = new Guy { Position = FindWalkableCell(taken) };
+            taken.Add(guy.Cell);
+            Game.Map.Guys.Add(guy);
+            Game.Views.SpawnGuyViews(guy);
+        }
 
-        var pathLine = new PathLine();
-        pathLine.Init(_guy, Game.TileSize);
-        AddChild(pathLine);
+        _guy = Game.Map.Guys[0];
 
         GameTime.Reset();
         _tick = new TickManager();
-        _tick.Tick += _guy.Tick;
+        _tick.Tick += () => Game.Map.Tick();
         AddChild(_tick);
 
         var timeBar = new TimeControlBar();
@@ -76,10 +81,6 @@ public partial class Main : Node2D
         var needsPanel = new NeedsPanel();
         needsPanel.Init(_guy);
         AddChild(needsPanel);
-
-        var zzz = new SleepZZZ();
-        zzz.Init(_guy, Game.TileSize);
-        AddChild(zzz);
 
         var tools = new ToolController();
         tools.Init(_guy, _stockpile, TerrainLayer);
@@ -92,12 +93,16 @@ public partial class Main : Node2D
 
     /// <summary>Finds the first walkable cell on the map for the initial colonist placement.</summary>
     /// <returns>The first walkable cell</returns>
-    Vector2 FindWalkableCell()
+    Vector2 FindWalkableCell(HashSet<Vector2I> taken = null)
     {
         for (int x = 0; x < _map.Width; x++)
             for (int y = 0; y < _map.Height; y++)
-                if (_map.Terrain[x, y].Walkable)
+            {
+                var cell = new Vector2I(x, y);
+                if (_map.Terrain[x, y].Walkable && (taken == null || !taken.Contains(cell)))
                     return new Vector2(x, y);
+            }
+
         return Vector2.Zero;
     }
 }
