@@ -14,7 +14,7 @@ public class WorkGiver_Mine : WorkGiver
 
         List<Vector2I> candidates = Game.Map.Designations.CellsOfType(DesignationType.Mine)
             .Where(CanReach)
-            .Where(c => Game.Map.Reservations.Available(c, guy))
+            .Where(c => Game.Map.Reservations.AvailableCell(c, guy))
             .OrderBy(c => guy.Cell.DistanceTo(c))
             .ToList();
 

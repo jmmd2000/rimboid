@@ -8,7 +8,7 @@ public class WorkGiver_Haul : WorkGiver
     {
         var reachable = Game.Pathing.ReachableCells(guy.Cell);
         var item = Game.Map.LooseItems
-            .Where(i => !Game.Map.Stockpiles.IsInStockpile(i) && Game.Map.Reservations.Available(i, guy))
+            .Where(i => !Game.Map.Stockpiles.IsInStockpile(i) && Game.Map.Reservations.AvailableItem(i, guy))
             .OrderBy(i => guy.Cell.DistanceTo(i.Cell))
             .FirstOrDefault(i => reachable.Contains(i.Cell));
         if (item == null) return null;

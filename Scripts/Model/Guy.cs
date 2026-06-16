@@ -146,7 +146,7 @@ public class Guy
     /// <summary>Claims the targets a job will work, so other Guys skip them.</summary>
     void Reserve(Job job)
     {
-        Game.Map.Reservations.Reserve(job.TargetItem, this);
-        if (job.ClaimsCell) Game.Map.Reservations.Reserve(job.TargetCell, this);
+        Game.Map.Reservations.ReserveItem(job.TargetItem, this);
+        if (job.ClaimsCell) Game.Map.Reservations.ReserveCell(job.TargetCell, this);
     }
 }

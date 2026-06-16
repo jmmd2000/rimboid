@@ -18,7 +18,7 @@ public class ThinkNode_Eat : IThinkNode
 
         var reachable = Game.Pathing.ReachableCells(guy.Cell);
         var food = Game.Map.LooseItems
-            .Where(i => i.Def.IsFood && Game.Map.Reservations.Available(i, guy))
+            .Where(i => i.Def.IsFood && Game.Map.Reservations.AvailableItem(i, guy))
             .OrderBy(i => guy.Cell.DistanceTo(i.Cell))
             .FirstOrDefault(i => reachable.Contains(i.Cell));
         if (food == null) return null;
