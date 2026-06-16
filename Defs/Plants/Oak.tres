@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PlantDef" format=3 uid="uid://dsduiqx02rvbc"]
+
+[ext_resource type="Script" uid="uid://cil75mcf8b12h" path="res://Scripts/Defs/PlantDef.cs" id="1_3oc5u"]
+[ext_resource type="Resource" uid="uid://e6i03qklm0y2" path="res://Defs/Items/Wood.tres" id="1_hf0aa"]
+
+[resource]
+script = ExtResource("1_3oc5u")
+DefName = "Oak"
+Label = "oak tree"
+BlocksMovement = true
+HarvestItem = ExtResource("1_hf0aa")
+HarvestYield = 5
+WorkToHarvest = 70.0
+MinDrawWidth = 1.5
+MaxDrawWidth = 2.0
+MinDrawHeight = 3.0
+MaxDrawHeight = 5.0
+metadata/_custom_type_script = "uid://cil75mcf8b12h"

@@ -40,6 +40,7 @@ public partial class Main : Node2D
     {
         _map = new GameMap(MapWidth, MapHeight);
         ItemDefOf.Load();
+        PlantDefOf.Load();
         BuildingDefOf.Load();
         WorldGenerator.Generate(_map, this);
         MapView.PaintAll(_map);

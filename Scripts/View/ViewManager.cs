@@ -15,7 +15,7 @@ public partial class ViewManager : Node2D
     {
         var view = new ItemView
         {
-            Texture = item.Def.Graphic
+            Texture = item.Def.Texture
         };
         view.Init(item, Game.TileSize);
         AddChild(view);

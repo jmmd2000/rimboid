@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="PlantDef" format=3 uid="uid://vrdktttdudh3"]
+
+[ext_resource type="Script" uid="uid://cil75mcf8b12h" path="res://Scripts/Defs/PlantDef.cs" id="1_ori70"]
+[ext_resource type="Resource" uid="uid://e6i03qklm0y2" path="res://Defs/Items/Wood.tres" id="1_piu8r"]
+
+[resource]
+script = ExtResource("1_ori70")
+DefName = "Pine"
+Label = "pine tree"
+BlocksMovement = true
+HarvestItem = ExtResource("1_piu8r")
+HarvestYield = 10
+WorkToHarvest = 110.0
+MinDrawWidth = 2.0
+MaxDrawWidth = 2.5
+MinDrawHeight = 8.0
+MaxDrawHeight = 14.0
+metadata/_custom_type_script = "uid://cil75mcf8b12h"

@@ -7,5 +7,5 @@
 script = ExtResource("1_ntvhc")
 DefName = "Stone"
 Label = "stone"
-Graphic = ExtResource("1_pnv3p")
+Texture = ExtResource("1_pnv3p")
 metadata/_custom_type_script = "uid://bfkfdeiify8cv"
