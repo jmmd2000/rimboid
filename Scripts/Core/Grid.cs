@@ -42,4 +42,9 @@ public static class Grid
         // diagonals
         new(1, 1), new(1, -1), new(-1, 1), new(-1, -1),
     };
+
+    public static readonly Vector2I[] Cardinal4 =
+    {
+        new(1, 0), new(-1, 0), new(0, 1), new(0, -1),
+    };
 }

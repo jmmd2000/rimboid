@@ -56,18 +56,15 @@ public class WorkGiverMineTest
     [TestCase]
     public void SkipsUnreachableDesignation()
     {
-        // wall off (5,5) on all 8 sides, stone is unwalkable, so no neighbour is reachable
-        foreach (var d in Grid.Adjacent8)
+        // wall the 4 cardinal neighbours; diagonals stay open, mining is orthogonal, so still unminable
+        foreach (var d in Grid.Cardinal4)
         {
             var n = new Vector2I(5, 5) + d;
             Game.Map.Terrain[n.X, n.Y] = TerrainDefOf.Stone;
         }
-        Game.Pathing.Init(Game.Map); // rebuild the grid with the walls
-
+        Game.Pathing.Init(Game.Map);
         Game.Map.Designations.Add(DesignationType.Mine, new Vector2I(5, 5));
-        var guy = new Guy { Position = Vector2.Zero };
-
-        AssertObject(new WorkGiver_Mine().TryGiveJob(guy)).IsNull();
+        AssertObject(new WorkGiver_Mine().TryGiveJob(new Guy { Position = Vector2.Zero })).IsNull();
     }
 
     [TestCase]

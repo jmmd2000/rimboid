@@ -10,7 +10,7 @@ public class WorkGiver_Mine : WorkGiver
         var reachable = Game.Pathing.ReachableCells(guy.Cell);
 
         // mineable if the guy can stand on any of the 8 neighbours to reach it
-        bool CanReach(Vector2I cell) => Grid.Adjacent8.Any(d => reachable.Contains(cell + d));
+        bool CanReach(Vector2I cell) => Grid.Cardinal4.Any(d => reachable.Contains(cell + d));
 
         List<Vector2I> candidates = Game.Map.Designations.CellsOfType(DesignationType.Mine)
             .Where(CanReach)

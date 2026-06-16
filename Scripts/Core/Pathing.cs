@@ -156,6 +156,26 @@ public class Pathing
         return best;
     }
 
+    /// <summary>
+    /// Nearest of a cell's four cardinal neighbours that the origin can reach, where a Guy
+    /// stands to mine. Mining is orthogonal only (no reaching across a diagonal corner), so a
+    /// rock whose only open neighbours are diagonal is correctly skipped. Null if none reachable.
+    /// </summary>
+    public Vector2I? NearestReachableCardinal(Vector2I cell, Vector2I from)
+    {
+        var reachable = ReachableCells(from);
+        Vector2I? best = null;
+        float bestDist = float.MaxValue;
+        foreach (var d in Grid.Cardinal4)
+        {
+            var n = cell + d;
+            if (!reachable.Contains(n)) continue;
+            float dist = from.DistanceTo(n);
+            if (dist < bestDist) { best = n; bestDist = dist; }
+        }
+        return best;
+    }
+
     /// <summary>True if, once wall is solid, start can no longer reach the map edge i.e. it's enclosed.</summary>
     bool WouldTrap(Vector2I start, Vector2I wall)
     {

@@ -19,7 +19,7 @@ public class JobDriver_Mine : JobDriver
 
         // walk to a cell adjacent to the target
         yield return WalkTo(
-            () => Game.Pathing.NearestReachableWorkCell(job.TargetCell, guy.Cell),
+            () => Game.Pathing.NearestReachableCardinal(job.TargetCell, guy.Cell),
             failIf: () => !Game.Map.Designations.Has(DesignationType.Mine, job.TargetCell)
         );
 
