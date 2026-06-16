@@ -7,18 +7,22 @@ public class WorkGiver_Haul : WorkGiver
     public override Job TryGiveJob(Guy guy)
     {
         var reachable = Game.Pathing.ReachableCells(guy.Cell);
-        var item = Game.Map.LooseItems
-            .Where(i => !Game.Map.Stockpiles.IsInStockpile(i) && Game.Map.Reservations.AvailableItem(i, guy))
-            .OrderBy(i => guy.Cell.DistanceTo(i.Cell))
-            .FirstOrDefault(i => reachable.Contains(i.Cell));
-        if (item == null) return null;
 
-        int room = Game.Map.Stockpiles.TotalRoomFor(item.Def);
-        // no room, no pickup
+        Item best = null;
+        int bestDist = int.MaxValue;
+        foreach (var i in Game.Map.LooseItems)
+        {
+            if (Game.Map.Stockpiles.IsInStockpile(i)) continue;
+            if (!reachable.Contains(i.Cell)) continue;
+            if (!Game.Map.Reservations.AvailableItem(i, guy)) continue;
+            int dist = Grid.DistanceSquared(guy.Cell, i.Cell);
+            if (dist < bestDist) { bestDist = dist; best = i; }
+        }
+        if (best == null) return null;
+
+        int room = Game.Map.Stockpiles.TotalRoomFor(best.Def);
         if (room == 0) return null;
-
-        // only take what'll fit
-        int amount = Mathf.Min(item.Count, room);
-        return new Job { Type = JobType.Haul, TargetCell = item.Cell, TargetItem = item, Count = amount };
+        int amount = Mathf.Min(best.Count, room);
+        return new Job { Type = JobType.Haul, TargetCell = best.Cell, TargetItem = best, Count = amount };
     }
 }

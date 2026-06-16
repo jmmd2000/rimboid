@@ -30,10 +30,16 @@ public class WorkGiver_Construct : WorkGiver
             return new Job { Type = JobType.Build, TargetCell = frame.Cell, ClaimsCell = true };
         }
 
-        var materials = Game.Map.LooseItems
-            .Where(i => i.Def == frame.Def.Materials && reachable.Contains(i.Cell) && Game.Map.Reservations.AvailableItem(i, guy))
-            .OrderBy(i => guy.Cell.DistanceTo(i.Cell))
-            .FirstOrDefault();
+        Item materials = null;
+        int bestDist = int.MaxValue;
+        foreach (var i in Game.Map.LooseItems)
+        {
+            if (i.Def != frame.Def.Materials) continue;
+            if (!reachable.Contains(i.Cell)) continue;
+            if (!Game.Map.Reservations.AvailableItem(i, guy)) continue;
+            int dist = Grid.DistanceSquared(guy.Cell, i.Cell);
+            if (dist < bestDist) { bestDist = dist; materials = i; }
+        }
         if (materials == null) return null;
 
         int needed = frame.Def.MaterialCost - frame.MaterialsDelivered;

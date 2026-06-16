@@ -17,12 +17,19 @@ public class ThinkNode_Eat : IThinkNode
         if (guy.Needs.Food.Level >= threshold) return null;
 
         var reachable = Game.Pathing.ReachableCells(guy.Cell);
-        var food = Game.Map.LooseItems
-            .Where(i => i.Def.IsFood && Game.Map.Reservations.AvailableItem(i, guy))
-            .OrderBy(i => guy.Cell.DistanceTo(i.Cell))
-            .FirstOrDefault(i => reachable.Contains(i.Cell));
-        if (food == null) return null;
 
-        return new Job { Type = JobType.Eat, TargetCell = food.Cell, TargetItem = food };
+        Item best = null;
+        int bestDist = int.MaxValue;
+        foreach (var i in Game.Map.LooseItems)
+        {
+            if (!i.Def.IsFood) continue;
+            if (!reachable.Contains(i.Cell)) continue;
+            if (!Game.Map.Reservations.AvailableItem(i, guy)) continue;
+            int dist = Grid.DistanceSquared(guy.Cell, i.Cell);
+            if (dist < bestDist) { bestDist = dist; best = i; }
+        }
+        if (best == null) return null;
+
+        return new Job { Type = JobType.Eat, TargetCell = best.Cell, TargetItem = best };
     }
 }

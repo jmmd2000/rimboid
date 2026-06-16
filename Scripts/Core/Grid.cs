@@ -47,4 +47,11 @@ public static class Grid
     {
         new(1, 0), new(-1, 0), new(0, 1), new(0, -1),
     };
+
+    public static int DistanceSquared(Vector2I a, Vector2I b)
+    {
+        int dx = a.X - b.X;
+        int dy = a.Y - b.Y;
+        return dx * dx + dy * dy;
+    }
 }
