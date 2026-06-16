@@ -20,7 +20,7 @@ public partial class PathLine : Line2D
     public override void _Process(double delta)
     {
         ClearPoints();
-        if (_guy == null || _guy.AtPathEnd) return;
+        if (_guy == null || _guy != Game.SelectedGuy || _guy.AtPathEnd) return;
 
         AddPoint(_guy.Position * _tileSize + new Vector2(_tileSize / 2f, _tileSize / 2f));
         var path = _guy.GetPathPoints();
