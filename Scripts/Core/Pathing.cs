@@ -68,9 +68,7 @@ public class Pathing
             foreach (var d in Grid.Adjacent8)
             {
                 var n = c + d;
-                if (cells.Contains(n) || !Free(n)) continue;
-                // no diagonal
-                if (d.X != 0 && d.Y != 0 && (!Free(new Vector2I(n.X, c.Y)) || !Free(new Vector2I(c.X, n.Y)))) continue;
+                if (cells.Contains(n) || !CanStep(c, n, d)) continue;
                 cells.Add(n);
                 queue.Enqueue(n);
             }
@@ -82,6 +80,50 @@ public class Pathing
     void Invalidate() => _reachableValid = false;
 
     bool Free(Vector2I cell) => InBounds(cell) && !_astar.IsPointSolid(cell);
+
+    /// <summary>
+    /// A cell just became walkable. If it connects to the cached reachable region, flood-add it
+    /// and anything it newly links in, keeping the cache valid without a full re-flood. If it
+    /// opened in some other disconnected pocket, the cache is left untouched.
+    /// </summary>
+    void GrowReachable(Vector2I opened)
+    {
+        if (!ConnectsToRegion(opened)) return;
+
+        var queue = new Queue<Vector2I>();
+        _reachable.Add(opened);
+        queue.Enqueue(opened);
+        while (queue.Count > 0)
+        {
+            var c = queue.Dequeue();
+            foreach (var d in Grid.Adjacent8)
+            {
+                var n = c + d;
+                if (_reachable.Contains(n) || !CanStep(c, n, d)) continue;
+                _reachable.Add(n);
+                queue.Enqueue(n);
+            }
+        }
+    }
+
+    /// <summary>True if the cell can step into the cached reachable region (so opening it extends it).</summary>
+    bool ConnectsToRegion(Vector2I cell)
+    {
+        foreach (var d in Grid.Adjacent8)
+        {
+            var n = cell + d;
+            if (_reachable.Contains(n) && CanStep(cell, n, d)) return true;
+        }
+        return false;
+    }
+
+    /// <summary>Can a flood step from c to neighbour n (direction d)? Free, and no cutting a diagonal corner.</summary>
+    bool CanStep(Vector2I c, Vector2I n, Vector2I d)
+    {
+        if (!Free(n)) return false;
+        if (d.X != 0 && d.Y != 0 && (!Free(new Vector2I(n.X, c.Y)) || !Free(new Vector2I(c.X, n.Y)))) return false;
+        return true;
+    }
 
     /// <summary>Returns true if a path exists from one cell to another.</summary>
     /// <param name="from">Start cell.</param>
@@ -103,9 +145,13 @@ public class Pathing
     {
         var terrain = map.Terrain[cell.X, cell.Y];
         bool solid = !terrain.Walkable || map.BlocksMovementAt(cell);
+        bool wasSolid = _astar.IsPointSolid(cell);
         _astar.SetPointSolid(cell, solid);
         _astar.SetPointWeightScale(cell, terrain.PathCostMultiplier);
-        Invalidate();
+
+        if (!_reachableValid) return; // already stale, nothng to keep current
+        if (wasSolid && !solid) GrowReachable(cell); // just opened, add it
+        else if (!wasSolid && solid) Invalidate(); // closed, re-flood
     }
 
     /// <summary>Checks whether a cell is within the pathfinding grid bounds.</summary>
