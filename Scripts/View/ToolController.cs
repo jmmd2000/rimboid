@@ -139,7 +139,7 @@ public partial class ToolController : Node2D
         }
         foreach (var orphan in Game.Map.Designations.PruneUnreachable(Game.Map))
         {
-            Game.MapView.MarkDesignation(orphan);
+            Game.MapView.ClearDesignation(orphan);
         }
     }
 
