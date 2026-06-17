@@ -21,6 +21,14 @@ sources/0 = SubResource("TileSetAtlasSource_r0du0")
 script = ExtResource("1_glv2v")
 MapView = NodePath("MapView")
 TerrainLayer = NodePath("TerrainLayer")
+ElevationFrequency = 0.005
+ElevationOctaves = 5
+ShoreElevationThreshold = -0.35
+FoothillElevationThreshold = 0.25
+StoneElevationThreshold = 0.35
+MinTerrainRegionSize = 50
+ElevationPower = 1.0
+WarpStrength = 4.0
 
 [node name="TerrainLayer" type="TileMapLayer" parent="." unique_id=957565875]
 tile_set = SubResource("TileSet_glv2v")

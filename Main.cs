@@ -17,19 +17,24 @@ public partial class Main : Node2D
     [Export] public float ElevationFrequency = 0.01f;
     [Export] public int ElevationOctaves = 3;
 
-    [ExportGroup("Moisture Noise")]
-    [Export] public float MoistureFrequency = 0.01f;
-    [Export] public int MoistureOctaves = 3;
-
     [ExportGroup("Terrain Thresholds")]
-    // How low the terrain elevation must be to allow for water, if wet enough
-    [Export] public float WaterElevationThreshold = -0.1f;
-    // How wet the low ground needs to be to be water
-    [Export] public float WaterMoistureThreshold = 0.2f;
-    // How high the terrain elevation must be to become stone
-    [Export] public float StoneElevationThreshold = 0.3f;
-    // How wet the midground must be to be grass
-    [Export] public float GrassMoistureThreshold = -0.1f;
+    // elevation bands, low to high: water -> shore dirt -> grass -> foothill dirt -> stone
+    [Export] public float WaterElevationThreshold = -0.4f;
+    [Export] public float ShoreElevationThreshold = -0.3f;
+    [Export] public float FoothillElevationThreshold = 0.3f;
+    [Export] public float StoneElevationThreshold = 0.45f;
+
+    [ExportGroup("Terrain Cleanup")]
+    // terrain patches smaller than this (in cells) are dissolved into their surroundings
+    [Export] public int MinTerrainRegionSize = 8;
+
+    [ExportGroup("Terrain Shape")]
+    // raises elevation to this power after normalising - pushes toward flat lowlands and sharp peaks.
+    // 1.0 = no change, higher = flatter map with more dramatic mountains
+    [Export] public float ElevationPower = 1.8f;
+    // how strongly the warp noise displaces sample coordinates - breaks up blob edges.
+    // 0 = no warp, low single digits = subtle, high values get stringy and torn
+    [Export] public float WarpStrength = 5f;
 
     [ExportGroup("Plant Noise")]
     [Export] public float PlantFrequency = 0.04f;
