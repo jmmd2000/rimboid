@@ -7,7 +7,7 @@ public partial class MapView : Node2D
     [Export] public TileMapLayer OverlayLayer;
     [Export] public TileMapLayer DesignationLayer;
 
-    static readonly Vector2I StockpileAtlas = new(5, 0);
+    static readonly Vector2I StockpileAtlas = new(0, 0);
 
     GameMap _map;
 
@@ -36,9 +36,10 @@ public partial class MapView : Node2D
     {
         var atlas = type switch
         {
-            DesignationType.Harvest => new Vector2I(6, 0),
-            DesignationType.Mine => new Vector2I(4, 0),
-            _ => new Vector2I(4, 0)
+            DesignationType.Mine => new Vector2I(0, 0),
+            DesignationType.Harvest => new Vector2I(1, 0),
+            DesignationType.Chop => new Vector2I(2, 0),
+            _ => new Vector2I(0, 2)
         };
         DesignationLayer.SetCell(cell, 0, atlas);
     }

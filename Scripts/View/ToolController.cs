@@ -15,7 +15,7 @@ public partial class ToolController : Node2D
     Vector2I? _dragStart;
     MouseButton _dragButton;
 
-    enum ToolMode { None, Mine, Stockpile, Build, Harvest }
+    enum ToolMode { None, Mine, Stockpile, Build, Harvest, Chop }
     ToolMode _toolMode = ToolMode.None;
 
     static readonly Dictionary<Key, ToolMode> ModeKeys = new()
@@ -24,6 +24,7 @@ public partial class ToolController : Node2D
         [Key.S] = ToolMode.Stockpile,
         [Key.B] = ToolMode.Build,
         [Key.H] = ToolMode.Harvest,
+        [Key.C] = ToolMode.Chop,
     };
 
     /// <summary>Binds the controller to what it acts on. Call before adding to the tree.</summary>
@@ -125,8 +126,12 @@ public partial class ToolController : Node2D
                 else CancelWallRectangle(a, b);
                 break;
             case ToolMode.Harvest:
-                if (button == MouseButton.Left) DesignateHarvestRectangle(a, b);
-                else CancelHarvestRectangle(a, b);
+                if (button == MouseButton.Left) DesignatePlantRectangle(a, b, PlantWorkType.Harvest, DesignationType.Harvest);
+                else CancelDesignationRectangle(a, b, DesignationType.Harvest);
+                break;
+            case ToolMode.Chop:
+                if (button == MouseButton.Left) DesignatePlantRectangle(a, b, PlantWorkType.Chop, DesignationType.Chop);
+                else CancelDesignationRectangle(a, b, DesignationType.Chop);
                 break;
         }
     }
@@ -242,6 +247,33 @@ public partial class ToolController : Node2D
             if (Game.Map.Designations.Has(DesignationType.Harvest, cell))
             {
                 Game.Map.Designations.Remove(DesignationType.Harvest, cell);
+                Game.MapView.ClearDesignation(cell);
+            }
+        }
+    }
+
+    /// <summary>Designates plants of the given work type in the rectangle.</summary>
+    void DesignatePlantRectangle(Vector2I a, Vector2I b, PlantWorkType workType, DesignationType desig)
+    {
+        foreach (var cell in Grid.CellsInRect(a, b))
+        {
+            var plant = Game.Map.PlantAt(cell);
+            if (plant != null && plant.Def.WorkType == workType && !Game.Map.Designations.Has(desig, cell))
+            {
+                Game.Map.Designations.Add(desig, cell);
+                Game.MapView.MarkDesignation(desig, cell);
+            }
+        }
+    }
+
+    /// <summary>Clears a designation type across the rectangle.</summary>
+    void CancelDesignationRectangle(Vector2I a, Vector2I b, DesignationType desig)
+    {
+        foreach (var cell in Grid.CellsInRect(a, b))
+        {
+            if (Game.Map.Designations.Has(desig, cell))
+            {
+                Game.Map.Designations.Remove(desig, cell);
                 Game.MapView.ClearDesignation(cell);
             }
         }

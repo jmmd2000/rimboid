@@ -6,6 +6,7 @@ public class ThinkNode_Work : IThinkNode
     readonly List<WorkGiver> _workGivers = new()
     {
         new WorkGiver_Mine(),
+        new WorkGiver_Chop(),
         new WorkGiver_Harvest(),
         new WorkGiver_Construct(),
         new WorkGiver_Haul(),
