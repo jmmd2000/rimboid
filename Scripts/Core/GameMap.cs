@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using Godot;
 
-/// <summary>Simulation model for the map. Holds terrain grid, designations, loose items, frames and buildings.</summary>
+/// <summary>Simulation model for the map. Holds terrain grid, designations, loose items, frames, buildings, plants.</summary>
 public class GameMap
 {
     public int Width;
@@ -10,6 +10,7 @@ public class GameMap
     public DesignationManager Designations = new();
     public StockpileManager Stockpiles = new();
     public Dictionary<Vector2I, Building> Buildings = new();
+    public Dictionary<Vector2I, Plant> Plants = new();
     public List<Guy> Guys = new();
     public ReservationManager Reservations = new();
 
@@ -162,7 +163,12 @@ public class GameMap
     public Building BuildingAt(Vector2I cell) => Buildings.GetValueOrDefault(cell);
 
     /// <summary>True if a movement-blocking building occupies the cell.</summary>
-    public bool BlocksMovementAt(Vector2I cell) => Buildings.TryGetValue(cell, out var b) && b.Def.BlocksMovement;
+    public bool BlocksMovementAt(Vector2I cell)
+    {
+        if (Buildings.TryGetValue(cell, out var b) && b.Def.BlocksMovement) return true;
+        if (Plants.TryGetValue(cell, out var p) && p.Def.BlocksMovement) return true;
+        return false;
+    }
 
     /// <summary>Spawns a finished building at a cell and returns it.</summary>
     /// <param name="def">The building definition.</param>
@@ -173,4 +179,23 @@ public class GameMap
         Buildings[cell] = building;
         return building;
     }
+
+    // ---------- plants ----------
+
+    /// <summary>Spawns a plant at a cell (rolling its draw size) and returns it.</summary>
+    public Plant SpawnPlant(PlantDef def, Vector2I cell)
+    {
+        var plant = Plant.Spawn(def, cell);
+        Plants[cell] = plant;
+        return plant;
+    }
+
+    /// <summary>Removes a plant (harvested or cleared).</summary>
+    public void RemovePlant(Plant plant) => Plants.Remove(plant.Cell);
+
+    /// <summary>Returns the plant at a cell, or null if none.</summary>
+    public Plant PlantAt(Vector2I cell) => Plants.GetValueOrDefault(cell);
+
+    /// <summary>True if a plant occupies the cell.</summary>
+    public bool HasPlant(Vector2I cell) => Plants.ContainsKey(cell);
 }
