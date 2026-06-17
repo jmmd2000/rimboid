@@ -2,11 +2,13 @@
 
 [ext_resource type="Resource" uid="uid://d26oeyl7yfa73" path="res://Defs/Items/Berries.tres" id="1_nubak"]
 [ext_resource type="Script" uid="uid://cil75mcf8b12h" path="res://Scripts/Defs/PlantDef.cs" id="1_vbi7x"]
+[ext_resource type="Texture2D" uid="uid://br6ohlrr4ue4l" path="res://Assets/berry_bush.png" id="2_hv0w4"]
 
 [resource]
 script = ExtResource("1_vbi7x")
 DefName = "BerryBush"
 Label = "berry bush"
+Texture = ExtResource("2_hv0w4")
 HarvestItem = ExtResource("1_nubak")
 HarvestYield = 8
 WorkToHarvest = 40.0

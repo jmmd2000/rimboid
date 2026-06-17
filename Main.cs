@@ -69,6 +69,9 @@ public partial class Main : Node2D
         AddChild(views);
         Game.Views = views;
 
+        foreach (var plant in Game.Map.Plants.Values)
+            Game.Views.SpawnPlantView(plant);
+
         _stockpile = Game.Map.Stockpiles.Create();
 
         var taken = new HashSet<Vector2I>();

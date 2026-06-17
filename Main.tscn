@@ -29,6 +29,8 @@ StoneElevationThreshold = 0.35
 MinTerrainRegionSize = 50
 ElevationPower = 1.0
 WarpStrength = 4.0
+PlantDensityThreshold = 0.35
+PlantCoverage = 0.3
 
 [node name="TerrainLayer" type="TileMapLayer" parent="." unique_id=957565875]
 tile_set = SubResource("TileSet_glv2v")

@@ -1,12 +1,15 @@
 using System.Collections.Generic;
 using Godot;
 
-/// <summary>Manages the visual nodes for runtime objects (items, frames, buildings) and keeps them in sync with the model.</summary>
+/// <summary>Manages the visual nodes for runtime objects (items, frames, buildings, plants) and keeps them in sync with the model.</summary>
 public partial class ViewManager : Node2D
 {
     readonly Dictionary<Item, ItemView> _itemViews = new();
     readonly Dictionary<Frame, FrameView> _frameViews = new();
     readonly Dictionary<Building, BuildingView> _buildingViews = new();
+    readonly Dictionary<Plant, PlantView> _plantViews = new();
+
+    public override void _Ready() => YSortEnabled = true;
 
     // ---------- items ----------
 
@@ -94,14 +97,25 @@ public partial class ViewManager : Node2D
         _guyViews[guy] = views;
     }
 
-    /// <summary>Removes a pawn's visual nodes</summary>
-    public void RemovePawnViews(Guy guy)
+    /// <summary>Removes a guy's visual nodes</summary>
+    public void RemoveGuyViews(Guy guy)
     {
         if (_guyViews.TryGetValue(guy, out var views))
         {
             foreach (var v in views) v.QueueFree();
             _guyViews.Remove(guy);
         }
+    }
+
+    // ---------- plants ----------
+
+    /// <summary>Creates a visual node for a plant.</summary>
+    public void SpawnPlantView(Plant plant)
+    {
+        var view = new PlantView();
+        view.Init(plant, Game.TileSize);
+        AddChild(view);
+        _plantViews[plant] = view;
     }
 
 }
