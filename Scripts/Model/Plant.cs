@@ -9,6 +9,13 @@ public class Plant
     public float DrawWidth { get; init; }
     public float DrawHeight { get; init; }
 
+    public long GrowthStartTick { get; set; }
+    public long MatureAtTick { get; set; }
+
+    public bool IsHarvestable => Def.GrowthStages.Length > 0 && GameTime.Ticks >= MatureAtTick;
+
+    public Texture2D CurrentTexture => Def.GrowthStages.Length > 0 ? Def.GrowthStages[StageIndex] : null;
+
     static readonly System.Random _rng = new();
 
     /// <summary>Creates a plant at a cell, randomising its draw size from the def's ranges.
@@ -25,5 +32,19 @@ public class Plant
     {
         if (max <= 0f) return fallback;
         return min + (float)_rng.NextDouble() * (max - min);
+    }
+
+    /// <summary>Current growth-stage index, from how far between start and maturity the plant is.</summary>
+    public int StageIndex
+    {
+        get
+        {
+            int stages = Def.GrowthStages.Length;
+            if (stages <= 1) return 0;
+            long span = MatureAtTick - GrowthStartTick;
+            if (span <= 0) return stages - 1; // spawned mature
+            float frac = Mathf.Clamp((float)(GameTime.Ticks - GrowthStartTick) / span, 0f, 1f);
+            return Mathf.Min((int)(frac * (stages - 1)), stages - 1);
+        }
     }
 }

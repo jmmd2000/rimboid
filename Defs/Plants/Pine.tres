@@ -1,14 +1,14 @@
 [gd_resource type="Resource" script_class="PlantDef" format=3 uid="uid://vrdktttdudh3"]
 
+[ext_resource type="Texture2D" uid="uid://bibr4rd7l7qje" path="res://Assets/Plants/pine.png" id="1_mbnco"]
 [ext_resource type="Script" uid="uid://cil75mcf8b12h" path="res://Scripts/Defs/PlantDef.cs" id="1_ori70"]
 [ext_resource type="Resource" uid="uid://e6i03qklm0y2" path="res://Defs/Items/Wood.tres" id="1_piu8r"]
-[ext_resource type="Texture2D" uid="uid://bibr4rd7l7qje" path="res://Assets/Plants/pine.png" id="2_mbnco"]
 
 [resource]
 script = ExtResource("1_ori70")
 DefName = "Pine"
 Label = "pine tree"
-Texture = ExtResource("2_mbnco")
+GrowthStages = [ExtResource("1_mbnco")]
 BlocksMovement = true
 HarvestItem = ExtResource("1_piu8r")
 HarvestYield = 10

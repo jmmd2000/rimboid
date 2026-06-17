@@ -253,15 +253,15 @@ public partial class ToolController : Node2D
     }
 
     /// <summary>Designates plants of the given work type in the rectangle.</summary>
-    void DesignatePlantRectangle(Vector2I a, Vector2I b, PlantWorkType workType, DesignationType desig)
+    void DesignatePlantRectangle(Vector2I a, Vector2I b, PlantWorkType workType, DesignationType desigType)
     {
         foreach (var cell in Grid.CellsInRect(a, b))
         {
             var plant = Game.Map.PlantAt(cell);
-            if (plant != null && plant.Def.WorkType == workType && !Game.Map.Designations.Has(desig, cell))
+            if (plant != null && plant.Def.WorkType == workType && plant.IsHarvestable && !Game.Map.Designations.Has(desigType, cell))
             {
-                Game.Map.Designations.Add(desig, cell);
-                Game.MapView.MarkDesignation(desig, cell);
+                Game.Map.Designations.Add(desigType, cell);
+                Game.MapView.MarkDesignation(desigType, cell);
             }
         }
     }

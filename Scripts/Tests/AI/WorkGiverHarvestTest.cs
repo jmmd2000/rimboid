@@ -11,6 +11,7 @@ public class WorkGiverHarvestTest
     {
         ItemDefOf.Load();
         TerrainDefOf.Load();
+        PlantDefOf.Load();
 
         Game.Map = new GameMap(10, 10);
         for (int x = 0; x < Game.Map.Width; x++)
@@ -21,13 +22,17 @@ public class WorkGiverHarvestTest
         Game.Pathing.Init(Game.Map);
     }
 
-    [TestCase]
-    public void ReturnsHarvestJobForDesignation()
+    static void HarvestableAt(Vector2I cell)
     {
-        Game.Map.Designations.Add(DesignationType.Harvest, new Vector2I(5, 5));
-        var guy = new Guy { Position = Vector2.Zero };
+        Game.Map.SpawnPlant(PlantDefOf.BerryBush, cell);
+        Game.Map.Designations.Add(DesignationType.Harvest, cell);
+    }
 
-        var job = new WorkGiver_Harvest().TryGiveJob(guy);
+    [TestCase]
+    public void ReturnsHarvestJobForRipePlant()
+    {
+        HarvestableAt(new Vector2I(5, 5));
+        var job = new WorkGiver_Harvest().TryGiveJob(new Guy { Position = Vector2.Zero });
 
         AssertObject(job).IsNotNull();
         AssertBool(job.Type == JobType.Harvest).IsTrue();
@@ -37,18 +42,25 @@ public class WorkGiverHarvestTest
     [TestCase]
     public void ReturnsNullWhenNoDesignations()
     {
-        var guy = new Guy { Position = Vector2.Zero };
-        AssertObject(new WorkGiver_Harvest().TryGiveJob(guy)).IsNull();
+        AssertObject(new WorkGiver_Harvest().TryGiveJob(new Guy { Position = Vector2.Zero })).IsNull();
+    }
+
+    [TestCase]
+    public void SkipsUnripePlant()
+    {
+        var plant = Game.Map.SpawnPlant(PlantDefOf.BerryBush, new Vector2I(5, 5));
+        plant.MatureAtTick = GameTime.Ticks + GameTime.TicksPerDay;   // not mature yet
+        Game.Map.Designations.Add(DesignationType.Harvest, new Vector2I(5, 5));
+
+        AssertObject(new WorkGiver_Harvest().TryGiveJob(new Guy { Position = Vector2.Zero })).IsNull();
     }
 
     [TestCase]
     public void PicksNearestDesignation()
     {
-        Game.Map.Designations.Add(DesignationType.Harvest, new Vector2I(8, 8));
-        Game.Map.Designations.Add(DesignationType.Harvest, new Vector2I(2, 2));
-        var guy = new Guy { Position = Vector2.Zero };
-
-        var job = new WorkGiver_Harvest().TryGiveJob(guy);
+        HarvestableAt(new Vector2I(8, 8));
+        HarvestableAt(new Vector2I(2, 2));
+        var job = new WorkGiver_Harvest().TryGiveJob(new Guy { Position = Vector2.Zero });
 
         AssertBool(job.TargetCell == new Vector2I(2, 2)).IsTrue();
     }
@@ -62,7 +74,7 @@ public class WorkGiverHarvestTest
             Game.Map.Terrain[n.X, n.Y] = TerrainDefOf.Stone;
         }
         Game.Pathing.Init(Game.Map);
-        Game.Map.Designations.Add(DesignationType.Harvest, new Vector2I(5, 5));
+        HarvestableAt(new Vector2I(5, 5));
 
         AssertObject(new WorkGiver_Harvest().TryGiveJob(new Guy { Position = Vector2.Zero })).IsNotNull();
     }
@@ -73,10 +85,8 @@ public class WorkGiverHarvestTest
         for (int y = 0; y < Game.Map.Height; y++)
             Game.Map.Terrain[5, y] = TerrainDefOf.Stone;
         Game.Pathing.Init(Game.Map);
+        HarvestableAt(new Vector2I(8, 8));
 
-        Game.Map.Designations.Add(DesignationType.Harvest, new Vector2I(8, 8));
-        var guy = new Guy { Position = Vector2.Zero };
-
-        AssertObject(new WorkGiver_Harvest().TryGiveJob(guy)).IsNull();
+        AssertObject(new WorkGiver_Harvest().TryGiveJob(new Guy { Position = Vector2.Zero })).IsNull();
     }
 }

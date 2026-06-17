@@ -20,6 +20,8 @@ public class WorkGiver_Harvest : WorkGiver
         int bestDist = int.MaxValue;
         foreach (var cell in Game.Map.Designations.CellsOfType(DesignationType.Harvest))
         {
+            var plant = Game.Map.PlantAt(cell);
+            if (plant == null || !plant.IsHarvestable) continue;
             if (!CanReach(cell) || !Game.Map.Reservations.AvailableCell(cell, guy)) continue;
             int dist = Grid.DistanceSquared(guy.Cell, cell);
             if (dist < bestDist) { bestDist = dist; best = cell; }

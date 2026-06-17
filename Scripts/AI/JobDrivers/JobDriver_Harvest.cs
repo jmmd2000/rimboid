@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Godot;
 
 /// <summary>
 /// Job driver for harvesting a designated plant.
@@ -7,6 +8,23 @@ using System.Collections.Generic;
 public class JobDriver_Harvest : JobDriver
 {
     float _workDone;
+
+    /// <summary>A free cell beside the plant to drop the yield onto, so it isn't hidden under the
+    /// plant's sprite. Prefers the cell below, falls back to the plant's own cell if nothing's free.</summary>
+    static Vector2I DropCell(Vector2I plantCell)
+    {
+        bool Free(Vector2I c) =>
+            Game.Map.InBounds(c) && Game.Map.Terrain[c.X, c.Y].Walkable
+            && !Game.Map.BlocksMovementAt(c) && !Game.Map.HasPlant(c);
+
+        if (Free(plantCell + Vector2I.Down)) return plantCell + Vector2I.Down;
+
+        foreach (var d in Grid.Adjacent8)
+            if (Free(plantCell + d)) return plantCell + d;
+
+        // nowhere free, fall back to the plant's cell
+        return plantCell;
+    }
 
     protected override IEnumerable<Task> MakeTasks()
     {
@@ -35,14 +53,25 @@ public class JobDriver_Harvest : JobDriver
             {
                 if (plant.Def.HarvestItem != null)
                 {
-                    var (item, isNew, _) = Game.Map.SpawnItem(plant.Def.HarvestItem, job.TargetCell, plant.Def.HarvestYield);
+                    var dropCell = DropCell(job.TargetCell);
+                    var (item, isNew, _) = Game.Map.SpawnItem(plant.Def.HarvestItem, dropCell, plant.Def.HarvestYield);
                     if (isNew) Game.Views.SpawnItemView(item);
                 }
 
-                Game.Map.RemovePlant(plant);
-                Game.Views.RemovePlantView(plant);
+                if (plant.Def.RegrowDays > 0)
+                {
+                    //regrowing, keep the plant and its designation
+                    plant.GrowthStartTick = GameTime.Ticks;
+                    plant.MatureAtTick = GameTime.Ticks + (long)(plant.Def.RegrowDays * GameTime.TicksPerDay);
+                }
+                else
+                {
+                    Game.Map.RemovePlant(plant);
+                    Game.Views.RemovePlantView(plant);
+                    Game.Pathing.RefreshCell(Game.Map, job.TargetCell);
+                }
+
                 Game.Map.Designations.Remove(DesignationType.Harvest, job.TargetCell);
-                Game.Pathing.RefreshCell(Game.Map, job.TargetCell);
                 Game.MapView.ClearDesignation(job.TargetCell);
             },
             IsComplete = () => true,

@@ -2,13 +2,13 @@
 
 [ext_resource type="Script" uid="uid://cil75mcf8b12h" path="res://Scripts/Defs/PlantDef.cs" id="1_3oc5u"]
 [ext_resource type="Resource" uid="uid://e6i03qklm0y2" path="res://Defs/Items/Wood.tres" id="1_hf0aa"]
-[ext_resource type="Texture2D" uid="uid://dkopu8ie2psvs" path="res://Assets/Plants/oak.png" id="2_yfufo"]
+[ext_resource type="Texture2D" uid="uid://dkopu8ie2psvs" path="res://Assets/Plants/oak.png" id="1_yfufo"]
 
 [resource]
 script = ExtResource("1_3oc5u")
 DefName = "Oak"
 Label = "oak tree"
-Texture = ExtResource("2_yfufo")
+GrowthStages = [ExtResource("1_yfufo")]
 BlocksMovement = true
 HarvestItem = ExtResource("1_hf0aa")
 HarvestYield = 5

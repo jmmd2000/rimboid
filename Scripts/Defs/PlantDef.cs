@@ -9,9 +9,7 @@ public partial class PlantDef : Resource
 {
     [Export] public string DefName { get; set; }
     [Export] public string Label { get; set; }
-    [Export] public Texture2D Texture { get; set; }
-    // shown while a regrowing plant is depleted (e.g. a bush with no berries). Null for plants that don't regrow.
-    [Export] public Texture2D DepletedTexture { get; set; }
+    [Export] public Texture2D[] GrowthStages { get; set; } = System.Array.Empty<Texture2D>();
     [Export] public bool BlocksMovement { get; set; }
     [Export] public PlantWorkType WorkType { get; set; }
 
