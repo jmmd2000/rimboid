@@ -13,6 +13,7 @@ texture = ExtResource("2_uu6xs")
 3:0/0 = 0
 4:0/0 = 0
 5:0/0 = 0
+6:0/0 = 0
 
 [sub_resource type="TileSet" id="TileSet_glv2v"]
 sources/0 = SubResource("TileSetAtlasSource_r0du0")
@@ -35,13 +36,18 @@ PlantCoverage = 0.3
 [node name="TerrainLayer" type="TileMapLayer" parent="." unique_id=957565875]
 tile_set = SubResource("TileSet_glv2v")
 
-[node name="MapView" type="Node2D" parent="." unique_id=220814379 node_paths=PackedStringArray("TerrainLayer", "OverlayLayer")]
+[node name="MapView" type="Node2D" parent="." unique_id=220814379 node_paths=PackedStringArray("TerrainLayer", "OverlayLayer", "DesignationLayer")]
 script = ExtResource("3_r0du0")
 TerrainLayer = NodePath("../TerrainLayer")
 OverlayLayer = NodePath("../OverlayLayer")
+DesignationLayer = NodePath("../DesignationLayer")
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=1088383381]
 script = ExtResource("4_cm0pq")
 
 [node name="OverlayLayer" type="TileMapLayer" parent="." unique_id=406031737]
+tile_set = SubResource("TileSet_glv2v")
+
+[node name="DesignationLayer" type="TileMapLayer" parent="." unique_id=406031738]
+z_index = 10
 tile_set = SubResource("TileSet_glv2v")

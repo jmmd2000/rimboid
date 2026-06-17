@@ -118,4 +118,14 @@ public partial class ViewManager : Node2D
         _plantViews[plant] = view;
     }
 
+    /// <summary>Removes the visual node for a harvested or cleared plant.</summary>
+    public void RemovePlantView(Plant plant)
+    {
+        if (_plantViews.TryGetValue(plant, out var view))
+        {
+            view.QueueFree();
+            _plantViews.Remove(plant);
+        }
+    }
+
 }

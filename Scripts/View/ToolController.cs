@@ -15,7 +15,7 @@ public partial class ToolController : Node2D
     Vector2I? _dragStart;
     MouseButton _dragButton;
 
-    enum ToolMode { None, Mine, Stockpile, Build }
+    enum ToolMode { None, Mine, Stockpile, Build, Harvest }
     ToolMode _toolMode = ToolMode.None;
 
     static readonly Dictionary<Key, ToolMode> ModeKeys = new()
@@ -23,6 +23,7 @@ public partial class ToolController : Node2D
         [Key.M] = ToolMode.Mine,
         [Key.S] = ToolMode.Stockpile,
         [Key.B] = ToolMode.Build,
+        [Key.H] = ToolMode.Harvest,
     };
 
     /// <summary>Binds the controller to what it acts on. Call before adding to the tree.</summary>
@@ -123,6 +124,10 @@ public partial class ToolController : Node2D
                 if (button == MouseButton.Left) PlaceWallRectangle(a, b);
                 else CancelWallRectangle(a, b);
                 break;
+            case ToolMode.Harvest:
+                if (button == MouseButton.Left) DesignateHarvestRectangle(a, b);
+                else CancelHarvestRectangle(a, b);
+                break;
         }
     }
 
@@ -134,7 +139,7 @@ public partial class ToolController : Node2D
             if (Game.Map.Terrain[cell.X, cell.Y].Mineable && !Game.Map.Designations.Has(DesignationType.Mine, cell))
             {
                 Game.Map.Designations.Add(DesignationType.Mine, cell);
-                Game.MapView.MarkDesignation(cell);
+                Game.MapView.MarkDesignation(DesignationType.Mine, cell);
             }
         }
         foreach (var orphan in Game.Map.Designations.PruneUnreachable(Game.Map))
@@ -213,6 +218,32 @@ public partial class ToolController : Node2D
             if (frame == null) continue;
             Game.Map.RemoveFrame(frame);
             Game.Views.RemoveFrameView(frame);
+        }
+    }
+
+    /// <summary>Designates every plant in the rectangle for harvest.</summary>
+    void DesignateHarvestRectangle(Vector2I a, Vector2I b)
+    {
+        foreach (var cell in Grid.CellsInRect(a, b))
+        {
+            if (Game.Map.HasPlant(cell) && !Game.Map.Designations.Has(DesignationType.Harvest, cell))
+            {
+                Game.Map.Designations.Add(DesignationType.Harvest, cell);
+                Game.MapView.MarkDesignation(DesignationType.Harvest, cell);
+            }
+        }
+    }
+
+    /// <summary>Cancels every harvest designation in the rectangle.</summary>
+    void CancelHarvestRectangle(Vector2I a, Vector2I b)
+    {
+        foreach (var cell in Grid.CellsInRect(a, b))
+        {
+            if (Game.Map.Designations.Has(DesignationType.Harvest, cell))
+            {
+                Game.Map.Designations.Remove(DesignationType.Harvest, cell);
+                Game.MapView.ClearDesignation(cell);
+            }
         }
     }
 }

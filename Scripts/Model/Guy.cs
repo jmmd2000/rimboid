@@ -122,6 +122,7 @@ public class Guy
     float Exertion => _driver?.JobType switch
     {
         JobType.Mine => 2f,
+        JobType.Harvest => 1.6f,
         JobType.Haul => 1.2f,
         JobType.HaulToFrame => 1.2f,
         JobType.Build => 1.6f,
@@ -134,6 +135,7 @@ public class Guy
     static JobDriver MakeDriver(JobType type) => type switch
     {
         JobType.Mine => new JobDriver_Mine(),
+        JobType.Harvest => new JobDriver_Harvest(),
         JobType.Haul => new JobDriver_Haul(),
         JobType.HaulToFrame => new JobDriver_HaulToFrame(),
         JobType.Build => new JobDriver_Build(),

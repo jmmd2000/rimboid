@@ -5,8 +5,8 @@ public partial class MapView : Node2D
 {
     [Export] public TileMapLayer TerrainLayer;
     [Export] public TileMapLayer OverlayLayer;
+    [Export] public TileMapLayer DesignationLayer;
 
-    static readonly Vector2I DesignationAtlas = new(4, 0);
     static readonly Vector2I StockpileAtlas = new(5, 0);
 
     GameMap _map;
@@ -32,16 +32,22 @@ public partial class MapView : Node2D
 
     /// <summary>Places the designation overlay icon on a cell.</summary>
     /// <param name="cell">The cell to mark.</param>
-    public void MarkDesignation(Vector2I cell)
+    public void MarkDesignation(DesignationType type, Vector2I cell)
     {
-        OverlayLayer.SetCell(cell, 0, DesignationAtlas);
+        var atlas = type switch
+        {
+            DesignationType.Harvest => new Vector2I(6, 0),
+            DesignationType.Mine => new Vector2I(4, 0),
+            _ => new Vector2I(4, 0)
+        };
+        DesignationLayer.SetCell(cell, 0, atlas);
     }
 
     /// <summary>Removes the designation overlay from a cell.</summary>
     /// <param name="cell">The cell to clear.</param>
     public void ClearDesignation(Vector2I cell)
     {
-        OverlayLayer.EraseCell(cell);
+        DesignationLayer.EraseCell(cell);
     }
 
     /// <summary>Places the stockpile overlay on a cell. </summary>
