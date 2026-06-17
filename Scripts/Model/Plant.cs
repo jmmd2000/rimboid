@@ -6,8 +6,8 @@ public class Plant
     public PlantDef Def { get; init; }
     public Vector2I Cell { get; init; }
 
-    public float DrawWidth { get; init; }
-    public float DrawHeight { get; init; }
+    public float DrawWidth { get; set; }
+    public float DrawHeight { get; set; }
 
     public long GrowthStartTick { get; set; }
     public long MatureAtTick { get; set; }

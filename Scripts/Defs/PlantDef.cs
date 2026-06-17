@@ -12,6 +12,9 @@ public partial class PlantDef : Resource
     [Export] public Texture2D[] GrowthStages { get; set; } = System.Array.Empty<Texture2D>();
     [Export] public bool BlocksMovement { get; set; }
     [Export] public PlantWorkType WorkType { get; set; }
+    // the plant left behind when this one is chopped (e.g. a tree leaves a stump). Null = bare ground.
+    [Export] public PlantDef LeavesBehind { get; set; }
+    [Export] public bool Topples { get; set; }
 
     [ExportGroup("Gather")]
     [Export] public ItemDef HarvestItem { get; set; }

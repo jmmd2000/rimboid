@@ -128,4 +128,14 @@ public partial class ViewManager : Node2D
         }
     }
 
+    /// <summary>Removes a plant's view with a topple animation, the view frees itself when it lands.</summary>
+    public void ToppleAndRemovePlantView(Plant plant)
+    {
+        if (_plantViews.TryGetValue(plant, out var view))
+        {
+            view.Topple();
+            _plantViews.Remove(plant);
+        }
+    }
+
 }

@@ -135,6 +135,21 @@ public class GameMap
         list.Add(item);
     }
 
+    /// <summary>A free cell beside the given one to drop a yield onto (preferring the cell below),
+    /// so it isn't hidden under a plant sprite. Falls back to the cell itself if nothing's free.</summary>
+    public Vector2I FreeDropCell(Vector2I cell)
+    {
+        bool Free(Vector2I cell) => InBounds(cell) && Terrain[cell.X, cell.Y].Walkable && !BlocksMovementAt(cell) && !HasPlant(cell);
+
+        if (Free(cell + Vector2I.Down)) return cell + Vector2I.Down;
+
+        foreach (var d in Grid.Adjacent8)
+        {
+            if (Free(cell + d)) return cell + d;
+        }
+        return cell;
+    }
+
     // ---------- frames ----------
 
     /// <summary>Places a construction frame on the map. Assumes the cell has no frame already (callers check HasFrame).</summary>

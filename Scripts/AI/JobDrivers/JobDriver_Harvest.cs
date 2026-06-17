@@ -9,23 +9,6 @@ public class JobDriver_Harvest : JobDriver
 {
     float _workDone;
 
-    /// <summary>A free cell beside the plant to drop the yield onto, so it isn't hidden under the
-    /// plant's sprite. Prefers the cell below, falls back to the plant's own cell if nothing's free.</summary>
-    static Vector2I DropCell(Vector2I plantCell)
-    {
-        bool Free(Vector2I c) =>
-            Game.Map.InBounds(c) && Game.Map.Terrain[c.X, c.Y].Walkable
-            && !Game.Map.BlocksMovementAt(c) && !Game.Map.HasPlant(c);
-
-        if (Free(plantCell + Vector2I.Down)) return plantCell + Vector2I.Down;
-
-        foreach (var d in Grid.Adjacent8)
-            if (Free(plantCell + d)) return plantCell + d;
-
-        // nowhere free, fall back to the plant's cell
-        return plantCell;
-    }
-
     protected override IEnumerable<Task> MakeTasks()
     {
         var plant = Game.Map.PlantAt(job.TargetCell);
@@ -53,9 +36,8 @@ public class JobDriver_Harvest : JobDriver
             {
                 if (plant.Def.HarvestItem != null)
                 {
-                    var dropCell = DropCell(job.TargetCell);
-                    var (item, isNew, _) = Game.Map.SpawnItem(plant.Def.HarvestItem, dropCell, plant.Def.HarvestYield);
-                    if (isNew) Game.Views.SpawnItemView(item);
+                    var dropCell = Game.Map.FreeDropCell(job.TargetCell);
+                    Game.Views.DropItems(plant.Def.HarvestItem, dropCell, plant.Def.HarvestYield);
                 }
 
                 if (plant.Def.RegrowDays > 0)

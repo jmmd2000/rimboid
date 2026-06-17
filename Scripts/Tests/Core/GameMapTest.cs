@@ -136,4 +136,45 @@ public class GameMapTest
         var spill = map.LooseItems.First(i => i.Cell != new Vector2I(5, 5));
         AssertInt(spill.Count).IsEqual(10);
     }
+
+    static GameMap DirtMap()
+    {
+        TerrainDefOf.Load();
+        var map = new GameMap(10, 10);
+        for (int x = 0; x < map.Width; x++)
+            for (int y = 0; y < map.Height; y++)
+                map.Terrain[x, y] = TerrainDefOf.Dirt;
+        return map;
+    }
+
+    [TestCase]
+    public void FreeDropCellPrefersCellBelow()
+    {
+        var map = DirtMap();
+        AssertBool(map.FreeDropCell(new Vector2I(5, 5)) == new Vector2I(5, 6)).IsTrue();
+    }
+
+    [TestCase]
+    public void FreeDropCellSkipsCellWithPlant()
+    {
+        PlantDefOf.Load();
+        var map = DirtMap();
+        map.SpawnPlant(PlantDefOf.BerryBush, new Vector2I(5, 6));
+        var cell = map.FreeDropCell(new Vector2I(5, 5));
+
+        AssertBool(cell != new Vector2I(5, 6)).IsTrue();
+        AssertBool(map.HasPlant(cell)).IsFalse();
+    }
+
+    [TestCase]
+    public void FreeDropCellFallsBackToOriginWhenSurrounded()
+    {
+        var map = DirtMap();
+        foreach (var d in Grid.Adjacent8)
+        {
+            var n = new Vector2I(5, 5) + d;
+            map.Terrain[n.X, n.Y] = TerrainDefOf.Stone;
+        }
+        AssertBool(map.FreeDropCell(new Vector2I(5, 5)) == new Vector2I(5, 5)).IsTrue();
+    }
 }

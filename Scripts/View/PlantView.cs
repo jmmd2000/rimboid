@@ -47,4 +47,36 @@ public partial class PlantView : Sprite2D
         Scale = new Vector2(_plant.DrawWidth * _tileSize / tex.GetWidth(),
                             _plant.DrawHeight * _tileSize / tex.GetHeight());
     }
+
+    /// <summary>Plays a fall animation (pivoting at the base), then frees the node.</summary>
+    public void Topple()
+    {
+        SetProcess(false);
+        if (Texture == null) { QueueFree(); return; }
+
+        float cutPx = _tileSize;
+        float cropTexture = cutPx / Scale.Y;
+
+        // crop off the bottom of the tree texture for the stump
+        RegionEnabled = true;
+        RegionRect = new Rect2(0, 0, Texture.GetWidth(), Texture.GetHeight() - cropTexture);
+        Offset = new Vector2(-Texture.GetWidth() / 2f, -(Texture.GetHeight() - cropTexture));
+
+        // raise the rotation pivot to the cut line
+        Position -= new Vector2(0, cutPx);
+
+        // rotate flat, slide in the fall direction, drop to ground level
+        int direction = GD.Randf() < 0.5f ? 1 : -1;
+        var landing = Position + new Vector2(direction * cutPx, cutPx);
+
+        var tween = CreateTween().SetParallel(true);
+
+        tween.TweenProperty(this, "rotation", direction * Mathf.Pi / 2f, 1.2f)
+            .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
+
+        tween.TweenProperty(this, "position", landing, 1.2f)
+            .SetTrans(Tween.TransitionType.Quad).SetEase(Tween.EaseType.In);
+
+        tween.Chain().TweenCallback(Callable.From(QueueFree));
+    }
 }
