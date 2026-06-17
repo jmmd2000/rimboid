@@ -96,7 +96,7 @@ public static class WorldGenerator
 
     /// <summary>Post-process: dissolves terrain regions smaller than minSize into their
     /// surrounding terrain, removing single-cell specks and tiny puddles the noise leaves behind.</summary>
-    static void CleanupSmallRegions(GameMap map, int minSize)
+    internal static void CleanupSmallRegions(GameMap map, int minSize)
     {
         var visited = new bool[map.Width, map.Height];
 
