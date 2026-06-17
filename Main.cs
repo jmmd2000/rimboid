@@ -31,6 +31,14 @@ public partial class Main : Node2D
     // How wet the midground must be to be grass
     [Export] public float GrassMoistureThreshold = -0.1f;
 
+    [ExportGroup("Plant Noise")]
+    [Export] public float PlantFrequency = 0.04f;
+    [Export] public int PlantOctaves = 3;
+    // density above this carves out a clump where plants grow, below it stays bare
+    [Export] public float PlantDensityThreshold = 0.2f;
+    // fraction of cells inside a clump that get a plant (rest stay walkable gaps)
+    [Export] public float PlantCoverage = 0.4f;
+
     GameMap _map;
     Pathing _pathing;
     TickManager _tick;
@@ -98,7 +106,7 @@ public partial class Main : Node2D
             for (int y = 0; y < _map.Height; y++)
             {
                 var cell = new Vector2I(x, y);
-                if (_map.Terrain[x, y].Walkable && (taken == null || !taken.Contains(cell)))
+                if (_map.Terrain[x, y].Walkable && !_map.BlocksMovementAt(cell) && (taken == null || !taken.Contains(cell)))
                     return new Vector2(x, y);
             }
 
