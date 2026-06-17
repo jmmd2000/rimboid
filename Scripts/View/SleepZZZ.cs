@@ -14,7 +14,7 @@ public partial class SleepZZZ : CpuParticles2D
         _guy = guy;
         _tileSize = tileSize;
 
-        Texture = GD.Load<Texture2D>("res://Assets/z.png");
+        Texture = GD.Load<Texture2D>("res://Assets/Particles/z.png");
         Amount = 2;
         Lifetime = 1.6f;
         Emitting = false;

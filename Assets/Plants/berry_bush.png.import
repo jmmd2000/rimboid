@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cxwwf6o13gfft"
-path="res://.godot/imported/terrain_tiles.png-17a34986ff83382f832362d9add0bd6f.ctex"
+uid="uid://br6ohlrr4ue4l"
+path="res://.godot/imported/berry_bush.png-56dc4238c771100bb8fa6908b321d569.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/terrain_tiles.png"
-dest_files=["res://.godot/imported/terrain_tiles.png-17a34986ff83382f832362d9add0bd6f.ctex"]
+source_file="res://Assets/Plants/berry_bush.png"
+dest_files=["res://.godot/imported/berry_bush.png-56dc4238c771100bb8fa6908b321d569.ctex"]
 
 [params]
 

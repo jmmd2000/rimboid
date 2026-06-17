@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dmwymaya23h8m"
-path="res://.godot/imported/berries.png-7884ca8d938980e1eb50b3c9edf3523f.ctex"
+uid="uid://cg03fj3451kvb"
+path="res://.godot/imported/stone.png-fa22bc0140a67df71c713cb08d0b9601.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/berries.png"
-dest_files=["res://.godot/imported/berries.png-7884ca8d938980e1eb50b3c9edf3523f.ctex"]
+source_file="res://Assets/Items/stone.png"
+dest_files=["res://.godot/imported/stone.png-fa22bc0140a67df71c713cb08d0b9601.ctex"]
 
 [params]
 

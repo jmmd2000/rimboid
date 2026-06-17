@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://cil75mcf8b12h" path="res://Scripts/Defs/PlantDef.cs" id="1_ori70"]
 [ext_resource type="Resource" uid="uid://e6i03qklm0y2" path="res://Defs/Items/Wood.tres" id="1_piu8r"]
-[ext_resource type="Texture2D" uid="uid://bibr4rd7l7qje" path="res://Assets/pine.png" id="2_mbnco"]
+[ext_resource type="Texture2D" uid="uid://bibr4rd7l7qje" path="res://Assets/Plants/pine.png" id="2_mbnco"]
 
 [resource]
 script = ExtResource("1_ori70")
