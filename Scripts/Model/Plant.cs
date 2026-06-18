@@ -16,6 +16,15 @@ public class Plant
 
     public Texture2D CurrentTexture => Def.GrowthStages.Length > 0 ? Def.GrowthStages[StageIndex] : null;
 
+    /// <summary>Begins growth from the current tick, maturing after the given number of days.
+    /// Used when a crop is sown at stage 0, or when a harvested plant regrows.</summary>
+    /// <param name="days">Days from now until the plant is mature.</param>
+    public void StartGrowing(float days)
+    {
+        GrowthStartTick = GameTime.Ticks;
+        MatureAtTick = GameTime.Ticks + (long)(days * GameTime.TicksPerDay);
+    }
+
     static readonly System.Random _rng = new();
 
     /// <summary>Creates a plant at a cell, randomising its draw size from the def's ranges.

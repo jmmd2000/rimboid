@@ -67,4 +67,48 @@ public class PlantTest
         AssertFloat(plant.DrawWidth).IsEqual(2f);
         AssertFloat(plant.DrawHeight).IsEqual(3f);
     }
+
+    [TestCase]
+    public void SownCropStartsAtStageZero()
+    {
+        var map = new GameMap(10, 10);
+        var def = new PlantDef { GrowthStages = new Texture2D[4], GrowDays = 4f };
+        var crop = map.SpawnPlant(def, new Vector2I(3, 3), sown: true);
+
+        AssertInt(crop.StageIndex).IsEqual(0);
+        AssertBool(crop.IsHarvestable).IsFalse();
+    }
+
+    [TestCase]
+    public void SownCropMaturesAfterGrowDays()
+    {
+        var map = new GameMap(10, 10);
+        var def = new PlantDef { GrowthStages = new Texture2D[4], GrowDays = 4f };
+        var crop = map.SpawnPlant(def, new Vector2I(3, 3), sown: true);
+
+        long expected = (long)(def.GrowDays * GameTime.TicksPerDay);
+        AssertBool(crop.MatureAtTick - crop.GrowthStartTick == expected).IsTrue();
+    }
+
+    [TestCase]
+    public void SownCropIsHarvestableAtMaturity()
+    {
+        var map = new GameMap(10, 10);
+        var def = new PlantDef { GrowthStages = new Texture2D[4], GrowDays = 4f };
+        var crop = map.SpawnPlant(def, new Vector2I(3, 3), sown: true);
+
+        crop.MatureAtTick = GameTime.Ticks;
+        AssertBool(crop.IsHarvestable).IsTrue();
+    }
+
+    [TestCase]
+    public void UnsownPlantSpawnsMature()
+    {
+        var map = new GameMap(10, 10);
+        var def = new PlantDef { GrowthStages = new Texture2D[4], GrowDays = 4f };
+        var crop = map.SpawnPlant(def, new Vector2I(4, 4));
+
+        AssertInt(crop.StageIndex).IsEqual(3);
+        AssertBool(crop.IsHarvestable).IsTrue();
+    }
 }

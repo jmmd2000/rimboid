@@ -43,8 +43,7 @@ public class JobDriver_Harvest : JobDriver
                 if (plant.Def.RegrowDays > 0)
                 {
                     //regrowing, keep the plant and its designation
-                    plant.GrowthStartTick = GameTime.Ticks;
-                    plant.MatureAtTick = GameTime.Ticks + (long)(plant.Def.RegrowDays * GameTime.TicksPerDay);
+                    plant.StartGrowing(plant.Def.RegrowDays);
                 }
                 else
                 {

@@ -16,6 +16,13 @@ public partial class PlantDef : Resource
     [Export] public PlantDef LeavesBehind { get; set; }
     [Export] public bool Topples { get; set; }
 
+    [ExportGroup("Growing")]
+    // crops can be sown into a grow zone; wild plants (trees, bushes) cannot.
+    [Export] public bool Sowable { get; set; }
+    // days from sown (stage 0) to mature. Unused by wild plants, which spawn mature.
+    [Export] public float GrowDays { get; set; } = 4f;
+    [Export] public float WorkToSow { get; set; } = 100f;
+
     [ExportGroup("Gather")]
     [Export] public ItemDef HarvestItem { get; set; }
     [Export] public int HarvestYield { get; set; }

@@ -198,9 +198,10 @@ public class GameMap
     // ---------- plants ----------
 
     /// <summary>Spawns a plant at a cell (rolling its draw size) and returns it.</summary>
-    public Plant SpawnPlant(PlantDef def, Vector2I cell)
+    public Plant SpawnPlant(PlantDef def, Vector2I cell, bool sown = false)
     {
         var plant = Plant.Spawn(def, cell);
+        if (sown) plant.StartGrowing(def.GrowDays);
         Plants[cell] = plant;
         return plant;
     }
