@@ -44,8 +44,8 @@ public partial class PlantView : Sprite2D
         if (tex == null) return;
 
         Offset = new Vector2(-tex.GetWidth() / 2f, -tex.GetHeight());
-        Scale = new Vector2(_plant.DrawWidth * _tileSize / tex.GetWidth(),
-                            _plant.DrawHeight * _tileSize / tex.GetHeight());
+        Scale = new Vector2(_plant.StageDrawWidth * _tileSize / tex.GetWidth(),
+                            _plant.StageDrawHeight * _tileSize / tex.GetHeight());
     }
 
     /// <summary>Plays a fall animation (pivoting at the base), then frees the node.</summary>

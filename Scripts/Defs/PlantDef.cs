@@ -33,10 +33,15 @@ public partial class PlantDef : Resource
     [ExportGroup("Visual")]
     // sprite size in cells, fractional allowed (1.5 = 1 cell + 0.25 either side).
     // each plant rolls a size in these ranges when spawned, 0 means "match the footprint".
+    // when DrawSizeGrowsWithStage is on, this is the size at the FINAL stage.
     [Export] public float MinDrawWidth { get; set; }
     [Export] public float MaxDrawWidth { get; set; }
     [Export] public float MinDrawHeight { get; set; }
     [Export] public float MaxDrawHeight { get; set; }
+    // if true, draw size grows from the footprint (stage 0) up to the rolled size at the
+    // final stage, so young plants sit inside their tile. if false, the rolled size is used
+    // at every stage (default — trees, bushes).
+    [Export] public bool DrawSizeGrowsWithStage { get; set; }
 
     [ExportGroup("Footprint")]
     // whole cells occupied on the grid (only blocks if BlocksMovement). Usually 1x1.

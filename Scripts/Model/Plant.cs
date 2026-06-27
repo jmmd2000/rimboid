@@ -56,4 +56,20 @@ public class Plant
             return Mathf.Min((int)(frac * (stages - 1)), stages - 1);
         }
     }
+
+    /// <summary>Draw width for the current stage. When the def opts in, scales from the
+    /// footprint at stage 0 up to the random size at the final stage, otherwise the random size.</summary>
+    public float StageDrawWidth => StageScaledSize(DrawWidth, Def.FootprintWidth);
+
+    /// <summary>Draw height for the current stage</summary>
+    public float StageDrawHeight => StageScaledSize(DrawHeight, Def.FootprintHeight);
+
+    float StageScaledSize(float matureSize, int footprint)
+    {
+        if (!Def.DrawSizeGrowsWithStage) return matureSize;
+        int stages = Def.GrowthStages.Length;
+        if (stages <= 1) return matureSize;
+        float t = (float)StageIndex / (stages - 1);
+        return Mathf.Lerp(footprint, matureSize, t);
+    }
 }
