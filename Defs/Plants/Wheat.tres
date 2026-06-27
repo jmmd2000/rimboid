@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="PlantDef" format=3 uid="uid://11uku1qehueo"]
+
+[ext_resource type="Script" uid="uid://cil75mcf8b12h" path="res://Scripts/Defs/PlantDef.cs" id="1_g6nou"]
+[ext_resource type="Texture2D" uid="uid://dg3ngrbmppp1g" path="res://Assets/Plants/wheat_stage0.png" id="1_mj1l7"]
+[ext_resource type="Texture2D" uid="uid://igx6hwske6s6" path="res://Assets/Plants/wheat_stage1.png" id="2_sldt1"]
+[ext_resource type="Texture2D" uid="uid://bc47hobjmdmsb" path="res://Assets/Plants/wheat_stage2.png" id="3_72uko"]
+[ext_resource type="Texture2D" uid="uid://8tjoqccqvy5b" path="res://Assets/Plants/wheat_stage3.png" id="4_sig66"]
+[ext_resource type="Resource" uid="uid://b2vbgcnpdw1fe" path="res://Defs/Items/Wheat.tres" id="5_wwmfa"]
+
+[resource]
+script = ExtResource("1_g6nou")
+DefName = "Wheat"
+Label = "wheat"
+GrowthStages = [ExtResource("1_mj1l7"), ExtResource("2_sldt1"), ExtResource("3_72uko"), ExtResource("4_sig66")]
+WorkType = 1
+Sowable = true
+WorkToSow = 80.0
+HarvestItem = ExtResource("5_wwmfa")
+HarvestYield = 12
+MinDrawWidth = 1.0
+MaxDrawWidth = 1.0
+MinDrawHeight = 1.0
+MaxDrawHeight = 1.3
+metadata/_custom_type_script = "uid://cil75mcf8b12h"

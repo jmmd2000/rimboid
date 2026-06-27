@@ -1,6 +1,6 @@
 [gd_resource type="Resource" script_class="PlantDef" format=3 uid="uid://bkhu2xa3empjq"]
 
-[ext_resource type="Texture2D" uid="uid://bfg07igpt3u1b" path="res://Assets/UI/oak_stump.png" id="1_8a166"]
+[ext_resource type="Texture2D" uid="uid://bfg07igpt3u1b" path="res://Assets/Plants/oak_stump.png" id="1_8a166"]
 [ext_resource type="Script" uid="uid://cil75mcf8b12h" path="res://Scripts/Defs/PlantDef.cs" id="1_ve11p"]
 
 [resource]

@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bfg07igpt3u1b"
-path="res://.godot/imported/oak_stump.png-d53c587686476d7989508ecde57c3ad8.ctex"
+uid="uid://cc82nlondvjk1"
+path="res://.godot/imported/pine_stump.png-417c5ae1b51726ff30ce680aef4769db.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/UI/oak_stump.png"
-dest_files=["res://.godot/imported/oak_stump.png-d53c587686476d7989508ecde57c3ad8.ctex"]
+source_file="res://Assets/Plants/pine_stump.png"
+dest_files=["res://.godot/imported/pine_stump.png-417c5ae1b51726ff30ce680aef4769db.ctex"]
 
 [params]
 

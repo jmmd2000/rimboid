@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://cc82nlondvjk1"
-path="res://.godot/imported/pine_stump.png-2f0dd91629400038fb9ed6602867a339.ctex"
+uid="uid://bc47hobjmdmsb"
+path="res://.godot/imported/wheat_stage2.png-8361dc74260e7b27d41ea165344bb4a8.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://Assets/UI/pine_stump.png"
-dest_files=["res://.godot/imported/pine_stump.png-2f0dd91629400038fb9ed6602867a339.ctex"]
+source_file="res://Assets/Plants/wheat_stage2.png"
+dest_files=["res://.godot/imported/wheat_stage2.png-8361dc74260e7b27d41ea165344bb4a8.ctex"]
 
 [params]
 

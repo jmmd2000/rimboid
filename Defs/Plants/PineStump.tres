@@ -1,7 +1,7 @@
 [gd_resource type="Resource" script_class="PlantDef" format=3 uid="uid://re3bs3wttqkb"]
 
 [ext_resource type="Script" uid="uid://cil75mcf8b12h" path="res://Scripts/Defs/PlantDef.cs" id="1_0shia"]
-[ext_resource type="Texture2D" uid="uid://cc82nlondvjk1" path="res://Assets/UI/pine_stump.png" id="1_nevgf"]
+[ext_resource type="Texture2D" uid="uid://cc82nlondvjk1" path="res://Assets/Plants/pine_stump.png" id="1_nevgf"]
 
 [resource]
 script = ExtResource("1_0shia")
