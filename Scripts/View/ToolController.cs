@@ -9,13 +9,14 @@ using Godot;
 public partial class ToolController : Node2D
 {
     Stockpile _stockpile;
+    GrowZone _growZone;
     TileMapLayer _terrainLayer;
     SelectionBox _selectionBox;
 
     Vector2I? _dragStart;
     MouseButton _dragButton;
 
-    enum ToolMode { None, Mine, Stockpile, Build, Harvest, Chop }
+    enum ToolMode { None, Mine, Stockpile, Build, Harvest, Chop, Grow }
     ToolMode _toolMode = ToolMode.None;
 
     static readonly Dictionary<Key, ToolMode> ModeKeys = new()
@@ -25,15 +26,17 @@ public partial class ToolController : Node2D
         [Key.B] = ToolMode.Build,
         [Key.H] = ToolMode.Harvest,
         [Key.C] = ToolMode.Chop,
+        [Key.G] = ToolMode.Grow,
     };
 
     /// <summary>Binds the controller to what it acts on. Call before adding to the tree.</summary>
     /// <param name="guy">The guy that click-to-move drives.</param>
     /// <param name="stockpile">The stockpile the stockpile tool edits.</param>
     /// <param name="terrainLayer">The tilemap used to convert the mouse position to a cell.</param>
-    public void Init(Stockpile stockpile, TileMapLayer terrainLayer)
+    public void Init(Stockpile stockpile, GrowZone growZone, TileMapLayer terrainLayer)
     {
         _stockpile = stockpile;
+        _growZone = growZone;
         _terrainLayer = terrainLayer;
 
         _selectionBox = new SelectionBox();
@@ -133,8 +136,14 @@ public partial class ToolController : Node2D
                 if (button == MouseButton.Left) DesignatePlantRectangle(a, b, PlantWorkType.Chop, DesignationType.Chop);
                 else CancelDesignationRectangle(a, b, DesignationType.Chop);
                 break;
+            case ToolMode.Grow:
+                if (button == MouseButton.Left) AddGrowZoneRectangle(a, b);
+                else RemoveGrowZoneRectangle(a, b);
+                break;
         }
     }
+
+    // ---------- mining ----------
 
     /// <summary>Designates every reachable, mineable cell in the rectangle for mining.</summary>
     void DesignateMineRectangle(Vector2I a, Vector2I b)
@@ -172,6 +181,8 @@ public partial class ToolController : Node2D
         }
     }
 
+    // ---------- stockpile ----------
+
     /// <summary>Adds every walkable cell in the rectangle to the stockpile.</summary>
     void AddStockpileRectangle(Vector2I a, Vector2I b)
     {
@@ -195,6 +206,34 @@ public partial class ToolController : Node2D
             }
         }
     }
+
+    // ---------- grow zone ----------
+
+    /// <summary>Adds every walkable cell in the rectangle to the grow zone.</summary>
+    void AddGrowZoneRectangle(Vector2I a, Vector2I b)
+    {
+        foreach (var cell in Grid.CellsInRect(a, b))
+        {
+            if (Game.Map.Terrain[cell.X, cell.Y].Walkable && _growZone.Cells.Add(cell))
+            {
+                Game.MapView.MarkGrowZone(cell);
+            }
+        }
+    }
+
+    /// <summary>Removes every grow-zone cell in the rectangle.</summary>
+    void RemoveGrowZoneRectangle(Vector2I a, Vector2I b)
+    {
+        foreach (var cell in Grid.CellsInRect(a, b))
+        {
+            if (_growZone.Cells.Remove(cell))
+            {
+                Game.MapView.ClearGrowZone(cell);
+            }
+        }
+    }
+
+    // ---------- walls ----------
 
     /// <summary>Places a wall blueprint frame on every valid cell in the rectangle.</summary>
     void PlaceWallRectangle(Vector2I a, Vector2I b)
@@ -225,6 +264,8 @@ public partial class ToolController : Node2D
             Game.Views.RemoveFrameView(frame);
         }
     }
+
+    // ---------- harvest ----------
 
     /// <summary>Designates every plant in the rectangle for harvest.</summary>
     void DesignateHarvestRectangle(Vector2I a, Vector2I b)

@@ -8,6 +8,7 @@ public partial class MapView : Node2D
     [Export] public TileMapLayer DesignationLayer;
 
     static readonly Vector2I StockpileAtlas = new(0, 0);
+    static readonly Vector2I GrowZoneAtlas = new(0, 0);
 
     GameMap _map;
 
@@ -61,6 +62,20 @@ public partial class MapView : Node2D
     /// <summary>Removes the stockpile overlay from a cell.</summary>
     /// <param name="cell">The cell to clear.</param>
     public void ClearStockpile(Vector2I cell)
+    {
+        OverlayLayer.EraseCell(cell);
+    }
+
+    /// <summary>Places the grow-zone overlay on a cell.</summary>
+    /// <param name="cell">The cell to mark.</param>
+    public void MarkGrowZone(Vector2I cell)
+    {
+        OverlayLayer.SetCell(cell, 1, GrowZoneAtlas);
+    }
+
+    /// <summary>Removes the grow-zone overlay from a cell.</summary>
+    /// <param name="cell">The cell to clear.</param>
+    public void ClearGrowZone(Vector2I cell)
     {
         OverlayLayer.EraseCell(cell);
     }

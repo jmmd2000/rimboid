@@ -48,6 +48,7 @@ public partial class Main : Node2D
     Pathing _pathing;
     TickManager _tick;
     Stockpile _stockpile;
+    GrowZone _growZone;
 
     public override void _Ready()
     {
@@ -74,6 +75,9 @@ public partial class Main : Node2D
 
         _stockpile = Game.Map.Stockpiles.Create();
 
+        _growZone = Game.Map.GrowZones.Create();
+        _growZone.Crop = PlantDefOf.Wheat;
+
         var taken = new HashSet<Vector2I>();
         for (int i = 0; i < StartingGuys; i++)
         {
@@ -98,12 +102,8 @@ public partial class Main : Node2D
         AddChild(needsPanel);
 
         var tools = new ToolController();
-        tools.Init(_stockpile, TerrainLayer);
+        tools.Init(_stockpile, _growZone, TerrainLayer);
         AddChild(tools);
-
-        // TEMP: spawn berries
-        var (berries, _, _) = Game.Map.SpawnItem(ItemDefOf.Berries, new Vector2I(3, 3), 10);
-        Game.Views.SpawnItemView(berries);
     }
 
     /// <summary>Finds the first walkable cell on the map for the initial colonist placement.</summary>
