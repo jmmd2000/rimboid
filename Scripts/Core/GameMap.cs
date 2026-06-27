@@ -9,6 +9,7 @@ public class GameMap
     public TerrainDef[,] Terrain;
     public DesignationManager Designations = new();
     public StockpileManager Stockpiles = new();
+    public GrowZoneManager GrowZones = new();
     public Dictionary<Vector2I, Building> Buildings = new();
     public Dictionary<Vector2I, Plant> Plants = new();
     public List<Guy> Guys = new();
