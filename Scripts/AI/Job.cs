@@ -1,7 +1,7 @@
 using Godot;
 
 /// <summary>The kind of job; selects which driver runs it.</summary>
-public enum JobType { Mine, Haul, HaulToFrame, Build, Wander, Sleep, Eat, Harvest, Chop }
+public enum JobType { Mine, Haul, HaulToFrame, Build, Wander, Sleep, Eat, Harvest, Chop, Sow }
 
 /// <summary>Intent data for a job. Holds targets the colonist should act on.</summary>
 public class Job

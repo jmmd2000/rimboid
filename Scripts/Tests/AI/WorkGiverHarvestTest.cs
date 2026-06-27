@@ -89,4 +89,24 @@ public class WorkGiverHarvestTest
 
         AssertObject(new WorkGiver_Harvest().TryGiveJob(new Guy { Position = Vector2.Zero })).IsNull();
     }
+
+    [TestCase]
+    public void HarvestsMatureCropInGrowZoneWithoutDesignation()
+    {
+        var cell = new Vector2I(5, 5);
+        Game.Map.SpawnPlant(PlantDefOf.BerryBush, cell);
+        Game.Map.GrowZones.Create().Cells.Add(cell);
+
+        var job = new WorkGiver_Harvest().TryGiveJob(new Guy { Position = Vector2.Zero });
+
+        AssertObject(job).IsNotNull();
+        AssertBool(job.TargetCell == cell).IsTrue();
+    }
+
+    [TestCase]
+    public void SkipsMatureCropNeitherZonedNorDesignated()
+    {
+        Game.Map.SpawnPlant(PlantDefOf.BerryBush, new Vector2I(5, 5));
+        AssertObject(new WorkGiver_Harvest().TryGiveJob(new Guy { Position = Vector2.Zero })).IsNull();
+    }
 }

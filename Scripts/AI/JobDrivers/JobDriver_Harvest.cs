@@ -9,6 +9,16 @@ public class JobDriver_Harvest : JobDriver
 {
     float _workDone;
 
+    /// <summary>The harvest order is still valid while the plant is ripe and the cell is either
+    /// designated for harvest or part of a grow zone. Cancelling either voids the job.</summary>
+    bool HarvestOrderStands()
+    {
+        var plant = Game.Map.PlantAt(job.TargetCell);
+        return plant != null && plant.IsHarvestable
+            && (Game.Map.Designations.Has(DesignationType.Harvest, job.TargetCell)
+                || Game.Map.GrowZones.IsGrowZoneCell(job.TargetCell));
+    }
+
     protected override IEnumerable<Task> MakeTasks()
     {
         var plant = Game.Map.PlantAt(job.TargetCell);
@@ -17,7 +27,7 @@ public class JobDriver_Harvest : JobDriver
         // walk to the cell beside the plant
         yield return WalkTo(
             () => Game.Pathing.NearestReachableWorkCell(job.TargetCell, guy.Cell),
-            failIf: () => !Game.Map.Designations.Has(DesignationType.Harvest, job.TargetCell)
+            failIf: () => !HarvestOrderStands()
         );
 
         // harvest over time
@@ -26,7 +36,7 @@ public class JobDriver_Harvest : JobDriver
             OnStart = () => _workDone = 0,
             OnTick = () => _workDone += 1f,
             IsComplete = () => _workDone >= plant.Def.WorkToHarvest,
-            FailOn = () => !Game.Map.Designations.Has(DesignationType.Harvest, job.TargetCell),
+            FailOn = () => !HarvestOrderStands(),
         };
 
         // when done, drop yield, remove the plant, clear designation, reopen the cell

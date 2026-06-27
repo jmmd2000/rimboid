@@ -7,6 +7,9 @@ public class GrowZoneManager
 {
     readonly List<GrowZone> _zones = new();
 
+    /// <summary>All grow zones on the map, for work givers that scan every zone cell.</summary>
+    public IReadOnlyList<GrowZone> Zones => _zones;
+
     /// <summary>Creates a new grow zone and returns it.</summary>
     /// <returns>The new grow zone.</returns>
     public GrowZone Create()
