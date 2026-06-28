@@ -20,8 +20,18 @@ public partial class BuildingView : Node2D
     public override void _Draw()
     {
         if (Building == null) return;
-        var rect = new Rect2(Vector2.Zero, new Vector2(_tileSize, _tileSize));
-        DrawRect(rect, Building.Def.Colour);
-        DrawRect(rect, Building.Def.Colour.Darkened(0.3f), filled: false, width: 1f);
+        var def = Building.Def;
+        var rect = new Rect2(Vector2.Zero, new Vector2(def.Size.X * _tileSize, def.Size.Y * _tileSize));
+
+        if (def.Texture != null)
+        {
+            DrawTextureRect(def.Texture, rect, tile: false);
+        }
+        else
+        {
+            DrawRect(rect, Building.Def.Colour);
+            DrawRect(rect, Building.Def.Colour.Darkened(0.3f), filled: false, width: 1f);
+        }
+
     }
 }

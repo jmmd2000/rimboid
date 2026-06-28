@@ -192,7 +192,7 @@ public class GameMap
     public Building SpawnBuilding(BuildingDef def, Vector2I cell)
     {
         var building = new Building { Def = def, Cell = cell };
-        Buildings[cell] = building;
+        foreach (var c in building.OccupiedCells) Buildings[c] = building;
         return building;
     }
 

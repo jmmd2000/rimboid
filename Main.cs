@@ -56,6 +56,7 @@ public partial class Main : Node2D
         ItemDefOf.Load();
         PlantDefOf.Load();
         BuildingDefOf.Load();
+        RecipeDefOf.Load();
         WorldGenerator.Generate(_map, this);
         MapView.PaintAll(_map);
 
@@ -79,6 +80,16 @@ public partial class Main : Node2D
         _growZone.Crop = PlantDefOf.Wheat;
 
         var taken = new HashSet<Vector2I>();
+
+        var stoveCell = FindFootprintCell(BuildingDefOf.Stove.Size, taken);
+        var stove = Game.Map.SpawnBuilding(BuildingDefOf.Stove, stoveCell);
+        Game.Views.SpawnBuildingView(stove);
+        foreach (var c in stove.OccupiedCells)
+        {
+            taken.Add(c);
+            _pathing.RefreshCell(_map, c);
+        }
+
         for (int i = 0; i < StartingGuys; i++)
         {
             var guy = new Guy { Position = FindWalkableCell(taken) };
@@ -119,5 +130,24 @@ public partial class Main : Node2D
             }
 
         return Vector2.Zero;
+    }
+
+    /// <summary>Finds an origin cell where the whole size-footprint is walkable, unblocked and free.</summary>
+    Vector2I FindFootprintCell(Vector2I size, HashSet<Vector2I> taken)
+    {
+        for (int x = 0; x < _map.Width - size.X; x++)
+            for (int y = 0; y < _map.Height - size.Y; y++)
+            {
+                bool ok = true;
+                for (int dx = 0; dx < size.X && ok; dx++)
+                    for (int dy = 0; dy < size.Y && ok; dy++)
+                    {
+                        var c = new Vector2I(x + dx, y + dy);
+                        if (!_map.Terrain[c.X, c.Y].Walkable || _map.BlocksMovementAt(c) || taken.Contains(c))
+                            ok = false;
+                    }
+                if (ok) return new Vector2I(x, y);
+            }
+        return Vector2I.Zero;
     }
 }
