@@ -17,4 +17,7 @@ public class Building
                     yield return Cell + new Vector2I(dx, dy);
         }
     }
+
+    /// <summary>Runtime workbench state, present only when Def.WorkBench != null</summary>
+    public WorkBench WorkBench { get; set; }
 }

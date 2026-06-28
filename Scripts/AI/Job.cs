@@ -1,7 +1,7 @@
 using Godot;
 
 /// <summary>The kind of job; selects which driver runs it.</summary>
-public enum JobType { Mine, Haul, HaulToFrame, Build, Wander, Sleep, Eat, Harvest, Chop, Sow }
+public enum JobType { Mine, Haul, HaulToFrame, Build, Wander, Sleep, Eat, Harvest, Chop, Sow, DoBill }
 
 /// <summary>Intent data for a job. Holds targets the colonist should act on.</summary>
 public class Job
@@ -12,6 +12,8 @@ public class Job
     public Vector2I TargetCell;
     /// <summary>The item this job acts on, if any.</summary>
     public Item TargetItem;
+    /// <summary>The bill this job fulfils, if any.</summary>
+    public Bill TargetBill;
     /// <summary>How many units to act on (e.g. amount to haul). 0 = unset / whole stack.</summary>
     public int Count;
     ///<summary>Whether the job claims a cell, for reservations</summary>

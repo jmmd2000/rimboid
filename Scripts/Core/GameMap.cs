@@ -124,6 +124,15 @@ public class GameMap
         return list.Find(i => i.Def == def);
     }
 
+    /// <summary>Total count of an item def in loose piles across the map.</summary>
+    public int CountStored(ItemDef def)
+    {
+        int total = 0;
+        foreach (var item in _looseItems)
+            if (item.Def == def) total += item.Count;
+        return total;
+    }
+
     /// <summary>True if this exact item is still on the map.</summary>
     public bool HasItem(Item item) => _itemsByCell.TryGetValue(item.Cell, out var list) && list.Contains(item);
 
@@ -192,6 +201,7 @@ public class GameMap
     public Building SpawnBuilding(BuildingDef def, Vector2I cell)
     {
         var building = new Building { Def = def, Cell = cell };
+        if (def.WorkBench != null) building.WorkBench = new WorkBench();
         foreach (var c in building.OccupiedCells) Buildings[c] = building;
         return building;
     }

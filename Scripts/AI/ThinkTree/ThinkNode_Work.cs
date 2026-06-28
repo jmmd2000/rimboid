@@ -10,6 +10,7 @@ public class ThinkNode_Work : IThinkNode
         new WorkGiver_Harvest(),
         new WorkGiver_Sow(),
         new WorkGiver_Construct(),
+        new WorkGiver_DoBill(),
         new WorkGiver_Haul(),
         new WorkGiver_Consolidate(),
     };
