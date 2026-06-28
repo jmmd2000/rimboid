@@ -9,4 +9,5 @@ obj/
 
 docs/
 CLAUDE.md
+.claude/
 .vscode/

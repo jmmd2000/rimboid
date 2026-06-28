@@ -70,6 +70,52 @@ public abstract class JobDriver
         };
     }
 
+    ///<summary>
+    /// Walks to each pile in turn and picks it up into a single carried stack, until `count` units
+    /// are gathered. The piles must be already reserved by this guy. Used for multi pile hauls
+    /// </summary>
+    /// <param name="piles">Reserved source piles, all of the same item def.</param>
+    /// <param name="count">How many units to gather in total.</param>
+    /// <param name="failIf">Optional per-tick failure check (e.g. the destination became invalid).</param>
+    protected IEnumerable<Task> GatherIntoCarrying(List<Item> piles, int count, Func<bool> failIf = null)
+    {
+        foreach (var pile in piles)
+        {
+            if ((guy.Carrying?.Count ?? 0) >= count) yield break; //already have enough
+            var source = pile;
+
+            yield return WalkTo(() => source.Cell, failIf);
+
+            yield return new Task
+            {
+                OnStart = () =>
+                {
+                    if (!Game.Map.HasItem(source)) return;
+                    int stillNeeded = count - (guy.Carrying?.Count ?? 0);
+                    if (stillNeeded <= 0) return;
+                    int take = Mathf.Min(stillNeeded, source.Count);
+
+                    if (take >= source.Count)
+                    {
+                        Game.Map.RemoveItem(source);
+                        Game.Views.RemoveItemView(source);
+                    }
+                    else
+                    {
+                        source.Count -= take;
+                    }
+
+                    if (guy.Carrying == null)
+                        guy.Carrying = new Item { Def = source.Def, Count = take };
+                    else
+                        guy.Carrying.Count += take;
+                },
+                IsComplete = () => true,
+                FailOn = failIf,
+            };
+        }
+    }
+
     /// <summary>Advances the job by one tick. Returns the current status.</summary>
     /// <returns>Ongoing, Completed, or Failed.</returns>
     public JobStatus Tick()

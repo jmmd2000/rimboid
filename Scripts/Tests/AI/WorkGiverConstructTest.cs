@@ -47,7 +47,7 @@ public class WorkGiverConstructTest
         AssertObject(job).IsNotNull();
         AssertBool(job.Type == JobType.HaulToFrame).IsTrue();
         AssertBool(job.TargetCell == new Vector2I(5, 5)).IsTrue();
-        AssertBool(job.TargetItem.Def == ItemDefOf.Stone).IsTrue();
+        AssertBool(job.ReservedItems[0].Def == ItemDefOf.Stone).IsTrue();
     }
 
     [TestCase]
@@ -140,5 +140,20 @@ public class WorkGiverConstructTest
 
         AssertObject(job).IsNotNull();
         AssertBool(job.Type == JobType.Build).IsTrue();
+    }
+
+    [TestCase]
+    public void CollectsFromMultiplePilesInOneJob()
+    {
+        AddFrame(new Vector2I(5, 5));
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(2, 2), 2);
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), 3);
+        var guy = new Guy { Position = Vector2.Zero };
+
+        var job = new WorkGiver_Construct().TryGiveJob(guy);
+
+        AssertObject(job).IsNotNull();
+        AssertInt(job.Count).IsEqual(5); // 2 + 3, the full wall cost
+        AssertInt(job.ReservedItems.Count).IsEqual(2); // both piles claimed
     }
 }

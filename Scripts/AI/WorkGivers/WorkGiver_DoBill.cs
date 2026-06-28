@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using Godot;
 
-/// <summary>Finds a workbench with a bill that should run and whose ingredients are reachable,
-/// and returns a job to work that bill.</summary>
+/// <summary>Finds a workbench with a bill that should run and whose ingredients can be gathered,
+/// reserves those piles, and returns a job to work that bill.</summary>
 public class WorkGiver_DoBill : WorkGiver
 {
     public override Job TryGiveJob(Guy guy)
@@ -25,6 +25,7 @@ public class WorkGiver_DoBill : WorkGiver
 
         Building bestBench = null;
         Bill bestBill = null;
+        List<Item> bestPicks = null;
         int bestDist = int.MaxValue;
 
         foreach (var bench in benches)
@@ -35,30 +36,37 @@ public class WorkGiver_DoBill : WorkGiver
             foreach (var bill in bench.WorkBench.Bills)
             {
                 if (!bill.ShouldDo) continue;
-                if (!IngredientsAvailable(bill.Recipe, reachable)) continue;
+                var picks = SelectIngredients(bill.Recipe, reachable, guy);
+                if (picks == null) continue;
 
                 int dist = Grid.DistanceSquared(guy.Cell, bench.Cell);
-                if (dist < bestDist) { bestDist = dist; bestBench = bench; bestBill = bill; }
+                if (dist < bestDist) { bestDist = dist; bestBench = bench; bestBill = bill; bestPicks = picks; }
                 break;
             }
         }
         if (bestBench == null) return null;
 
-        return new Job { Type = JobType.DoBill, TargetCell = bestBench.Cell, TargetBill = bestBill, ClaimsCell = true };
+        return new Job { Type = JobType.DoBill, TargetCell = bestBench.Cell, TargetBill = bestBill, ReservedItems = bestPicks, ClaimsCell = true };
     }
 
-    /// <summary>True if every ingredient line is met by at least one reachable pile.</summary>
-    static bool IngredientsAvailable(RecipeDef recipe, HashSet<Vector2I> reachable)
+    /// <summary>Picks reachable, unreserved piles covering every ingredient line, or null if any line can't be met.</summary>
+    static List<Item> SelectIngredients(RecipeDef recipe, HashSet<Vector2I> reachable, Guy guy)
     {
+        var picks = new List<Item>();
         foreach (var ing in recipe.Ingredients)
         {
-            bool found = false;
+            int total = 0;
             foreach (var item in Game.Map.LooseItems)
             {
-                if (item.Def == ing.Item && item.Count >= ing.Count && reachable.Contains(item.Cell)) { found = true; break; }
+                if (total >= ing.Count) break;
+                if (item.Def != ing.Item) continue;
+                if (!reachable.Contains(item.Cell)) continue;
+                if (!Game.Map.Reservations.AvailableItem(item, guy)) continue;
+                picks.Add(item);
+                total += item.Count;
             }
-            if (!found) return false;
+            if (total < ing.Count) return null;
         }
-        return true;
+        return picks;
     }
 }

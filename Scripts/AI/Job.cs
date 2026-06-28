@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 /// <summary>The kind of job; selects which driver runs it.</summary>
@@ -12,6 +13,8 @@ public class Job
     public Vector2I TargetCell;
     /// <summary>The item this job acts on, if any.</summary>
     public Item TargetItem;
+    /// <summary>Piles this job has claimed to draw from (gathered in one trip). Reserved on job start.</summary>
+    public List<Item> ReservedItems;
     /// <summary>The bill this job fulfils, if any.</summary>
     public Bill TargetBill;
     /// <summary>How many units to act on (e.g. amount to haul). 0 = unset / whole stack.</summary>

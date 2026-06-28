@@ -156,5 +156,8 @@ public class Guy
     {
         Game.Map.Reservations.ReserveItem(job.TargetItem, this);
         if (job.ClaimsCell) Game.Map.Reservations.ReserveCell(job.TargetCell, this);
+        if (job.ReservedItems != null)
+            foreach (var item in job.ReservedItems)
+                Game.Map.Reservations.ReserveItem(item, this);
     }
 }

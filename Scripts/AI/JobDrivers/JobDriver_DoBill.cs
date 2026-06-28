@@ -2,8 +2,8 @@ using System.Collections.Generic;
 using Godot;
 
 /// <summary>
-/// Works a bill at a bench: fetch each ingredient and consume it, do the recipe's work,
-/// then produce the output on the floor for hauling. Fails if the bench is removed mid-job.
+/// Works a bill at a bench: for each ingredient, gather its reserved piles in one trip and consume
+/// them, then do the recipe's work and produce the output on the floor. Fails if the bench is removed.
 /// </summary>
 public class JobDriver_DoBill : JobDriver
 {
@@ -16,44 +16,20 @@ public class JobDriver_DoBill : JobDriver
         var recipe = bill.Recipe;
         var benchCell = job.TargetCell;
 
-        bool BenchGone() => Game.Map.BuildingAt(benchCell)?.Def.WorkBench == null;
+        bool BenchGone() => Game.Map.BuildingAt(benchCell)?.WorkBench == null;
 
-        // gather and consume each ingredient line
+        // gather and consume each ingredient line (one trip per ingredient def)
         foreach (var ing in recipe.Ingredients)
         {
-            Item source = null;
+            var piles = job.ReservedItems.FindAll(i => i.Def == ing.Item);
 
-            // walk to a pile
-            yield return WalkTo(
-                () => { source = FindPile(ing); return source?.Cell; },
-                failIf: () => BenchGone() || source == null
-            );
-
-            // pick up the needed amount
-            yield return new Task
-            {
-                OnStart = () =>
-                {
-                    if (source == null) return;
-                    if (ing.Count >= source.Count)
-                    {
-                        guy.Carrying = source;
-                        Game.Map.RemoveItem(source);
-                        Game.Views.RemoveItemView(source);
-                    }
-                    else
-                    {
-                        source.Count -= ing.Count;
-                        guy.Carrying = new Item { Def = source.Def, Count = ing.Count };
-                    }
-                },
-                IsComplete = () => true,
-            };
+            foreach (var t in GatherIntoCarrying(piles, ing.Count, failIf: BenchGone))
+                yield return t;
 
             // carry it to a cell beside the bench
             yield return WalkTo(
                 () => Game.Pathing.NearestReachableWorkCell(benchCell, guy.Cell),
-                failIf: () => BenchGone()
+                failIf: BenchGone
             );
 
             // consume it into the bill
@@ -64,7 +40,7 @@ public class JobDriver_DoBill : JobDriver
             };
         }
 
-        // do the cooking work over time
+        // do the cooking work, once, after all ingredients are in
         yield return new Task
         {
             OnStart = () => _work = 0,
@@ -73,7 +49,7 @@ public class JobDriver_DoBill : JobDriver
             FailOn = () => BenchGone(),
         };
 
-        // produce the output on the floor
+        // produce the output on the floor, the haul work-giver moves it to a stockpile
         yield return new Task
         {
             OnStart = () =>
@@ -83,21 +59,5 @@ public class JobDriver_DoBill : JobDriver
             },
             IsComplete = () => true,
         };
-
-        /// <summary>Nearest reachable pile holding enough of an ingredient.</summary>
-        Item FindPile(IngredientCount ing)
-        {
-            var reachable = Game.Pathing.ReachableCells(guy.Cell);
-            Item best = null;
-            int bestDist = int.MaxValue;
-            foreach (var item in Game.Map.LooseItems)
-            {
-                if (item.Def != ing.Item || item.Count < ing.Count) continue;
-                if (!reachable.Contains(item.Cell)) continue;
-                int dist = Grid.DistanceSquared(guy.Cell, item.Cell);
-                if (dist < bestDist) { bestDist = dist; best = item; }
-            }
-            return best;
-        }
     }
 }
