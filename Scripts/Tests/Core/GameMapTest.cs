@@ -177,4 +177,16 @@ public class GameMapTest
         }
         AssertBool(map.FreeDropCell(new Vector2I(5, 5)) == new Vector2I(5, 5)).IsTrue();
     }
+
+    [TestCase]
+    public void SpawnItemRefusesDifferentDefOnOccupiedCell()
+    {
+        var map = new GameMap(10, 10);
+        map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), 5);
+        var (item, isNew, overflow) = map.SpawnItem(ItemDefOf.Berries, new Vector2I(3, 3), 4);
+
+        AssertObject(item).IsNull();
+        AssertInt(overflow).IsEqual(4);
+        AssertInt(map.LooseItems.Count).IsEqual(1);
+    }
 }

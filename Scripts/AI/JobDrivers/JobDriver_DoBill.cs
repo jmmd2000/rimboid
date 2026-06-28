@@ -54,8 +54,8 @@ public class JobDriver_DoBill : JobDriver
         {
             OnStart = () =>
             {
-                var (pile, isNew, _) = Game.Map.SpawnItem(recipe.Output, guy.Cell, recipe.OutputCount);
-                if (isNew) Game.Views.SpawnItemView(pile);
+                foreach (var pile in Game.Map.DropItems(recipe.Output, guy.Cell, recipe.OutputCount))
+                    Game.Views.SpawnItemView(pile);
             },
             IsComplete = () => true,
         };

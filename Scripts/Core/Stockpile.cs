@@ -21,11 +21,9 @@ public class Stockpile
         Vector2I? empty = null;
         foreach (var cell in Cells)
         {
-            var existing = Game.Map.ItemAt(cell, def);
-            // keep track of an empty cell but keep looking for a partial
-            if (existing == null) { empty ??= cell; continue; }
-            // finish off a partial cell first
-            if (existing.Count < def.MaxStackSize) return cell;
+            var here = Game.Map.ItemAt(cell);
+            if (here == null) { empty ??= cell; continue; }
+            if (here.Def == def && here.Count < def.MaxStackSize) return cell;
         }
         // no partial cell found, use an empty.
         return empty;

@@ -57,8 +57,9 @@ public class StockpileManager
             if (!s.WouldAccept(def)) continue;
             foreach (var cell in s.Cells)
             {
-                var existing = Game.Map.ItemAt(cell, def);
-                room += existing == null ? def.MaxStackSize : def.MaxStackSize - existing.Count;
+                var here = Game.Map.ItemAt(cell);
+                if (here == null) room += def.MaxStackSize;
+                else if (here.Def == def) room += def.MaxStackSize - here.Count;
             }
         }
         return room;

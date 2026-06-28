@@ -70,6 +70,9 @@ public class GameMap
             return (existing, false, count - added);
         }
 
+        // one stack per cell
+        if (ItemAt(cell) != null) return (null, false, count);
+
         int initial = Mathf.Min(count, def.MaxStackSize);
         var item = new Item { Def = def, Cell = cell, Count = initial };
         _looseItems.Add(item);
