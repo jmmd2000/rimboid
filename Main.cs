@@ -90,13 +90,6 @@ public partial class Main : Node2D
             _pathing.RefreshCell(_map, c);
         }
 
-        stove.WorkBench.Bills.Add(new Bill
-        {
-            Recipe = RecipeDefOf.CookSimpleMeal,
-            RepeatMode = BillRepeatMode.UntilYouHave,
-            TargetCount = 10,
-        });
-
         for (int i = 0; i < StartingGuys; i++)
         {
             var guy = new Guy { Position = FindWalkableCell(taken) };
@@ -118,6 +111,9 @@ public partial class Main : Node2D
 
         var needsPanel = new NeedsPanel();
         AddChild(needsPanel);
+
+        var billPanel = new BillPanel();
+        AddChild(billPanel);
 
         var tools = new ToolController();
         tools.Init(_stockpile, _growZone, TerrainLayer);

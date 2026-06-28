@@ -65,7 +65,17 @@ public partial class ToolController : Node2D
 
             if (mb.ButtonIndex == MouseButton.Left)
             {
-                Game.SelectedGuy = Game.Map.Guys.FirstOrDefault(g => g.Cell == cell);
+                var building = Game.Map.BuildingAt(cell);
+                if (building != null)
+                {
+                    Game.SelectedBuilding = building;
+                    Game.SelectedGuy = null;
+                }
+                else
+                {
+                    Game.SelectedGuy = Game.Map.Guys.FirstOrDefault(guy => guy.Cell == cell);
+                    Game.SelectedBuilding = null;
+                }
 
             }
             else if (mb.ButtonIndex == MouseButton.Right && Game.SelectedGuy != null)

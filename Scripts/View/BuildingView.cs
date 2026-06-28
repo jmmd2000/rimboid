@@ -5,6 +5,7 @@ public partial class BuildingView : Node2D
 {
     public Building Building;
     int _tileSize;
+    bool _selected;
 
     /// <summary>Positions this view at the building's cell.</summary>
     /// <param name="building">The building to display.</param>
@@ -15,6 +16,16 @@ public partial class BuildingView : Node2D
         _tileSize = tileSize;
         Position = new Vector2(building.Cell.X * tileSize, building.Cell.Y * tileSize);
         ZIndex = 1;
+    }
+
+    public override void _Process(double delta)
+    {
+        bool selected = Game.SelectedBuilding == Building;
+        if (selected != _selected)
+        {
+            _selected = selected;
+            QueueRedraw();
+        }
     }
 
     public override void _Draw()
@@ -32,6 +43,9 @@ public partial class BuildingView : Node2D
             DrawRect(rect, Building.Def.Colour);
             DrawRect(rect, Building.Def.Colour.Darkened(0.3f), filled: false, width: 1f);
         }
+
+        if (_selected)
+            DrawRect(rect, Colors.White, filled: false, width: 1f);
 
     }
 }

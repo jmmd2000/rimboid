@@ -9,4 +9,5 @@ public static class Game
     public static MapView MapView;
     public static ViewManager Views;
     public static Guy SelectedGuy;
+    public static Building SelectedBuilding;
 }
