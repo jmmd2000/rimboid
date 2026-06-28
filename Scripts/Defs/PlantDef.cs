@@ -5,10 +5,8 @@ public enum PlantWorkType { Chop, Harvest }
 
 ///<summary>Definition for a plant. Holds textures, harvest yield and draw size.</summary>
 [GlobalClass]
-public partial class PlantDef : Resource
+public partial class PlantDef : Def
 {
-    [Export] public string DefName { get; set; }
-    [Export] public string Label { get; set; }
     [Export] public Texture2D[] GrowthStages { get; set; } = System.Array.Empty<Texture2D>();
     [Export] public bool BlocksMovement { get; set; }
     [Export] public PlantWorkType WorkType { get; set; }
@@ -47,5 +45,4 @@ public partial class PlantDef : Resource
     // whole cells occupied on the grid (only blocks if BlocksMovement). Usually 1x1.
     [Export] public int FootprintWidth { get; set; } = 1;
     [Export] public int FootprintHeight { get; set; } = 1;
-
 }

@@ -2,10 +2,8 @@ using Godot;
 
 /// <summary>Definition resource for an item type. Holds name, stack size, and graphic.</summary>
 [GlobalClass]
-public partial class ItemDef : Resource
+public partial class ItemDef : Def
 {
-    [Export] public string DefName { get; set; }
-    [Export] public string Label { get; set; }
     [Export] public int MaxStackSize { get; set; } = 75;
     [Export] public Texture2D Texture { get; set; }
 

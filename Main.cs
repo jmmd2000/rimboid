@@ -57,6 +57,7 @@ public partial class Main : Node2D
         PlantDefOf.Load();
         BuildingDefOf.Load();
         RecipeDefOf.Load();
+        DefLoader.LoadAll();
         WorldGenerator.Generate(_map, this);
         MapView.PaintAll(_map);
 
