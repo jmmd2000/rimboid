@@ -1,12 +1,18 @@
 [gd_resource type="Resource" script_class="ItemDef" format=3 uid="uid://d26oeyl7yfa73"]
 
+[ext_resource type="Script" uid="uid://cbfkt404a6jeq" path="res://Scripts/Defs/FoodProperties.cs" id="1_5unmo"]
 [ext_resource type="Texture2D" uid="uid://dmwymaya23h8m" path="res://Assets/Items/berries.png" id="1_berry"]
 [ext_resource type="Script" uid="uid://bfkfdeiify8cv" path="res://Scripts/Defs/ItemDef.cs" id="2_5unmo"]
+
+[sub_resource type="Resource" id="Resource_gqo0f"]
+script = ExtResource("1_5unmo")
+Nutrition = 0.3
+metadata/_custom_type_script = "uid://cbfkt404a6jeq"
 
 [resource]
 script = ExtResource("2_5unmo")
 DefName = "Berries"
 Label = "berries"
 Texture = ExtResource("1_berry")
-Nutrition = 0.3
+Food = SubResource("Resource_gqo0f")
 metadata/_custom_type_script = "uid://bfkfdeiify8cv"

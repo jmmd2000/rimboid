@@ -1,7 +1,13 @@
 [gd_resource type="Resource" script_class="ItemDef" format=3 uid="uid://yk31dvxlfn7t"]
 
+[ext_resource type="Script" uid="uid://cbfkt404a6jeq" path="res://Scripts/Defs/FoodProperties.cs" id="1_71av0"]
 [ext_resource type="Script" uid="uid://bfkfdeiify8cv" path="res://Scripts/Defs/ItemDef.cs" id="1_pnltw"]
 [ext_resource type="Texture2D" uid="uid://sdir4dxqwuej" path="res://Assets/Items/simple_meal.png" id="1_y3xth"]
+
+[sub_resource type="Resource" id="Resource_8yo7y"]
+script = ExtResource("1_71av0")
+Nutrition = 0.9
+metadata/_custom_type_script = "uid://cbfkt404a6jeq"
 
 [resource]
 script = ExtResource("1_pnltw")
@@ -9,5 +15,5 @@ DefName = "SimpleMeal"
 Label = "simple meal"
 MaxStackSize = 10
 Texture = ExtResource("1_y3xth")
-Nutrition = 0.9
+Food = SubResource("Resource_8yo7y")
 metadata/_custom_type_script = "uid://bfkfdeiify8cv"

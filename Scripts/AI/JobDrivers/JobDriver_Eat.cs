@@ -25,7 +25,7 @@ public class JobDriver_Eat : JobDriver
                 if (_biteProgress < TicksPerBite) return;
                 _biteProgress = 0f;
 
-                guy.Needs.Food.Add(job.TargetItem.Def.Nutrition);
+                guy.Needs.Food.Add(job.TargetItem.Def.Food.Nutrition);
                 job.TargetItem.Count--;
                 if (job.TargetItem.Count <= 0)
                 {

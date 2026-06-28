@@ -8,7 +8,8 @@ public partial class ItemDef : Resource
     [Export] public string Label { get; set; }
     [Export] public int MaxStackSize { get; set; } = 75;
     [Export] public Texture2D Texture { get; set; }
-    [Export] public float Nutrition { get; set; }
 
-    public bool IsFood => Nutrition > 0f;
+    [Export] public FoodProperties Food { get; set; }
+
+    public bool IsFood => Food != null;
 }
