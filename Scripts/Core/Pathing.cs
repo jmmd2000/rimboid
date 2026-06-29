@@ -8,10 +8,10 @@ public class Pathing
     bool[,] _solid;
     int _width, _height;
 
-    // every cell the colonist can currently walk to
-    HashSet<Vector2I> _reachable = new();
-    // false = grid changed, must re-flood
-    bool _reachableValid;
+    // one cached set per connected region queried since the last grid change
+    readonly List<HashSet<Vector2I>> _regions = new();
+    bool _regionsValid;
+    static readonly HashSet<Vector2I> _empty = new();
 
     /// <summary>Builds the pathfinding grid from the map's terrain data.</summary>
     /// <param name="map">The game map to read terrain from.</param>
@@ -55,10 +55,15 @@ public class Pathing
     /// </summary>
     public HashSet<Vector2I> ReachableCells(Vector2I from)
     {
-        if (_reachableValid && _reachable.Contains(from)) return _reachable;
-        _reachable = Flood(from);
-        _reachableValid = true;
-        return _reachable;
+        if (!_regionsValid) { _regions.Clear(); _regionsValid = true; }
+
+        foreach (var region in _regions)
+            if (region.Contains(from)) return region;   // cache hit, no flood
+
+        if (!Free(from)) return _empty;
+        var flooded = Flood(from);
+        _regions.Add(flooded);
+        return flooded;
     }
 
     /// <summary>Flood-fills the connected region of walkable cells containing 'from'.</summary>
@@ -84,46 +89,10 @@ public class Pathing
         return cells;
     }
 
-    /// <summary>Marks the cached reachable set stale, it re-floods on next use.</summary>
-    void Invalidate() => _reachableValid = false;
+    /// <summary>Marks all cached regions stale, they re-flood on next use.</summary>
+    void Invalidate() => _regionsValid = false;
 
     bool Free(Vector2I cell) => InBounds(cell) && !_solid[cell.X, cell.Y];
-
-    /// <summary>
-    /// A cell just became walkable. If it connects to the cached reachable region, flood-add it
-    /// and anything it newly links in, keeping the cache valid without a full re-flood. If it
-    /// opened in some other disconnected pocket, the cache is left untouched.
-    /// </summary>
-    void GrowReachable(Vector2I opened)
-    {
-        if (!ConnectsToRegion(opened)) return;
-
-        var queue = new Queue<Vector2I>();
-        _reachable.Add(opened);
-        queue.Enqueue(opened);
-        while (queue.Count > 0)
-        {
-            var c = queue.Dequeue();
-            foreach (var d in Grid.Adjacent8)
-            {
-                var n = c + d;
-                if (_reachable.Contains(n) || !CanStep(c, n, d)) continue;
-                _reachable.Add(n);
-                queue.Enqueue(n);
-            }
-        }
-    }
-
-    /// <summary>True if the cell can step into the cached reachable region (so opening it extends it).</summary>
-    bool ConnectsToRegion(Vector2I cell)
-    {
-        foreach (var d in Grid.Adjacent8)
-        {
-            var n = cell + d;
-            if (_reachable.Contains(n) && CanStep(cell, n, d)) return true;
-        }
-        return false;
-    }
 
     /// <summary>Can a flood step from c to neighbour n (direction d)? Free, and no cutting a diagonal corner.</summary>
     bool CanStep(Vector2I c, Vector2I n, Vector2I d)
@@ -153,14 +122,11 @@ public class Pathing
     {
         var terrain = map.Terrain[cell.X, cell.Y];
         bool solid = !terrain.Walkable || map.BlocksMovementAt(cell);
-        bool wasSolid = _solid[cell.X, cell.Y];
         _solid[cell.X, cell.Y] = solid;
         _astar.SetPointSolid(cell, solid);
         _astar.SetPointWeightScale(cell, terrain.PathCostMultiplier);
 
-        if (!_reachableValid) return; // already stale, nothng to keep current
-        if (wasSolid && !solid) GrowReachable(cell); // just opened, add it
-        else if (!wasSolid && solid) Invalidate(); // closed, re-flood
+        Invalidate(); // grid changed, regions stale
     }
 
     /// <summary>Checks whether a cell is within the pathfinding grid bounds.</summary>
