@@ -5,6 +5,8 @@ using Godot;
 public class Pathing
 {
     AStarGrid2D _astar = new();
+    bool[,] _solid;
+    int _width, _height;
 
     // every cell the colonist can currently walk to
     HashSet<Vector2I> _reachable = new();
@@ -15,6 +17,9 @@ public class Pathing
     /// <param name="map">The game map to read terrain from.</param>
     public void Init(GameMap map)
     {
+        _width = map.Width;
+        _height = map.Height;
+        _solid = new bool[map.Width, map.Height];
         _astar.Region = new Rect2I(0, 0, map.Width, map.Height);
         _astar.DiagonalMode = AStarGrid2D.DiagonalModeEnum.OnlyIfNoObstacles;
         _astar.Update();
@@ -25,6 +30,7 @@ public class Pathing
                 var terrain = map.Terrain[x, y];
                 var cell = new Vector2I(x, y);
                 bool solid = !terrain.Walkable || map.BlocksMovementAt(cell);
+                _solid[x, y] = solid;
                 _astar.SetPointSolid(cell, solid);
                 _astar.SetPointWeightScale(cell, terrain.PathCostMultiplier);
             }
@@ -79,7 +85,7 @@ public class Pathing
     /// <summary>Marks the cached reachable set stale, it re-floods on next use.</summary>
     void Invalidate() => _reachableValid = false;
 
-    bool Free(Vector2I cell) => InBounds(cell) && !_astar.IsPointSolid(cell);
+    bool Free(Vector2I cell) => InBounds(cell) && !_solid[cell.X, cell.Y];
 
     /// <summary>
     /// A cell just became walkable. If it connects to the cached reachable region, flood-add it
@@ -145,7 +151,8 @@ public class Pathing
     {
         var terrain = map.Terrain[cell.X, cell.Y];
         bool solid = !terrain.Walkable || map.BlocksMovementAt(cell);
-        bool wasSolid = _astar.IsPointSolid(cell);
+        bool wasSolid = _solid[cell.X, cell.Y];
+        _solid[cell.X, cell.Y] = solid;
         _astar.SetPointSolid(cell, solid);
         _astar.SetPointWeightScale(cell, terrain.PathCostMultiplier);
 
@@ -155,12 +162,7 @@ public class Pathing
     }
 
     /// <summary>Checks whether a cell is within the pathfinding grid bounds.</summary>
-    bool InBounds(Vector2I cell)
-    {
-        var r = _astar.Region;
-        return cell.X >= r.Position.X && cell.X < r.Position.X + r.Size.X
-            && cell.Y >= r.Position.Y && cell.Y < r.Position.Y + r.Size.Y;
-    }
+    bool InBounds(Vector2I cell) => cell.X >= 0 && cell.X < _width && cell.Y >= 0 && cell.Y < _height;
 
     /// <summary>
     /// Nearest of a cell's 8 neighbours that is walkable AND reachable from the origin,
@@ -169,15 +171,15 @@ public class Pathing
     /// </summary>
     public Vector2I? NearestReachableWorkCell(Vector2I cell, Vector2I from)
     {
+        var reachable = ReachableCells(from);
         Vector2I? best = null;
-        float bestSteps = int.MaxValue;
+        float bestDist = float.MaxValue;
         foreach (var d in Grid.Adjacent8)
         {
             var n = cell + d;
-            if (!InBounds(n) || _astar.IsPointSolid(n)) continue;
-            int steps = PathSteps(from, n);
-            if (steps < 0) continue;
-            if (steps < bestSteps) { best = n; bestSteps = steps; }
+            if (!reachable.Contains(n)) continue;
+            float dist = from.DistanceTo(n);
+            if (dist < bestDist) { best = n; bestDist = dist; }
         }
         return best;
     }
@@ -188,16 +190,16 @@ public class Pathing
     /// </summary>
     public Vector2I? NearestSafeWorkCell(Vector2I frameCell, Vector2I from)
     {
+        var reachable = ReachableCells(from);
         Vector2I? best = null;
-        int bestSteps = int.MaxValue;
+        float bestDist = float.MaxValue;
         foreach (var d in Grid.Adjacent8)
         {
             var n = frameCell + d;
-            if (!InBounds(n) || _astar.IsPointSolid(n)) continue;
+            if (!reachable.Contains(n)) continue;
             if (WouldTrap(n, frameCell)) continue;
-            int steps = PathSteps(from, n);
-            if (steps < 0) continue;
-            if (steps < bestSteps) { best = n; bestSteps = steps; }
+            float dist = from.DistanceTo(n);
+            if (dist < bestDist) { best = n; bestDist = dist; }
         }
         return best;
     }
@@ -225,12 +227,14 @@ public class Pathing
     /// <summary>True if, once wall is solid, start can no longer reach the map edge i.e. it's enclosed.</summary>
     bool WouldTrap(Vector2I start, Vector2I wall)
     {
+        const int openEnough = 400;
         var visited = new HashSet<Vector2I> { start };
         var queue = new Queue<Vector2I>();
         queue.Enqueue(start);
 
         while (queue.Count > 0)
         {
+            if (visited.Count > openEnough) return false;
             var c = queue.Dequeue();
             if (IsBorder(c)) return false;
             foreach (var d in Grid.Adjacent8)
@@ -252,9 +256,6 @@ public class Pathing
     bool IsBorder(Vector2I cell)
     {
         var region = _astar.Region;
-        return cell.X == region.Position.X
-            || cell.Y == region.Position.Y
-            || cell.X == region.Position.X + region.Size.X - 1
-            || cell.Y == region.Position.Y + region.Size.Y - 1;
+        return cell.X == 0 || cell.Y == 0 || cell.X == _width - 1 || cell.Y == _height - 1;
     }
 }

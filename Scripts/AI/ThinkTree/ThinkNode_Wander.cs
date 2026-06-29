@@ -10,6 +10,7 @@ public class ThinkNode_Wander : IThinkNode
 
     public Job TryGiveJob(Guy guy)
     {
+        var reachable = Game.Pathing.ReachableCells(guy.Cell);
         for (int i = 0; i < Attempts; i++)
         {
             int dx = _rng.Next(-Radius, Radius + 1);
@@ -17,10 +18,7 @@ public class ThinkNode_Wander : IThinkNode
             var cell = new Vector2I(guy.Cell.X + dx, guy.Cell.Y + dy);
 
             if (cell == guy.Cell) continue;
-            if (cell.X < 0 || cell.X >= Game.Map.Width || cell.Y < 0 || cell.Y >= Game.Map.Height) continue;
-
-            var path = Game.Pathing.GetPath(guy.Cell, cell);
-            if (path == null || path.Length < 2) continue;
+            if (!reachable.Contains(cell)) continue;
 
             return new Job { Type = JobType.Wander, TargetCell = cell };
         }
