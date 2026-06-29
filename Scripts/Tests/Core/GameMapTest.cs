@@ -10,7 +10,7 @@ public class GameMapTest
     [BeforeTest]
     public void Setup()
     {
-        ItemDefOf.Load();
+        DefLoader.LoadAll();
     }
 
     [TestCase]
@@ -122,7 +122,7 @@ public class GameMapTest
     [TestCase]
     public void DropItemsCapsOriginAndSpillsRemainder()
     {
-        TerrainDefOf.Load();
+        DefLoader.LoadAll();
         var map = new GameMap(10, 10);
         for (int x = 0; x < map.Width; x++)
             for (int y = 0; y < map.Height; y++)
@@ -139,7 +139,7 @@ public class GameMapTest
 
     static GameMap DirtMap()
     {
-        TerrainDefOf.Load();
+        DefLoader.LoadAll();
         var map = new GameMap(10, 10);
         for (int x = 0; x < map.Width; x++)
             for (int y = 0; y < map.Height; y++)
@@ -157,7 +157,7 @@ public class GameMapTest
     [TestCase]
     public void FreeDropCellSkipsCellWithPlant()
     {
-        PlantDefOf.Load();
+        DefLoader.LoadAll();
         var map = DirtMap();
         map.SpawnPlant(PlantDefOf.BerryBush, new Vector2I(5, 6));
         var cell = map.FreeDropCell(new Vector2I(5, 5));

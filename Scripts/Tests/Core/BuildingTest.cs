@@ -9,8 +9,7 @@ public class BuildingTest
     [BeforeTest]
     public void Setup()
     {
-        TerrainDefOf.Load();
-        BuildingDefOf.Load();
+        DefLoader.LoadAll();
 
         Game.Map = new GameMap(10, 10);
         for (int x = 0; x < Game.Map.Width; x++)

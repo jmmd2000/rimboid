@@ -9,8 +9,7 @@ public class BillTest
     [BeforeTest]
     public void Setup()
     {
-        ItemDefOf.Load();
-        RecipeDefOf.Load();
+        DefLoader.LoadAll();
         Game.Map = new GameMap(10, 10);
     }
 

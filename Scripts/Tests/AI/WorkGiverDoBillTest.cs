@@ -9,10 +9,7 @@ public class WorkGiverDoBillTest
     [BeforeTest]
     public void Setup()
     {
-        ItemDefOf.Load();
-        RecipeDefOf.Load();
-        BuildingDefOf.Load();
-        TerrainDefOf.Load();
+        DefLoader.LoadAll();
 
         Game.Map = new GameMap(10, 10);
         for (int x = 0; x < Game.Map.Width; x++)

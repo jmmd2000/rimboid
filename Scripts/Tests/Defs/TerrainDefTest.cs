@@ -8,7 +8,7 @@ public class TerrainDefTest
     [TestCase]
     public void StoneIsMineableDirtIsNot()
     {
-        TerrainDefOf.Load();
+        DefLoader.LoadAll();
         AssertBool(TerrainDefOf.Stone.Mineable).IsTrue();
         AssertBool(TerrainDefOf.Dirt.Mineable).IsFalse();
     }

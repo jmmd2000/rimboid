@@ -28,5 +28,12 @@ public static class DefLoader
         LoadFolder<BuildingDef>("res://Defs/Buildings");
         LoadFolder<PlantDef>("res://Defs/Plants");
         LoadFolder<RecipeDef>("res://Defs/Recipes");
+
+        // these can be removed as the need for the DefOf files is dropped
+        TerrainDefOf.Resolve();
+        ItemDefOf.Resolve();
+        BuildingDefOf.Resolve();
+        PlantDefOf.Resolve();
+        RecipeDefOf.Resolve();
     }
 }

@@ -9,7 +9,7 @@ public class StockpileTest
     [BeforeTest]
     public void Setup()
     {
-        ItemDefOf.Load();
+        DefLoader.LoadAll();
         Game.Map = new GameMap(10, 10);
     }
 

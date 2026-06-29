@@ -9,7 +9,7 @@ public class PlantTest
     [BeforeTest]
     public void Setup()
     {
-        PlantDefOf.Load();
+        DefLoader.LoadAll();
     }
 
     [TestCase]

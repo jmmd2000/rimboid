@@ -1,15 +1,13 @@
-using Godot;
-
-/// <summary>Static references to building definitions. Call Load() before use.</summary>
+/// <summary>Code-referenced building defs, bound from the database. Call Resolve() after DefLoader.LoadAll().</summary>
 public static class BuildingDefOf
 {
     public static BuildingDef WallStone;
     public static BuildingDef Stove;
 
-    /// <summary>Loads all building definitions from .tres resource files.</summary>
-    public static void Load()
+    /// <summary>Binds the named building defs from the database.</summary>
+    public static void Resolve()
     {
-        WallStone = GD.Load<BuildingDef>("res://Defs/Buildings/WallStone.tres");
-        Stove = GD.Load<BuildingDef>("res://Defs/Buildings/Stove.tres");
+        WallStone = DefDatabase<BuildingDef>.Get("WallStone");
+        Stove = DefDatabase<BuildingDef>.Get("Stove");
     }
 }

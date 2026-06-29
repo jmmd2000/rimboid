@@ -10,9 +10,6 @@ public static class WorldGenerator
     /// <param name="settings">Main node holding noise and threshold exports.</param>
     public static void Generate(GameMap map, Main settings)
     {
-        TerrainDefOf.Load();
-        PlantDefOf.Load();
-
         var elevation = new FastNoiseLite
         {
             Seed = settings.Seed,

@@ -1,13 +1,11 @@
-using Godot;
-
-/// <summary>Static references to recipe definitions. Call Load() before use.</summary>
+/// <summary>Code-referenced recipe defs, bound from the database. Call Resolve() after DefLoader.LoadAll().</summary>
 public static class RecipeDefOf
 {
     public static RecipeDef CookSimpleMeal;
 
-    /// <summary>Loads all recipe definitions from .tres resource files.</summary>
-    public static void Load()
+    /// <summary>Binds the named recipe defs from the database.</summary>
+    public static void Resolve()
     {
-        CookSimpleMeal = GD.Load<RecipeDef>("res://Defs/Recipes/CookSimpleMeal.tres");
+        CookSimpleMeal = DefDatabase<RecipeDef>.Get("CookSimpleMeal");
     }
 }
