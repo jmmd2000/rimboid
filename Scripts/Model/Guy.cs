@@ -72,9 +72,9 @@ public class Guy
             return;
         }
 
-        DropJobForUrgentNeed();
-        StartJobIfIdle();
-        RunCurrentJob();
+        using (Prof.Sample("Think.Urgent")) DropJobForUrgentNeed();
+        using (Prof.Sample("Think.Start"))  StartJobIfIdle();
+        using (Prof.Sample("Job.Run"))      RunCurrentJob();
     }
 
     void DropJobForUrgentNeed()

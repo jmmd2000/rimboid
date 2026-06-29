@@ -38,16 +38,16 @@ public class GameMap
     /// <summary>Returns true if the cell lies within the map grid.</summary>
     public bool InBounds(Vector2I cell) => cell.X >= 0 && cell.X < Width && cell.Y >= 0 && cell.Y < Height;
 
-    static readonly System.Diagnostics.Stopwatch _sw = new();
-    static double _acc; static int _n;
     /// <summary>Advances every pawn on this map by one sim tick</summary>
     public void Tick()
     {
-        _sw.Restart();
-        foreach (var guy in Guys) guy.Tick();
-        _sw.Stop();
-        _acc += _sw.Elapsed.TotalMilliseconds;
-        if (++_n >= 120) { GD.Print($"avg tick: {_acc / _n:F3} ms"); _acc = 0; _n = 0; }
+        using (Prof.Sample("Sim.Tick"))
+            foreach (var guy in Guys) guy.Tick();
+
+        Stats.Gauge("guys", Guys.Count);
+        Stats.Gauge("loose items", _looseItems.Count);
+        Stats.Gauge("frames", _frames.Count);
+        Stats.Gauge("buildings", Buildings.Count);
     }
 
     // ---------- items ----------

@@ -115,6 +115,8 @@ public partial class Main : Node2D
         var buildMenu = GD.Load<PackedScene>("res://Scenes/BuildMenu.tscn").Instantiate();
         AddChild(buildMenu);
 
+        AddChild(new DebugOverlay());
+
         var tools = new ToolController();
         tools.Init(_stockpile, _growZone, TerrainLayer);
         AddChild(tools);

@@ -43,6 +43,7 @@ public class Pathing
     /// <returns>Array of world positions, or null.</returns>
     public Vector2[] GetPath(Vector2I from, Vector2I to)
     {
+        using var _ = Prof.Sample("Pathing.GetPath");
         if (_astar.IsPointSolid(to)) return null;
         return _astar.GetPointPath(from, to);
     }
@@ -63,6 +64,7 @@ public class Pathing
     /// <summary>Flood-fills the connected region of walkable cells containing 'from'.</summary>
     HashSet<Vector2I> Flood(Vector2I from)
     {
+        using var _ = Prof.Sample("Pathing.Flood");
         var cells = new HashSet<Vector2I>();
         if (!Free(from)) return cells;
         cells.Add(from);
