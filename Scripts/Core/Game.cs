@@ -10,4 +10,5 @@ public static class Game
     public static ViewManager Views;
     public static Guy SelectedGuy;
     public static Building SelectedBuilding;
+    public static BuildingDef SelectedBuildable; // non-null = build placement mode
 }

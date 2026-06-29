@@ -112,6 +112,9 @@ public partial class Main : Node2D
         var billPanel = new BillPanel();
         AddChild(billPanel);
 
+        var buildMenu = GD.Load<PackedScene>("res://Scenes/BuildMenu.tscn").Instantiate();
+        AddChild(buildMenu);
+
         var tools = new ToolController();
         tools.Init(_stockpile, _growZone, TerrainLayer);
         AddChild(tools);

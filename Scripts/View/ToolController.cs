@@ -16,14 +16,13 @@ public partial class ToolController : Node2D
     Vector2I? _dragStart;
     MouseButton _dragButton;
 
-    enum ToolMode { None, Mine, Stockpile, Build, Harvest, Chop, Grow }
+    enum ToolMode { None, Mine, Stockpile, Harvest, Chop, Grow }
     ToolMode _toolMode = ToolMode.None;
 
     static readonly Dictionary<Key, ToolMode> ModeKeys = new()
     {
         [Key.M] = ToolMode.Mine,
         [Key.S] = ToolMode.Stockpile,
-        [Key.B] = ToolMode.Build,
         [Key.H] = ToolMode.Harvest,
         [Key.C] = ToolMode.Chop,
         [Key.G] = ToolMode.Grow,
@@ -46,18 +45,23 @@ public partial class ToolController : Node2D
 
     public override void _UnhandledInput(InputEvent e)
     {
-        // tool mode toggle
-        if (e is InputEventKey key && key.Pressed && !key.Echo && ModeKeys.TryGetValue(key.Keycode, out var mode))
+        // tool / build-mode keys
+        if (e is InputEventKey key && key.Pressed && !key.Echo)
         {
-            _toolMode = _toolMode == mode ? ToolMode.None : mode;
-            GD.Print($"Tool mode: {_toolMode}");
+            if (key.Keycode == Key.Escape)
+            {
+                Game.SelectedBuildable = null;   // exit build placement
+            }
+            else if (ModeKeys.TryGetValue(key.Keycode, out var mode))
+            {
+                _toolMode = _toolMode == mode ? ToolMode.None : mode;
+                Game.SelectedBuildable = null;   // switching to a normal tool exits build placement
+                GD.Print($"Tool mode: {_toolMode}");
+            }
         }
 
-        // any tool mode drag selects, with no tool left-click walks
-        if (_toolMode != ToolMode.None)
-        {
-            HandleDrag(e);
-        }
+        if (Game.SelectedBuildable != null) HandleDrag(e);
+        else if (_toolMode != ToolMode.None) HandleDrag(e);
         else if (e is InputEventMouseButton mb && mb.Pressed)
         {
             Vector2I cell = CellUnderMouse();
@@ -124,6 +128,13 @@ public partial class ToolController : Node2D
     /// <summary>Applies a finished drag rectangle based on the active mode and button.</summary>
     void ApplyDrag(Vector2I a, Vector2I b, MouseButton button)
     {
+        if (Game.SelectedBuildable != null)
+        {
+            if (button == MouseButton.Left) PlaceBuildableRectangle(a, b);
+            else CancelBuildableRectangle(a, b);
+            return;
+        }
+
         switch (_toolMode)
         {
             case ToolMode.Mine:
@@ -133,10 +144,6 @@ public partial class ToolController : Node2D
             case ToolMode.Stockpile:
                 if (button == MouseButton.Left) AddStockpileRectangle(a, b);
                 else RemoveStockpileRectangle(a, b);
-                break;
-            case ToolMode.Build:
-                if (button == MouseButton.Left) PlaceWallRectangle(a, b);
-                else CancelWallRectangle(a, b);
                 break;
             case ToolMode.Harvest:
                 if (button == MouseButton.Left) DesignatePlantRectangle(a, b, PlantWorkType.Harvest, DesignationType.Harvest);
@@ -245,26 +252,26 @@ public partial class ToolController : Node2D
 
     // ---------- walls ----------
 
-    /// <summary>Places a wall blueprint frame on every valid cell in the rectangle.</summary>
-    void PlaceWallRectangle(Vector2I a, Vector2I b)
+    /// <summary>Places a buildable frame on every valid cell in the rectangle.</summary>
+    void PlaceBuildableRectangle(Vector2I a, Vector2I b)
     {
         foreach (var cell in Grid.CellsInRect(a, b))
         {
-            if (!CanPlaceWall(cell)) continue;
-            var frame = new Frame { Def = BuildingDefOf.WallStone, Cell = cell };
+            if (!CanPlaceBuilding(cell)) continue;
+            var frame = new Frame { Def = Game.SelectedBuildable, Cell = cell };
             Game.Map.AddFrame(frame);
             Game.Views.SpawnFrameView(frame);
         }
     }
 
-    /// <summary>True if a wall blueprint can be placed on the cell.</summary>
-    bool CanPlaceWall(Vector2I cell)
+    /// <summary>True if a blueprint can be placed on the cell.</summary>
+    bool CanPlaceBuilding(Vector2I cell)
     {
-        return Game.Map.Terrain[cell.X, cell.Y].Walkable && !Game.Map.HasFrame(cell) && Game.Map.BuildingAt(cell) == null;
+        return Game.Map.Terrain[cell.X, cell.Y].Walkable && !Game.Map.HasPlant(cell) && !Game.Map.HasFrame(cell) && Game.Map.BuildingAt(cell) == null;
     }
 
     /// <summary>Removes any wall blueprint frames in the rectangle.</summary>
-    void CancelWallRectangle(Vector2I a, Vector2I b)
+    void CancelBuildableRectangle(Vector2I a, Vector2I b)
     {
         foreach (var cell in Grid.CellsInRect(a, b))
         {
