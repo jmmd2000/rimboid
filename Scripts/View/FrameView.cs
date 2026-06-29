@@ -24,7 +24,7 @@ public partial class FrameView : Node2D
         {
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
-            Size = new Vector2(tileSize, tileSize)
+            Size = new Vector2(frame.Def.Size.X * tileSize, frame.Def.Size.Y * tileSize)
         };
         _label.AddThemeColorOverride("font_color", Colors.White);
         _label.AddThemeFontSizeOverride("font_size", 8);
@@ -48,7 +48,8 @@ public partial class FrameView : Node2D
     public override void _Draw()
     {
         if (Frame == null) return;
-        var rect = new Rect2(Vector2.Zero, new Vector2(_tileSize, _tileSize));
+        var size = Frame.Def.Size;
+        var rect = new Rect2(Vector2.Zero, new Vector2(size.X * _tileSize, size.Y * _tileSize));
         var colour = Frame.Def.Colour;
 
         if (!Frame.MaterialsComplete)
@@ -69,8 +70,8 @@ public partial class FrameView : Node2D
         if (Frame.Def.WorkToBuild > 0)
         {
             float workFraction = Mathf.Clamp(Frame.WorkDone / Frame.Def.WorkToBuild, 0f, 1f);
-            float h = _tileSize * workFraction;
-            DrawRect(new Rect2(0, _tileSize - h, _tileSize, h), new Color(colour, 0.95f));
+            float h = rect.Size.Y * workFraction;
+            DrawRect(new Rect2(0, rect.Size.Y - h, rect.Size.X, h), new Color(colour, 0.95f));
         }
     }
 }

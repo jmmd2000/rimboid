@@ -169,14 +169,14 @@ public class GameMap
     public void AddFrame(Frame frame)
     {
         _frames.Add(frame);
-        _frameByCell[frame.Cell] = frame;
+        foreach (var c in frame.OccupiedCells) _frameByCell[c] = frame;
     }
 
     /// <summary>Removes a construction frame (cancelled or finished).</summary>
     public void RemoveFrame(Frame frame)
     {
         _frames.Remove(frame);
-        _frameByCell.Remove(frame.Cell);
+        foreach (var c in frame.OccupiedCells) _frameByCell.Remove(c);
     }
 
     /// <summary>Returns the construction frame at a cell, or null if none.</summary>
