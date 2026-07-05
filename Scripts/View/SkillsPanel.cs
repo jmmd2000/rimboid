@@ -9,7 +9,7 @@ public partial class SkillsPanel : CanvasLayer
 
     public override void _Ready()
     {
-        _box = new VBoxContainer { Position = new Vector2(10, 100) };
+        _box = new VBoxContainer { Position = new Vector2(10, 200) };
         AddChild(_box);
 
         foreach (var def in DefDatabase<SkillDef>.All)

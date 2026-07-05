@@ -114,7 +114,7 @@ public partial class ToolController : Node2D
                 }
                 else
                 {
-                    Game.SelectedGuy = Game.Map.Guys.FirstOrDefault(guy => guy.Cell == cell);
+                    Game.SelectedGuy = GuyUnderMouse();
                     Game.SelectedBuilding = null;
                 }
 
@@ -129,6 +129,17 @@ public partial class ToolController : Node2D
     }
 
     Vector2I CellUnderMouse() => _terrainLayer.LocalToMap(_terrainLayer.ToLocal(GetGlobalMousePosition()));
+
+    /// <summary>The colonist whose drawn sprite is under the mouse, or null. Compares against each guy's
+    /// visual centre (Position + half a tile) so guys stay clickable mid-move</summary>
+    Guy GuyUnderMouse()
+    {
+        Vector2 mouseTiles = _terrainLayer.ToLocal(GetGlobalMousePosition()) / Game.TileSize;
+        return Game.Map.Guys
+            .Where(guy => (guy.Position + Vector2.One * 0.5f).DistanceTo(mouseTiles) <= 0.5f)
+            .OrderBy(guy => (guy.Position + Vector2.One * 0.5f).DistanceTo(mouseTiles))
+            .FirstOrDefault();
+    }
 
     /// <summary>Tracks a press/drag/release selection and updates the preview outline.</summary>
     void HandleDrag(InputEvent e)
