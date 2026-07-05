@@ -14,8 +14,11 @@ public class Skill
 /// <summary>Holds a colonist's skills, banks XP earned by doing work, and levels them up.</summary>
 public class Skills
 {
-    /// <summary>XP awarded each time a skilled job completes. Tuning knob.</summary>
-    public const float XPPerJob = 35f;
+    /// <summary>XP awarded per unit of work performed.</summary>
+    public const float XPPerWork = 0.25f;
+
+    /// <summary>Work speed gained per skill level</summary>
+    public const float WorkRatePerLevel = 0.05f;
 
     /// <summary>Highest reachable level.</summary>
     public const int MaxLevel = 20;
@@ -51,5 +54,6 @@ public class Skills
             skill.XP -= XPToLevel(skill.Level);
             skill.Level++;
         }
+        if (skill.Level >= MaxLevel) skill.XP = XPToLevel(skill.Level);
     }
 }

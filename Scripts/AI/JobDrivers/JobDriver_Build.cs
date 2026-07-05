@@ -21,7 +21,7 @@ public class JobDriver_Build : JobDriver
         // construction work over time
         yield return new Task
         {
-            OnTick = () => { var f = Game.Map.FrameAt(job.TargetCell); if (f != null) f.WorkDone += 1f; },
+            OnTick = () => { var f = Game.Map.FrameAt(job.TargetCell); if (f != null) f.WorkDone += SkilledWork(SkillDefOf.Construction); },
             IsComplete = () => { var f = Game.Map.FrameAt(job.TargetCell); return f == null || f.WorkComplete; },
             FailOn = FrameGone,
         };

@@ -27,7 +27,7 @@ public class JobDriver_Mine : JobDriver
         yield return new Task
         {
             OnStart = () => _workDone = 0,
-            OnTick = () => _workDone += 1f,
+            OnTick = () => _workDone += SkilledWork(SkillDefOf.Mining),
             IsComplete = () => _workDone >= terrain.WorkToMine,
             FailOn = () => !Game.Map.Designations.Has(DesignationType.Mine, job.TargetCell),
         };

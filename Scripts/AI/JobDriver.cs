@@ -32,9 +32,6 @@ public abstract class JobDriver
     /// <summary>The type of job this driver is executing.</summary>
     public JobType JobType => job.Type;
 
-    /// <summary>The job intent this driver is executing.</summary>
-    public Job CurrentJob => job;
-
     /// <summary>Yields the sequence of tasks that make up this job.</summary>
     /// <returns>An enumerable of tasks to execute in order.</returns>
     protected abstract IEnumerable<Task> MakeTasks();
@@ -117,6 +114,16 @@ public abstract class JobDriver
                 FailOn = failIf,
             };
         }
+    }
+
+    /// <summary> One tick of skilled work, banks XP for the work done and returns how much work that is,
+    /// scaled by the colonists skill. A null skill means unskilled, returns 1 and grants no xp.</summary>
+    /// <param name="skill">The skill this work trains.</param>
+    protected float SkilledWork(SkillDef skill)
+    {
+        float work = guy.WorkRate(skill);
+        guy.Skills.Gain(skill, work * Skills.XPPerWork);
+        return work;
     }
 
     /// <summary>Advances the job by one tick. Returns the current status.</summary>

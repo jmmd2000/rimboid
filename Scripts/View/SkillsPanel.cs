@@ -25,7 +25,8 @@ public partial class SkillsPanel : CanvasLayer
         foreach (var (def, row) in _rows)
         {
             var skill = guy.Skills.Get(def);
-            row.Label.Text = $"{def.Label} Lv {skill.Level} ({skill.XP:0}/{Skills.XPToLevel(skill.Level):0})";
+            var progress = skill.Level >= Skills.MaxLevel ? "MAX" : $"{skill.XP:0}/{Skills.XPToLevel(skill.Level):0}";
+            row.Label.Text = $"{def.Label}  Lv {skill.Level}  ({progress})";
             row.Bar.Value = skill.XP / Skills.XPToLevel(skill.Level);
         }
     }

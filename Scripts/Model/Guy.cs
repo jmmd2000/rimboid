@@ -100,11 +100,8 @@ public class Guy
     {
         if (_driver == null) return;
         var status = _driver.Tick();
-        if (status == JobStatus.Ongoing) return;
-
-        if (status == JobStatus.Completed)
-            Skills.Gain(SkillForJob(_driver), Skills.XPPerJob);
-        EndJob(dropCarry: status == JobStatus.Failed);
+        if (status != JobStatus.Ongoing)
+            EndJob(dropCarry: status == JobStatus.Failed);
     }
 
     /// <summary>Ends the current job, optionally dropping any carried item where the colonist stands.</summary>
@@ -136,18 +133,13 @@ public class Guy
         _ => 1f,
     };
 
-    /// <summary>Which skill a completed job trains, or null if the job is unskilled.</summary>
-    /// <param name="driver">The driver of the job that just finished</param>
-    static SkillDef SkillForJob(JobDriver driver) => driver.JobType switch
+    /// <summary>Work-speed multiplier for a task using the given skill, 1.0 at level 0, rising with level.
+    /// <param name="skill">The skill the task trains, or null for an unskilled task.</param>
+    public float WorkRate(SkillDef skill)
     {
-        JobType.Mine => SkillDefOf.Mining,
-        JobType.Chop => SkillDefOf.Scavenging,
-        JobType.Harvest => SkillDefOf.Farming,
-        JobType.Sow => SkillDefOf.Farming,
-        JobType.Build => SkillDefOf.Construction,
-        JobType.DoBill => driver.CurrentJob.TargetBill?.Recipe?.Skill,
-        _ => null,
-    };
+        if (skill == null) return 1f;
+        return 1f + Skills.Get(skill).Level * Skills.WorkRatePerLevel;
+    }
 
     /// <summary>Builds the driver that executes a job of the given type.</summary>
     /// <param name="type">The job type to build a driver for.</param>

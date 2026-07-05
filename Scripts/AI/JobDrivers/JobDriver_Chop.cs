@@ -21,7 +21,7 @@ public class JobDriver_Chop : JobDriver
         yield return new Task
         {
             OnStart = () => _workDone = 0,
-            OnTick = () => _workDone += 1f,
+            OnTick = () => _workDone += SkilledWork(SkillDefOf.Scavenging),
             IsComplete = () => _workDone >= plant.Def.WorkToHarvest,
             FailOn = () => !Game.Map.Designations.Has(DesignationType.Chop, job.TargetCell),
         };

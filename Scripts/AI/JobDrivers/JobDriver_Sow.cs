@@ -26,7 +26,7 @@ public class JobDriver_Sow : JobDriver
         yield return new Task
         {
             OnStart = () => _workDone = 0,
-            OnTick = () => _workDone += 1f,
+            OnTick = () => _workDone += SkilledWork(SkillDefOf.Farming),
             IsComplete = () => _workDone >= crop.WorkToSow,
             FailOn = () => !OrderStands(),
         };

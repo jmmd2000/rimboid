@@ -44,7 +44,7 @@ public class JobDriver_DoBill : JobDriver
         yield return new Task
         {
             OnStart = () => _work = 0,
-            OnTick = () => _work += 1f,
+            OnTick = () => _work += SkilledWork(recipe.Skill),
             IsComplete = () => _work >= recipe.WorkAmount,
             FailOn = () => BenchGone(),
         };

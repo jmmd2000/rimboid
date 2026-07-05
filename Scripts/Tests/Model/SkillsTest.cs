@@ -51,6 +51,7 @@ public class SkillsTest
         var skills = new Skills();
         skills.Gain(Def, 1_000_000f);
         AssertInt(skills.Get(Def).Level).IsEqual(Skills.MaxLevel);
+        AssertFloat(skills.Get(Def).XP).IsLessEqual(Skills.XPToLevel(Skills.MaxLevel));
     }
 
     [TestCase]
@@ -60,5 +61,25 @@ public class SkillsTest
         skills.Gain(null, 100f);
         skills.Gain(Def, 50f);
         AssertFloat(skills.Get(Def).XP).IsEqual(50f);
+    }
+
+    [TestCase]
+    public void WorkRateIsOneAtLevelZero()
+    {
+        AssertFloat(new Guy().WorkRate(Def)).IsEqual(1f);
+    }
+
+    [TestCase]
+    public void WorkRateRisesPerLevel()
+    {
+        var guy = new Guy();
+        guy.Skills.Gain(Def, 100f);
+        AssertFloat(guy.WorkRate(Def)).IsEqual(1f + Skills.WorkRatePerLevel);
+    }
+
+    [TestCase]
+    public void WorkRateForNullSkillIsOne()
+    {
+        AssertFloat(new Guy().WorkRate(null)).IsEqual(1f);
     }
 }
