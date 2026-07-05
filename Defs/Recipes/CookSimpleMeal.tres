@@ -4,6 +4,7 @@
 [ext_resource type="Script" uid="uid://bcnqc0yvoc0pa" path="res://Scripts/Defs/RecipeDef.cs" id="2_doasf"]
 [ext_resource type="Resource" uid="uid://b2vbgcnpdw1fe" path="res://Defs/Items/Wheat.tres" id="2_l72r0"]
 [ext_resource type="Resource" uid="uid://yk31dvxlfn7t" path="res://Defs/Items/SimpleMeal.tres" id="3_g4qpe"]
+[ext_resource type="Resource" uid="uid://b70f83lw3te8t" path="res://Defs/Skills/Cooking.tres" id="4_g4qpe"]
 
 [sub_resource type="Resource" id="Resource_jy1j2"]
 script = ExtResource("1_dxoi2")
@@ -13,9 +14,10 @@ metadata/_custom_type_script = "uid://dv52jm3ykod6d"
 
 [resource]
 script = ExtResource("2_doasf")
-DefName = "CookSimpleMeal"
-Label = "cook simple meal"
 Ingredients = Array[ExtResource("1_dxoi2")]([SubResource("Resource_jy1j2")])
 Output = ExtResource("3_g4qpe")
 WorkAmount = 150.0
+Skill = ExtResource("4_g4qpe")
+DefName = "CookSimpleMeal"
+Label = "cook simple meal"
 metadata/_custom_type_script = "uid://bcnqc0yvoc0pa"

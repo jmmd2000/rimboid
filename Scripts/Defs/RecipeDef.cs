@@ -8,4 +8,5 @@ public partial class RecipeDef : Def
     [Export] public ItemDef Output { get; set; }
     [Export] public int OutputCount { get; set; } = 1;
     [Export] public float WorkAmount { get; set; } = 120f;
+    [Export] public SkillDef Skill { get; set; }
 }

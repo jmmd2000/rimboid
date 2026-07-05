@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="SkillDef" format=3 uid="uid://db8dnj1dytsmc"]
+
+[ext_resource type="Script" uid="uid://viiglsgipkuo" path="res://Scripts/Defs/SkillDef.cs" id="1_2r6mm"]
+
+[resource]
+script = ExtResource("1_2r6mm")
+DefName = "Construction"
+Label = "construction"
+metadata/_custom_type_script = "uid://viiglsgipkuo"

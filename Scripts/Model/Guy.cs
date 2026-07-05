@@ -12,6 +12,7 @@ public class Guy
     public Item Carrying;
 
     public Needs Needs = new();
+    public Skills Skills = new();
     public Social Social = new();
     public bool IsSleeping;
 
@@ -73,8 +74,8 @@ public class Guy
         }
 
         using (Prof.Sample("Think.Urgent")) DropJobForUrgentNeed();
-        using (Prof.Sample("Think.Start"))  StartJobIfIdle();
-        using (Prof.Sample("Job.Run"))      RunCurrentJob();
+        using (Prof.Sample("Think.Start")) StartJobIfIdle();
+        using (Prof.Sample("Job.Run")) RunCurrentJob();
     }
 
     void DropJobForUrgentNeed()
@@ -99,8 +100,11 @@ public class Guy
     {
         if (_driver == null) return;
         var status = _driver.Tick();
-        if (status != JobStatus.Ongoing)
-            EndJob(dropCarry: status == JobStatus.Failed);
+        if (status == JobStatus.Ongoing) return;
+
+        if (status == JobStatus.Completed)
+            Skills.Gain(SkillForJob(_driver), Skills.XPPerJob);
+        EndJob(dropCarry: status == JobStatus.Failed);
     }
 
     /// <summary>Ends the current job, optionally dropping any carried item where the colonist stands.</summary>
@@ -130,6 +134,19 @@ public class Guy
         JobType.Build => 1.6f,
         JobType.DoBill => 1.2f,
         _ => 1f,
+    };
+
+    /// <summary>Which skill a completed job trains, or null if the job is unskilled.</summary>
+    /// <param name="driver">The driver of the job that just finished</param>
+    static SkillDef SkillForJob(JobDriver driver) => driver.JobType switch
+    {
+        JobType.Mine => SkillDefOf.Mining,
+        JobType.Chop => SkillDefOf.Scavenging,
+        JobType.Harvest => SkillDefOf.Farming,
+        JobType.Sow => SkillDefOf.Farming,
+        JobType.Build => SkillDefOf.Construction,
+        JobType.DoBill => driver.CurrentJob.TargetBill?.Recipe?.Skill,
+        _ => null,
     };
 
     /// <summary>Builds the driver that executes a job of the given type.</summary>

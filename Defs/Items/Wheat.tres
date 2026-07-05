@@ -11,8 +11,8 @@ metadata/_custom_type_script = "uid://cbfkt404a6jeq"
 
 [resource]
 script = ExtResource("1_4djht")
-DefName = "Wheat"
-Label = "wheat"
 Texture = ExtResource("1_g75g6")
 Food = SubResource("Resource_1ql8j")
+DefName = "Wheat"
+Label = "wheat"
 metadata/_custom_type_script = "uid://bfkfdeiify8cv"

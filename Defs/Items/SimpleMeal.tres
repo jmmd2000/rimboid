@@ -11,9 +11,9 @@ metadata/_custom_type_script = "uid://cbfkt404a6jeq"
 
 [resource]
 script = ExtResource("1_pnltw")
-DefName = "SimpleMeal"
-Label = "simple meal"
 MaxStackSize = 10
 Texture = ExtResource("1_y3xth")
 Food = SubResource("Resource_8yo7y")
+DefName = "SimpleMeal"
+Label = "simple meal"
 metadata/_custom_type_script = "uid://bfkfdeiify8cv"

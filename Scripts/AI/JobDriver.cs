@@ -32,6 +32,9 @@ public abstract class JobDriver
     /// <summary>The type of job this driver is executing.</summary>
     public JobType JobType => job.Type;
 
+    /// <summary>The job intent this driver is executing.</summary>
+    public Job CurrentJob => job;
+
     /// <summary>Yields the sequence of tasks that make up this job.</summary>
     /// <returns>An enumerable of tasks to execute in order.</returns>
     protected abstract IEnumerable<Task> MakeTasks();
