@@ -45,7 +45,7 @@ public class JobDriver_Build : JobDriver
                 var frame = Game.Map.FrameAt(job.TargetCell);
                 if (frame == null) return;
 
-                var building = Game.Map.SpawnBuilding(frame.Def, frame.Cell);
+                var building = Game.Map.SpawnBuilding(frame.Def, frame.Cell, frame.Rotation);
                 Game.Map.RemoveFrame(frame);
                 Game.Views.RemoveFrameView(frame);
                 Game.Views.SpawnBuildingView(building);

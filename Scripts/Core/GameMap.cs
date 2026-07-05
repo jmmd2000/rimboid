@@ -201,9 +201,9 @@ public class GameMap
     /// <summary>Spawns a finished building at a cell and returns it.</summary>
     /// <param name="def">The building definition.</param>
     /// <param name="cell">The cell to place it on.</param>
-    public Building SpawnBuilding(BuildingDef def, Vector2I cell)
+    public Building SpawnBuilding(BuildingDef def, Vector2I cell, int rotation = 0)
     {
-        var building = new Building { Def = def, Cell = cell };
+        var building = new Building { Def = def, Cell = cell, Rotation = rotation };
         if (def.WorkBench != null) building.WorkBench = new WorkBench();
         foreach (var c in building.OccupiedCells) Buildings[c] = building;
         return building;

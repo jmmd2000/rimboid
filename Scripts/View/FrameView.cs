@@ -20,11 +20,14 @@ public partial class FrameView : Node2D
         Position = new Vector2(frame.Cell.X * tileSize, frame.Cell.Y * tileSize);
         ZIndex = 1;
 
+        var min = Footprint.MinOffset(frame.Def.Size, frame.Rotation);
+        var labelSize = Footprint.Rotated(frame.Def.Size, frame.Rotation);
         _label = new Label
         {
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
-            Size = new Vector2(frame.Def.Size.X * tileSize, frame.Def.Size.Y * tileSize)
+            Position = new Vector2(min.X * tileSize, min.Y * tileSize),
+            Size = new Vector2(labelSize.X * tileSize, labelSize.Y * tileSize)
         };
         _label.AddThemeColorOverride("font_color", Colors.White);
         _label.AddThemeFontSizeOverride("font_size", 8);
@@ -48,8 +51,9 @@ public partial class FrameView : Node2D
     public override void _Draw()
     {
         if (Frame == null) return;
-        var size = Frame.Def.Size;
-        var rect = new Rect2(Vector2.Zero, new Vector2(size.X * _tileSize, size.Y * _tileSize));
+        var min = Footprint.MinOffset(Frame.Def.Size, Frame.Rotation);
+        var size = Footprint.Rotated(Frame.Def.Size, Frame.Rotation);
+        var rect = new Rect2(min.X * _tileSize, min.Y * _tileSize, size.X * _tileSize, size.Y * _tileSize);
         var colour = Frame.Def.Colour;
 
         if (!Frame.MaterialsComplete)
@@ -71,7 +75,7 @@ public partial class FrameView : Node2D
         {
             float workFraction = Mathf.Clamp(Frame.WorkDone / Frame.Def.WorkToBuild, 0f, 1f);
             float h = rect.Size.Y * workFraction;
-            DrawRect(new Rect2(0, rect.Size.Y - h, rect.Size.X, h), new Color(colour, 0.95f));
+            DrawRect(new Rect2(rect.Position.X, rect.Position.Y + rect.Size.Y - h, rect.Size.X, h), new Color(colour, 0.95f));
         }
     }
 }

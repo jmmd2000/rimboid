@@ -13,6 +13,8 @@ public partial class ToolController : Node2D
     TileMapLayer _terrainLayer;
     SelectionBox _selectionBox;
 
+    int _buildRotation;   // 0-3, the pending placement orientation
+
     Vector2I? _dragStart;
     MouseButton _dragButton;
 
@@ -50,6 +52,7 @@ public partial class ToolController : Node2D
     {
         bool show = Game.SelectedBuildable != null;
         if (show || _ghostShown) QueueRedraw();
+        if (!show && _ghostShown) _buildRotation = 0;
         _ghostShown = show;
     }
 
@@ -57,18 +60,20 @@ public partial class ToolController : Node2D
     {
         var def = Game.SelectedBuildable;
         if (def == null) return;
-
         var origin = CellUnderMouse();
         if (!Game.Map.InBounds(origin)) return;
 
         int t = Game.TileSize;
-        var rect = new Rect2(origin.X * t, origin.Y * t, def.Size.X * t, def.Size.Y * t);
         var tint = CanPlaceBuilding(def, origin)
             ? new Color(0.4f, 1f, 0.4f, 0.55f)
             : new Color(1f, 0.4f, 0.4f, 0.55f);
 
+        var pivot = new Vector2(origin.X * t + t / 2f, origin.Y * t + t / 2f);
+        DrawSetTransform(pivot, _buildRotation * Mathf.Pi / 2f, Vector2.One);
+        var rect = new Rect2(-t / 2f, -t / 2f, def.Size.X * t, def.Size.Y * t);
         if (def.Texture != null) DrawTextureRect(def.Texture, rect, tile: false, modulate: tint);
         else DrawRect(rect, tint);
+        DrawSetTransform(Vector2.Zero, 0, Vector2.One);
     }
 
     public override void _UnhandledInput(InputEvent e)
@@ -79,6 +84,10 @@ public partial class ToolController : Node2D
             if (key.Keycode == Key.Escape)
             {
                 Game.SelectedBuildable = null;   // exit build placement
+            }
+            else if (key.Keycode == Key.R && Game.SelectedBuildable != null)
+            {
+                _buildRotation = (_buildRotation + 1) % 4;
             }
             else if (ModeKeys.TryGetValue(key.Keycode, out var mode))
             {
@@ -291,7 +300,7 @@ public partial class ToolController : Node2D
     void TryPlaceFrame(BuildingDef def, Vector2I origin)
     {
         if (!CanPlaceBuilding(def, origin)) return;
-        var frame = new Frame { Def = def, Cell = origin };
+        var frame = new Frame { Def = def, Cell = origin, Rotation = _buildRotation };
         Game.Map.AddFrame(frame);
         Game.Views.SpawnFrameView(frame);
     }
@@ -299,15 +308,13 @@ public partial class ToolController : Node2D
     /// <summary>True if a blueprint can be placed on the cell.</summary>
     bool CanPlaceBuilding(BuildingDef def, Vector2I origin)
     {
-        for (int dx = 0; dx < def.Size.X; dx++)
-            for (int dy = 0; dy < def.Size.Y; dy++)
-            {
-                var cell = origin + new Vector2I(dx, dy);
-                if (!Game.Map.InBounds(cell)) return false;
-                if (!Game.Map.Terrain[cell.X, cell.Y].Walkable) return false;
-                if (Game.Map.HasPlant(cell) || Game.Map.HasFrame(cell)) return false;
-                if (Game.Map.BuildingAt(cell) != null) return false;
-            }
+        foreach (var cell in Footprint.Cells(origin, def.Size, _buildRotation))
+        {
+            if (!Game.Map.InBounds(cell)) return false;
+            if (!Game.Map.Terrain[cell.X, cell.Y].Walkable) return false;
+            if (Game.Map.HasPlant(cell) || Game.Map.HasFrame(cell)) return false;
+            if (Game.Map.BuildingAt(cell) != null) return false;
+        }
         return true;
     }
 

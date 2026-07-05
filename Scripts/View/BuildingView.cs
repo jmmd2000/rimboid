@@ -32,20 +32,19 @@ public partial class BuildingView : Node2D
     {
         if (Building == null) return;
         var def = Building.Def;
-        var rect = new Rect2(Vector2.Zero, new Vector2(def.Size.X * _tileSize, def.Size.Y * _tileSize));
 
-        if (def.Texture != null)
-        {
-            DrawTextureRect(def.Texture, rect, tile: false);
-        }
-        else
-        {
-            DrawRect(rect, Building.Def.Colour);
-            DrawRect(rect, Building.Def.Colour.Darkened(0.3f), filled: false, width: 1f);
-        }
+        // pivot the sprite about the origin cell's centre so the footprint rotates around it
+        DrawSetTransform(new Vector2(_tileSize / 2f, _tileSize / 2f), Building.Rotation * Mathf.Pi / 2f, Vector2.One);
+        var rect = new Rect2(-_tileSize / 2f, -_tileSize / 2f, def.Size.X * _tileSize, def.Size.Y * _tileSize);
+        if (def.Texture != null) DrawTextureRect(def.Texture, rect, tile: false);
+        else DrawRect(rect, def.Colour);
+        DrawSetTransform(Vector2.Zero, 0, Vector2.One);
 
         if (_selected)
-            DrawRect(rect, Colors.White, filled: false, width: 1f);
-
+        {
+            var min = Footprint.MinOffset(def.Size, Building.Rotation);
+            var size = Footprint.Rotated(def.Size, Building.Rotation);
+            DrawRect(new Rect2(min.X * _tileSize, min.Y * _tileSize, size.X * _tileSize, size.Y * _tileSize), Colors.White, filled: false, width: 1f);
+        }
     }
 }
