@@ -109,6 +109,9 @@ public partial class Main : Node2D
         var needsPanel = new NeedsPanel();
         AddChild(needsPanel);
 
+        var skillsPanel = new SkillsPanel();
+        AddChild(skillsPanel);
+
         var billPanel = new BillPanel();
         AddChild(billPanel);
 
