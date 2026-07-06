@@ -1,0 +1,38 @@
+[gd_scene format=3 uid="uid://dr8rcd1wiphvh"]
+
+[ext_resource type="Script" uid="uid://uujk2wmn2cc8" path="res://Scripts/View/ToolBar.cs" id="1_l37fi"]
+
+[node name="ToolBar" type="CanvasLayer" unique_id=1208970663 node_paths=PackedStringArray("OrdersBar", "ZonesBar")]
+script = ExtResource("1_l37fi")
+OrdersBar = NodePath("Panel/Rows/OrdersBar")
+ZonesBar = NodePath("Panel/Rows/ZonesBar")
+
+[node name="Panel" type="PanelContainer" parent="." unique_id=302315144]
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -50.0
+offset_top = -51.0
+offset_right = -10.0
+offset_bottom = -11.0
+grow_horizontal = 0
+grow_vertical = 0
+
+[node name="Rows" type="VBoxContainer" parent="Panel" unique_id=1527715364]
+layout_mode = 2
+
+[node name="OrdersLabel" type="Label" parent="Panel/Rows" unique_id=1411963559]
+layout_mode = 2
+text = "Orders"
+
+[node name="OrdersBar" type="HBoxContainer" parent="Panel/Rows" unique_id=277279977]
+layout_mode = 2
+
+[node name="ZonesLabel" type="Label" parent="Panel/Rows" unique_id=168227732]
+layout_mode = 2
+text = "Zones"
+
+[node name="ZonesBar" type="HBoxContainer" parent="Panel/Rows" unique_id=1679937556]
+layout_mode = 2
