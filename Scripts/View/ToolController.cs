@@ -8,8 +8,6 @@ using Godot;
 /// </summary>
 public partial class ToolController : Node2D
 {
-    Stockpile _stockpile;
-    GrowZone _growZone;
     TileMapLayer _terrainLayer;
     SelectionBox _selectionBox;
 
@@ -18,27 +16,29 @@ public partial class ToolController : Node2D
     Vector2I? _dragStart;
     MouseButton _dragButton;
 
-    enum ToolMode { None, Mine, Stockpile, Harvest, Chop, Grow }
-    ToolMode _toolMode = ToolMode.None;
-
-    static readonly Dictionary<Key, ToolMode> ModeKeys = new()
-    {
-        [Key.M] = ToolMode.Mine,
-        [Key.S] = ToolMode.Stockpile,
-        [Key.H] = ToolMode.Harvest,
-        [Key.C] = ToolMode.Chop,
-        [Key.G] = ToolMode.Grow,
-    };
+    Dictionary<ToolDef, Designator> _designators;  // the behaviour for each tool
+    Dictionary<Key, ToolDef> _toolKeys;
 
     /// <summary>Binds the controller to what it acts on. Call before adding to the tree.</summary>
-    /// <param name="guy">The guy that click-to-move drives.</param>
     /// <param name="stockpile">The stockpile the stockpile tool edits.</param>
+    /// <param name="growZone">The grow zone the grow tool edits.</param>
     /// <param name="terrainLayer">The tilemap used to convert the mouse position to a cell.</param>
     public void Init(Stockpile stockpile, GrowZone growZone, TileMapLayer terrainLayer)
     {
-        _stockpile = stockpile;
-        _growZone = growZone;
         _terrainLayer = terrainLayer;
+
+        _designators = new()
+        {
+            [ToolDefOf.Mine] = new Designator_Mine(),
+            [ToolDefOf.Stockpile] = new Designator_Stockpile(stockpile),
+            [ToolDefOf.GrowZone] = new Designator_GrowZone(growZone),
+            [ToolDefOf.Harvest] = new Designator_Harvest(),
+            [ToolDefOf.Chop] = new Designator_Chop(),
+        };
+
+        _toolKeys = new();
+        foreach (var def in DefDatabase<ToolDef>.All)
+            if (def.Shortcut != Key.None) _toolKeys[def.Shortcut] = def;
 
         _selectionBox = new SelectionBox();
         _selectionBox.Init(Game.TileSize);
@@ -84,21 +84,21 @@ public partial class ToolController : Node2D
             if (key.Keycode == Key.Escape)
             {
                 Game.SelectedBuildable = null;   // exit build placement
+                Game.SelectedTool = null;        // exit tool mode
             }
             else if (key.Keycode == Key.R && Game.SelectedBuildable != null)
             {
                 _buildRotation = (_buildRotation + 1) % 4;
             }
-            else if (ModeKeys.TryGetValue(key.Keycode, out var mode))
+            else if (_toolKeys.TryGetValue(key.Keycode, out var tool))
             {
-                _toolMode = _toolMode == mode ? ToolMode.None : mode;
-                Game.SelectedBuildable = null;   // switching to a normal tool exits build placement
-                GD.Print($"Tool mode: {_toolMode}");
+                Game.SelectedTool = Game.SelectedTool == tool ? null : tool;
+                Game.SelectedBuildable = null; // switching to a tool exits build placement
             }
         }
 
         if (Game.SelectedBuildable != null) HandleDrag(e);
-        else if (_toolMode != ToolMode.None) HandleDrag(e);
+        else if (Game.SelectedTool != null) HandleDrag(e);
         else if (e is InputEventMouseButton mb && mb.Pressed)
         {
             Vector2I cell = CellUnderMouse();
@@ -173,7 +173,7 @@ public partial class ToolController : Node2D
         }
     }
 
-    /// <summary>Applies a finished drag rectangle based on the active mode and button.</summary>
+    /// <summary>Applies a finished drag rectangle: build placement, or the active tools designator.</summary>
     void ApplyDrag(Vector2I a, Vector2I b, MouseButton button)
     {
         if (Game.SelectedBuildable != null)
@@ -183,119 +183,14 @@ public partial class ToolController : Node2D
             return;
         }
 
-        switch (_toolMode)
-        {
-            case ToolMode.Mine:
-                if (button == MouseButton.Left) DesignateMineRectangle(a, b);
-                else CancelMineRectangle(a, b);
-                break;
-            case ToolMode.Stockpile:
-                if (button == MouseButton.Left) AddStockpileRectangle(a, b);
-                else RemoveStockpileRectangle(a, b);
-                break;
-            case ToolMode.Harvest:
-                if (button == MouseButton.Left) DesignatePlantRectangle(a, b, PlantWorkType.Harvest, DesignationType.Harvest);
-                else CancelDesignationRectangle(a, b, DesignationType.Harvest);
-                break;
-            case ToolMode.Chop:
-                if (button == MouseButton.Left) DesignatePlantRectangle(a, b, PlantWorkType.Chop, DesignationType.Chop);
-                else CancelDesignationRectangle(a, b, DesignationType.Chop);
-                break;
-            case ToolMode.Grow:
-                if (button == MouseButton.Left) AddGrowZoneRectangle(a, b);
-                else RemoveGrowZoneRectangle(a, b);
-                break;
-        }
-    }
+        if (Game.SelectedTool == null || !_designators.TryGetValue(Game.SelectedTool, out var designator)) return;
 
-    // ---------- mining ----------
-
-    /// <summary>Designates every reachable, mineable cell in the rectangle for mining.</summary>
-    void DesignateMineRectangle(Vector2I a, Vector2I b)
-    {
         foreach (var cell in Grid.CellsInRect(a, b))
         {
-            if (Game.Map.Terrain[cell.X, cell.Y].Mineable && !Game.Map.Designations.Has(DesignationType.Mine, cell))
-            {
-                Game.Map.Designations.Add(DesignationType.Mine, cell);
-                Game.MapView.MarkDesignation(DesignationType.Mine, cell);
-            }
+            if (button == MouseButton.Left) designator.Apply(cell);
+            else designator.Cancel(cell);
         }
-        foreach (var orphan in Game.Map.Designations.PruneUnreachable(Game.Map))
-        {
-            Game.MapView.ClearDesignation(orphan);
-        }
-    }
-
-    /// <summary>Cancels every mine designation in the rectangle.</summary>
-    void CancelMineRectangle(Vector2I a, Vector2I b)
-    {
-        foreach (var cell in Grid.CellsInRect(a, b))
-        {
-            if (Game.Map.Designations.Has(DesignationType.Mine, cell))
-            {
-                Game.Map.Designations.Remove(DesignationType.Mine, cell);
-                Game.MapView.ClearDesignation(cell);
-            }
-        }
-
-        // removing cells could strand others so prune the rest
-        foreach (var orphan in Game.Map.Designations.PruneUnreachable(Game.Map))
-        {
-            Game.MapView.ClearDesignation(orphan);
-        }
-    }
-
-    // ---------- stockpile ----------
-
-    /// <summary>Adds every walkable cell in the rectangle to the stockpile.</summary>
-    void AddStockpileRectangle(Vector2I a, Vector2I b)
-    {
-        foreach (var cell in Grid.CellsInRect(a, b))
-        {
-            if (Game.Map.Terrain[cell.X, cell.Y].Walkable && _stockpile.Cells.Add(cell))
-            {
-                Game.MapView.MarkStockpile(cell);
-            }
-        }
-    }
-
-    /// <summary>Removes every stockpile cell in the rectangle.</summary>
-    void RemoveStockpileRectangle(Vector2I a, Vector2I b)
-    {
-        foreach (var cell in Grid.CellsInRect(a, b))
-        {
-            if (_stockpile.Cells.Remove(cell))
-            {
-                Game.MapView.ClearStockpile(cell);
-            }
-        }
-    }
-
-    // ---------- grow zone ----------
-
-    /// <summary>Adds every walkable cell in the rectangle to the grow zone.</summary>
-    void AddGrowZoneRectangle(Vector2I a, Vector2I b)
-    {
-        foreach (var cell in Grid.CellsInRect(a, b))
-        {
-            if (Game.Map.Terrain[cell.X, cell.Y].Walkable && _growZone.Cells.Add(cell))
-            {
-                Game.MapView.MarkGrowZone(cell);
-            }
-        }
-    }
-
-    /// <summary>Removes every grow-zone cell in the rectangle.</summary>
-    void RemoveGrowZoneRectangle(Vector2I a, Vector2I b)
-    {
-        foreach (var cell in Grid.CellsInRect(a, b))
-        {
-            if (_growZone.Cells.Remove(cell))
-            {
-                Game.MapView.ClearGrowZone(cell);
-            }
-        }
+        designator.OnDragFinished();
     }
 
     // ---------- building ----------
@@ -338,61 +233,6 @@ public partial class ToolController : Node2D
             if (frame == null) continue;
             Game.Map.RemoveFrame(frame);
             Game.Views.RemoveFrameView(frame);
-        }
-    }
-
-    // ---------- harvest ----------
-
-    /// <summary>Designates every plant in the rectangle for harvest.</summary>
-    void DesignateHarvestRectangle(Vector2I a, Vector2I b)
-    {
-        foreach (var cell in Grid.CellsInRect(a, b))
-        {
-            if (Game.Map.HasPlant(cell) && !Game.Map.Designations.Has(DesignationType.Harvest, cell))
-            {
-                Game.Map.Designations.Add(DesignationType.Harvest, cell);
-                Game.MapView.MarkDesignation(DesignationType.Harvest, cell);
-            }
-        }
-    }
-
-    /// <summary>Cancels every harvest designation in the rectangle.</summary>
-    void CancelHarvestRectangle(Vector2I a, Vector2I b)
-    {
-        foreach (var cell in Grid.CellsInRect(a, b))
-        {
-            if (Game.Map.Designations.Has(DesignationType.Harvest, cell))
-            {
-                Game.Map.Designations.Remove(DesignationType.Harvest, cell);
-                Game.MapView.ClearDesignation(cell);
-            }
-        }
-    }
-
-    /// <summary>Designates plants of the given work type in the rectangle.</summary>
-    void DesignatePlantRectangle(Vector2I a, Vector2I b, PlantWorkType workType, DesignationType desigType)
-    {
-        foreach (var cell in Grid.CellsInRect(a, b))
-        {
-            var plant = Game.Map.PlantAt(cell);
-            if (plant != null && plant.Def.WorkType == workType && plant.IsHarvestable && !Game.Map.Designations.Has(desigType, cell))
-            {
-                Game.Map.Designations.Add(desigType, cell);
-                Game.MapView.MarkDesignation(desigType, cell);
-            }
-        }
-    }
-
-    /// <summary>Clears a designation type across the rectangle.</summary>
-    void CancelDesignationRectangle(Vector2I a, Vector2I b, DesignationType desig)
-    {
-        foreach (var cell in Grid.CellsInRect(a, b))
-        {
-            if (Game.Map.Designations.Has(desig, cell))
-            {
-                Game.Map.Designations.Remove(desig, cell);
-                Game.MapView.ClearDesignation(cell);
-            }
         }
     }
 }

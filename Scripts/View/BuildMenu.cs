@@ -30,7 +30,7 @@ public partial class BuildMenu : CanvasLayer
     static Button MakeButton(BuildingDef def)
     {
         var button = new Button { ToggleMode = true, CustomMinimumSize = new Vector2(96, 96) };
-        button.Pressed += () => Game.SelectedBuildable = def;
+        button.Pressed += () => { Game.SelectedBuildable = def; Game.SelectedTool = null; };
 
         var box = new VBoxContainer
         {
