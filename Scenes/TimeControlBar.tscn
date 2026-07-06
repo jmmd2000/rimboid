@@ -1,0 +1,47 @@
+[gd_scene format=3 uid="uid://ccvibbxgf1opg"]
+
+[ext_resource type="Script" uid="uid://depg8i58ppy5v" path="res://Scripts/View/TimeControlBar.cs" id="1_aaix0"]
+
+[node name="TimeControlBar" type="CanvasLayer" unique_id=184477033 node_paths=PackedStringArray("Pause", "Fast", "Faster", "Fastest", "Clock")]
+script = ExtResource("1_aaix0")
+Pause = NodePath("Row/Pause")
+Fast = NodePath("Row/Fast")
+Faster = NodePath("Row/Faster")
+Fastest = NodePath("Row/Fastest")
+Clock = NodePath("Clock")
+
+[node name="Row" type="HBoxContainer" parent="." unique_id=299060730]
+offset_left = 10.0
+offset_top = 10.0
+offset_right = 50.0
+offset_bottom = 50.0
+
+[node name="Pause" type="Button" parent="Row" unique_id=723871984]
+layout_mode = 2
+tooltip_text = "Pause / play (Space)"
+focus_mode = 0
+text = "||"
+
+[node name="Fast" type="Button" parent="Row" unique_id=2088189571]
+layout_mode = 2
+tooltip_text = "Fast (1)"
+focus_mode = 0
+text = "▶"
+
+[node name="Faster" type="Button" parent="Row" unique_id=1177470890]
+layout_mode = 2
+tooltip_text = "Faster (2)"
+focus_mode = 0
+text = "▶▶"
+
+[node name="Fastest" type="Button" parent="Row" unique_id=793090520]
+layout_mode = 2
+tooltip_text = "Fastest (3)"
+focus_mode = 0
+text = "▶▶▶"
+
+[node name="Clock" type="Label" parent="." unique_id=1766521787]
+offset_left = 10.0
+offset_top = 44.0
+offset_right = 50.0
+offset_bottom = 67.0

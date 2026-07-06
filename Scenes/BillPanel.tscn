@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cw0t4dfv1g6nb"]
+
+[ext_resource type="Script" uid="uid://dkohp34ufruiv" path="res://Scripts/View/BillPanel.cs" id="1_fsmpp"]
+[ext_resource type="PackedScene" uid="uid://dalldhawurm46" path="res://Scenes/BillRow.tscn" id="2_aqjmw"]
+
+[node name="BillPanel" type="CanvasLayer" unique_id=1595494458 node_paths=PackedStringArray("Root", "Box")]
+script = ExtResource("1_fsmpp")
+Root = NodePath("Root")
+Box = NodePath("Root/Box")
+RowScene = ExtResource("2_aqjmw")
+
+[node name="Root" type="PanelContainer" parent="." unique_id=532294000]
+visible = false
+offset_left = 10.0
+offset_top = 200.0
+offset_right = 250.0
+offset_bottom = 280.0
+
+[node name="Box" type="VBoxContainer" parent="Root" unique_id=647101802]
+layout_mode = 2

@@ -102,21 +102,14 @@ public partial class Main : Node2D
         _tick.Tick += () => Game.Map.Tick();
         AddChild(_tick);
 
-        var timeBar = new TimeControlBar();
+        var timeBar = GD.Load<PackedScene>("res://Scenes/TimeControlBar.tscn").Instantiate<TimeControlBar>();
         timeBar.Init(_tick);
         AddChild(timeBar);
 
-        var needsPanel = new NeedsPanel();
-        AddChild(needsPanel);
-
-        var skillsPanel = new SkillsPanel();
-        AddChild(skillsPanel);
-
-        var billPanel = new BillPanel();
-        AddChild(billPanel);
-
-        var buildMenu = GD.Load<PackedScene>("res://Scenes/BuildMenu.tscn").Instantiate();
-        AddChild(buildMenu);
+        AddChild(GD.Load<PackedScene>("res://Scenes/NeedsPanel.tscn").Instantiate());
+        AddChild(GD.Load<PackedScene>("res://Scenes/SkillsPanel.tscn").Instantiate());
+        AddChild(GD.Load<PackedScene>("res://Scenes/BillPanel.tscn").Instantiate());
+        AddChild(GD.Load<PackedScene>("res://Scenes/BuildMenu.tscn").Instantiate());
 
         AddChild(new DebugOverlay());
 

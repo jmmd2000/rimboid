@@ -1,14 +1,15 @@
-using System;
 using Godot;
 
 ///<summary>On-screen time controls and their keyboard shortcuts.</summary>
 public partial class TimeControlBar : CanvasLayer
 {
-    TickManager _tick;
+    [Export] public Button Pause;
+    [Export] public Button Fast;
+    [Export] public Button Faster;
+    [Export] public Button Fastest;
+    [Export] public Label Clock;
 
-    Button _pauseButton;
-    Button _fast, _faster, _fastest;
-    Label _clock;
+    TickManager _tick;
 
     /// <summary>Binds the bar to the tick manager it drives. Call before adding to the tree.</summary>
     /// <param name="tick">The tick manager to control.</param>
@@ -16,29 +17,23 @@ public partial class TimeControlBar : CanvasLayer
 
     public override void _Ready()
     {
-        var row = new HBoxContainer { Position = new Vector2(10, 10) };
-        AddChild(row);
-
-        _pauseButton = AddButton(row, "||", "Pause / play (Space)", () => _tick.TogglePause());
-        _fast = AddButton(row, "\u25B6", "Fast (1)", () => _tick.SetSpeed(1));
-        _faster = AddButton(row, "\u25B6\u25B6", "Faster (2)", () => _tick.SetSpeed(3));
-        _fastest = AddButton(row, "\u25B6\u25B6\u25B6", "Fastest (3)", () => _tick.SetSpeed(6));
-
-        _clock = new Label { Position = new Vector2(10, 44) };
-        AddChild(_clock);
+        Pause.Pressed += () => _tick.TogglePause();
+        Fast.Pressed += () => _tick.SetSpeed(1);
+        Faster.Pressed += () => _tick.SetSpeed(3);
+        Fastest.Pressed += () => _tick.SetSpeed(6);
     }
 
     public override void _Process(double delta)
     {
         if (_tick == null) return;
 
-        _pauseButton.Text = _tick.SpeedMultiplier == 0 ? "\u25B6" : "||";
+        Pause.Text = _tick.SpeedMultiplier == 0 ? "\u25B6" : "||";
 
-        Highlight(_fast, _tick.SpeedMultiplier == 1);
-        Highlight(_faster, _tick.SpeedMultiplier == 3);
-        Highlight(_fastest, _tick.SpeedMultiplier == 6);
+        Highlight(Fast, _tick.SpeedMultiplier == 1);
+        Highlight(Faster, _tick.SpeedMultiplier == 3);
+        Highlight(Fastest, _tick.SpeedMultiplier == 6);
 
-        _clock.Text = $"Day {GameTime.Day} - {GameTime.HourOfDay:00}:{GameTime.MinuteOfHour:00}";
+        Clock.Text = $"Day {GameTime.Day} - {GameTime.HourOfDay:00}:{GameTime.MinuteOfHour:00}";
     }
 
     public override void _UnhandledInput(InputEvent e)
@@ -54,20 +49,6 @@ public partial class TimeControlBar : CanvasLayer
             case Key.Key9: _tick.SetSpeed(25); break;
             case Key.Period: if (_tick.SpeedMultiplier == 0) _tick.DoSingleTick(); break;
         }
-    }
-
-    Button AddButton(HBoxContainer row, string text, string tooltip, Action onPressed)
-    {
-        var b = new Button
-        {
-            Text = text,
-            TooltipText = tooltip,
-            // don't let the button capture Space/Enter
-            FocusMode = Control.FocusModeEnum.None,
-        };
-        b.Pressed += () => onPressed();
-        row.AddChild(b);
-        return b;
     }
 
     static void Highlight(Button b, bool active) => b.Modulate = active ? Colors.Yellow : Colors.White;

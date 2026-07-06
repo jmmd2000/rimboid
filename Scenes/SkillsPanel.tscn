@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://drun6va672yvr"]
+
+[ext_resource type="Script" uid="uid://w6dbd327s3y2" path="res://Scripts/View/SkillsPanel.cs" id="1_hsd26"]
+[ext_resource type="PackedScene" uid="uid://cik6kqvlg2qmi" path="res://Scenes/LabelledBar.tscn" id="2_74hof"]
+
+[node name="SkillsPanel" type="CanvasLayer" unique_id=1713119577 node_paths=PackedStringArray("Box")]
+script = ExtResource("1_hsd26")
+Box = NodePath("Box")
+RowScene = ExtResource("2_74hof")
+
+[node name="Box" type="VBoxContainer" parent="." unique_id=1490941614]
+offset_left = 10.0
+offset_top = 200.0
+offset_right = 50.0
+offset_bottom = 240.0

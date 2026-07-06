@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://cik6kqvlg2qmi"]
+
+[ext_resource type="Script" uid="uid://cnxfogl0dpwxv" path="res://Scripts/View/LabelledBar.cs" id="1_y6fvy"]
+
+[node name="LabelledBar" type="VBoxContainer" unique_id=436568839 node_paths=PackedStringArray("Caption", "Bar")]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_y6fvy")
+Caption = NodePath("Caption")
+Bar = NodePath("Bar")
+
+[node name="Caption" type="Label" parent="." unique_id=1251166652]
+layout_mode = 2
+
+[node name="Bar" type="ProgressBar" parent="." unique_id=534294151]
+custom_minimum_size = Vector2(120, 14)
+layout_mode = 2
+max_value = 1.0
+show_percentage = false

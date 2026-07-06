@@ -1,0 +1,39 @@
+[gd_scene format=3 uid="uid://dalldhawurm46"]
+
+[ext_resource type="Script" uid="uid://bxcekwdq0hlrk" path="res://Scripts/View/BillRow.cs" id="1_gj7ym"]
+
+[node name="BillRow" type="HBoxContainer" unique_id=1334401432 node_paths=PackedStringArray("Caption", "CountControls", "Count", "Minus", "Plus", "Delete", "Mode")]
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_gj7ym")
+Caption = NodePath("Caption")
+CountControls = NodePath("CountControls")
+Count = NodePath("CountControls/Count")
+Minus = NodePath("CountControls/Minus")
+Plus = NodePath("CountControls/Plus")
+Delete = NodePath("Delete")
+Mode = NodePath("Mode")
+
+[node name="Caption" type="Label" parent="." unique_id=820652637]
+layout_mode = 2
+
+[node name="CountControls" type="HBoxContainer" parent="." unique_id=2068520332]
+layout_mode = 2
+
+[node name="Minus" type="Button" parent="CountControls" unique_id=1094160743]
+layout_mode = 2
+text = "-"
+
+[node name="Count" type="Label" parent="CountControls" unique_id=168030785]
+layout_mode = 2
+
+[node name="Plus" type="Button" parent="CountControls" unique_id=1856863635]
+layout_mode = 2
+text = "+"
+
+[node name="Delete" type="Button" parent="." unique_id=819386410]
+layout_mode = 2
+text = "x"
+
+[node name="Mode" type="Button" parent="." unique_id=744604714]
+layout_mode = 2
