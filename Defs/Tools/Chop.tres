@@ -1,9 +1,15 @@
 [gd_resource type="Resource" script_class="ToolDef" format=3 uid="uid://mkosr4omum5"]
 
 [ext_resource type="Script" uid="uid://d162lhnn3dfxr" path="res://Scripts/Defs/ToolDef.cs" id="1_unmum"]
+[ext_resource type="Texture2D" uid="uid://bqxu8tou755i3" path="res://Assets/UI/designations.png" id="1_w1frn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rigwh"]
+atlas = ExtResource("1_w1frn")
+region = Rect2(32, 0, 16, 16)
 
 [resource]
 script = ExtResource("1_unmum")
+Icon = SubResource("AtlasTexture_rigwh")
 Shortcut = 67
 Order = 2
 DefName = "Chop"

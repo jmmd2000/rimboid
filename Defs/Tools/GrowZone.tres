@@ -1,10 +1,12 @@
 [gd_resource type="Resource" script_class="ToolDef" format=3 uid="uid://t5ghgcuepsj2"]
 
 [ext_resource type="Script" uid="uid://d162lhnn3dfxr" path="res://Scripts/Defs/ToolDef.cs" id="1_fdfw0"]
+[ext_resource type="Texture2D" uid="uid://hrjp4uccuncc" path="res://Assets/UI/grow_zone.png" id="1_l0xfn"]
 
 [resource]
 script = ExtResource("1_fdfw0")
 Category = 1
+Icon = ExtResource("1_l0xfn")
 Shortcut = 71
 Order = 1
 DefName = "GrowZone"

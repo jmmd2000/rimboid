@@ -1,9 +1,15 @@
 [gd_resource type="Resource" script_class="ToolDef" format=3 uid="uid://ddqvaqtki4ac"]
 
+[ext_resource type="Texture2D" uid="uid://bqxu8tou755i3" path="res://Assets/UI/designations.png" id="1_275bn"]
 [ext_resource type="Script" uid="uid://d162lhnn3dfxr" path="res://Scripts/Defs/ToolDef.cs" id="1_cq2hv"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_336vb"]
+atlas = ExtResource("1_275bn")
+region = Rect2(16, 0, 16, 16)
 
 [resource]
 script = ExtResource("1_cq2hv")
+Icon = SubResource("AtlasTexture_336vb")
 Shortcut = 72
 Order = 1
 DefName = "Harvest"

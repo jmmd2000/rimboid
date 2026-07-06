@@ -1,10 +1,12 @@
 [gd_resource type="Resource" script_class="ToolDef" format=3 uid="uid://b0kor0iceqvgh"]
 
 [ext_resource type="Script" uid="uid://d162lhnn3dfxr" path="res://Scripts/Defs/ToolDef.cs" id="1_fcld4"]
+[ext_resource type="Texture2D" uid="uid://bn2k8vxjm05cd" path="res://Assets/UI/stockpile.png" id="1_om6ut"]
 
 [resource]
 script = ExtResource("1_fcld4")
 Category = 1
+Icon = ExtResource("1_om6ut")
 Shortcut = 83
 DefName = "Stockpile"
 Label = "Stockpile"
