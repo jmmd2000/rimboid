@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dalldhawurm46"]
 
-[ext_resource type="Script" uid="uid://bxcekwdq0hlrk" path="res://Scripts/View/BillRow.cs" id="1_gj7ym"]
+[ext_resource type="Script" uid="uid://bxcekwdq0hlrk" path="res://Scripts/View/UI/BillRow.cs" id="1_gj7ym"]
 
 [node name="BillRow" type="HBoxContainer" unique_id=1334401432 node_paths=PackedStringArray("Caption", "CountControls", "Count", "Minus", "Plus", "Delete", "Mode")]
 offset_right = 40.0

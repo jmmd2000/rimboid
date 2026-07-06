@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://k2p2ayuhhbn1"]
 
-[ext_resource type="Script" uid="uid://ci2ccsng3ltkh" path="res://Scripts/View/BuildMenu.cs" id="1_5m2dh"]
+[ext_resource type="Script" uid="uid://ci2ccsng3ltkh" path="res://Scripts/View/UI/BuildMenu.cs" id="1_5m2dh"]
 
 [node name="BuildMenu" type="CanvasLayer" unique_id=1491718542 node_paths=PackedStringArray("ButtonBar")]
 offset = Vector2(10, -10)

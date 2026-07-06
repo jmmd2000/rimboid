@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cw0t4dfv1g6nb"]
 
-[ext_resource type="Script" uid="uid://dkohp34ufruiv" path="res://Scripts/View/BillPanel.cs" id="1_fsmpp"]
+[ext_resource type="Script" uid="uid://dkohp34ufruiv" path="res://Scripts/View/UI/BillPanel.cs" id="1_fsmpp"]
 [ext_resource type="PackedScene" uid="uid://dalldhawurm46" path="res://Scenes/BillRow.tscn" id="2_aqjmw"]
 
 [node name="BillPanel" type="CanvasLayer" unique_id=1595494458 node_paths=PackedStringArray("Root", "Box")]

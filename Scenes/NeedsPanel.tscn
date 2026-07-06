@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://b0n1yjc63om45"]
 
-[ext_resource type="Script" uid="uid://xo23kn7ohn11" path="res://Scripts/View/NeedsPanel.cs" id="1_d7qb2"]
+[ext_resource type="Script" uid="uid://xo23kn7ohn11" path="res://Scripts/View/UI/NeedsPanel.cs" id="1_d7qb2"]
 [ext_resource type="PackedScene" uid="uid://cik6kqvlg2qmi" path="res://Scenes/LabelledBar.tscn" id="2_srmgv"]
 
 [node name="NeedsPanel" type="CanvasLayer" unique_id=2096982946 node_paths=PackedStringArray("Box", "Rest", "Food")]

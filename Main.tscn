@@ -2,8 +2,8 @@
 
 [ext_resource type="Script" uid="uid://bc0jbbmpihq6e" path="res://Main.cs" id="1_glv2v"]
 [ext_resource type="Texture2D" uid="uid://cu2aq6bfdmq47" path="res://Assets/Terrain/terrain.png" id="2_cm0pq"]
-[ext_resource type="Script" uid="uid://bj1rcpab6f1hf" path="res://Scripts/View/MapView.cs" id="3_r0du0"]
-[ext_resource type="Script" uid="uid://bjrgtn65xi8eu" path="res://Scripts/View/CameraController.cs" id="4_cm0pq"]
+[ext_resource type="Script" uid="uid://bj1rcpab6f1hf" path="res://Scripts/View/Entities/MapView.cs" id="3_r0du0"]
+[ext_resource type="Script" uid="uid://bjrgtn65xi8eu" path="res://Scripts/View/Input/CameraController.cs" id="4_cm0pq"]
 [ext_resource type="Texture2D" uid="uid://bn2k8vxjm05cd" path="res://Assets/UI/stockpile.png" id="5_3dxm6"]
 [ext_resource type="Texture2D" uid="uid://bqxu8tou755i3" path="res://Assets/UI/designations.png" id="5_fos0i"]
 [ext_resource type="Texture2D" uid="uid://hrjp4uccuncc" path="res://Assets/UI/grow_zone.png" id="6_lgr22"]

@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://ccvibbxgf1opg"]
 
-[ext_resource type="Script" uid="uid://depg8i58ppy5v" path="res://Scripts/View/TimeControlBar.cs" id="1_aaix0"]
+[ext_resource type="Script" uid="uid://depg8i58ppy5v" path="res://Scripts/View/UI/TimeControlBar.cs" id="1_aaix0"]
 
 [node name="TimeControlBar" type="CanvasLayer" unique_id=184477033 node_paths=PackedStringArray("Pause", "Fast", "Faster", "Fastest", "Clock")]
 script = ExtResource("1_aaix0")

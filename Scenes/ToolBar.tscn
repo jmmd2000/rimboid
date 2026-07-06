@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://dr8rcd1wiphvh"]
 
-[ext_resource type="Script" uid="uid://uujk2wmn2cc8" path="res://Scripts/View/ToolBar.cs" id="1_l37fi"]
+[ext_resource type="Script" uid="uid://uujk2wmn2cc8" path="res://Scripts/View/UI/ToolBar.cs" id="1_l37fi"]
 
 [node name="ToolBar" type="CanvasLayer" unique_id=1208970663 node_paths=PackedStringArray("OrdersBar", "ZonesBar")]
 script = ExtResource("1_l37fi")
