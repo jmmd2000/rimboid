@@ -1,0 +1,10 @@
+[gd_resource type="Resource" script_class="ToolDef" format=3 uid="uid://di2lml5aicgqy"]
+
+[ext_resource type="Script" uid="uid://d162lhnn3dfxr" path="res://Scripts/Defs/ToolDef.cs" id="1_5u8hr"]
+
+[resource]
+script = ExtResource("1_5u8hr")
+Shortcut = 77
+DefName = "Mine"
+Label = "Mine"
+metadata/_custom_type_script = "uid://d162lhnn3dfxr"

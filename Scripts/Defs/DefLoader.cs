@@ -29,6 +29,7 @@ public static class DefLoader
         LoadFolder<PlantDef>("res://Defs/Plants");
         LoadFolder<RecipeDef>("res://Defs/Recipes");
         LoadFolder<SkillDef>("res://Defs/Skills");
+        LoadFolder<ToolDef>("res://Defs/Tools");
 
         // these can be removed as the need for the DefOf files is dropped
         TerrainDefOf.Resolve();
@@ -37,5 +38,6 @@ public static class DefLoader
         PlantDefOf.Resolve();
         RecipeDefOf.Resolve();
         SkillDefOf.Resolve();
+        ToolDefOf.Resolve();
     }
 }

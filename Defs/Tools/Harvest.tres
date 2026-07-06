@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ToolDef" format=3 uid="uid://ddqvaqtki4ac"]
+
+[ext_resource type="Script" uid="uid://d162lhnn3dfxr" path="res://Scripts/Defs/ToolDef.cs" id="1_cq2hv"]
+
+[resource]
+script = ExtResource("1_cq2hv")
+Shortcut = 72
+Order = 1
+DefName = "Harvest"
+Label = "Harvest"
+metadata/_custom_type_script = "uid://d162lhnn3dfxr"

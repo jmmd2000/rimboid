@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ToolDef" format=3 uid="uid://b0kor0iceqvgh"]
+
+[ext_resource type="Script" uid="uid://d162lhnn3dfxr" path="res://Scripts/Defs/ToolDef.cs" id="1_fcld4"]
+
+[resource]
+script = ExtResource("1_fcld4")
+Category = 1
+Shortcut = 83
+DefName = "Stockpile"
+Label = "Stockpile"
+metadata/_custom_type_script = "uid://d162lhnn3dfxr"

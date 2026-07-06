@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="ToolDef" format=3 uid="uid://mkosr4omum5"]
+
+[ext_resource type="Script" uid="uid://d162lhnn3dfxr" path="res://Scripts/Defs/ToolDef.cs" id="1_unmum"]
+
+[resource]
+script = ExtResource("1_unmum")
+Shortcut = 67
+Order = 2
+DefName = "Chop"
+Label = "Chop"
+metadata/_custom_type_script = "uid://d162lhnn3dfxr"
