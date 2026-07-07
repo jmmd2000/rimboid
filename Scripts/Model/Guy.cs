@@ -113,7 +113,7 @@ public class Guy
         IsSleeping = false;
         if (dropCarry && Carrying != null)
         {
-            Game.Views.DropItems(Carrying.Def, Cell, Carrying.Count);
+            Game.Map.DropItems(Carrying.Def, Cell, Carrying.Count);
             Carrying = null;
         }
         _driver = null;

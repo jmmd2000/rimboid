@@ -33,23 +33,16 @@ public class JobDriver_Chop : JobDriver
                 if (plant.Def.HarvestItem != null)
                 {
                     var dropCell = Game.Map.FreeDropCell(job.TargetCell);
-                    Game.Views.DropItems(plant.Def.HarvestItem, dropCell, plant.Def.HarvestYield);
+                    Game.Map.DropItems(plant.Def.HarvestItem, dropCell, plant.Def.HarvestYield);
                 }
 
                 Game.Map.RemovePlant(plant);
-                if (plant.Def.Topples) Game.Views.ToppleAndRemovePlantView(plant);
-                else Game.Views.RemovePlantView(plant);
 
                 if (plant.Def.LeavesBehind != null)
-                {
-                    var stump = Game.Map.SpawnPlant(plant.Def.LeavesBehind, job.TargetCell);
-                    stump.DrawWidth = plant.DrawWidth;
-                    Game.Views.SpawnPlantView(stump);
-                }
+                    Game.Map.SpawnPlant(plant.Def.LeavesBehind, job.TargetCell, drawWidth: plant.DrawWidth);
 
                 Game.Map.Designations.Remove(DesignationType.Chop, job.TargetCell);
                 Game.Pathing.RefreshCell(Game.Map, job.TargetCell);
-                Game.MapView.ClearDesignation(job.TargetCell);
             },
             IsComplete = () => true,
         };

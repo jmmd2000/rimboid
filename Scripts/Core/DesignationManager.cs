@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Godot;
@@ -10,6 +11,12 @@ public class DesignationManager
 {
     readonly List<Designation> _list = new();
 
+    /// <summary>Raised when a designation is placed, so the view can mark the overlay.</summary>
+    public event Action<DesignationType, Vector2I> Added;
+
+    /// <summary>Raised when a designation is cleared at a cell, so the view can erase the overlay.</summary>
+    public event Action<Vector2I> Removed;
+
     /// <summary>Adds a designation if one doesn't already exist at that cell.</summary>
     /// <param name="type">The designation type.</param>
     /// <param name="cell">The map cell to designate.</param>
@@ -17,12 +24,16 @@ public class DesignationManager
     {
         if (Has(type, cell)) return;
         _list.Add(new Designation { Type = type, Cell = cell });
+        Added?.Invoke(type, cell);
     }
 
     /// <summary>Removes all designations of the given type at the cell.</summary>
     /// <param name="type">The designation type.</param>
     /// <param name="cell">The map cell to clear.</param>
-    public void Remove(DesignationType type, Vector2I cell) => _list.RemoveAll(d => d.Type == type && d.Cell == cell);
+    public void Remove(DesignationType type, Vector2I cell)
+    {
+        if (_list.RemoveAll(d => d.Type == type && d.Cell == cell) > 0) Removed?.Invoke(cell);
+    }
 
     /// <summary>Checks whether a designation of the given type exists at the cell.</summary>
     /// <param name="type">The designation type.</param>
@@ -111,6 +122,7 @@ public class DesignationManager
             return true;
         });
 
+        foreach (var cell in removed) Removed?.Invoke(cell);
         return removed;
     }
 }

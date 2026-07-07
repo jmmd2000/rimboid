@@ -47,7 +47,7 @@ public class JobDriver_Harvest : JobDriver
                 if (plant.Def.HarvestItem != null)
                 {
                     var dropCell = Game.Map.FreeDropCell(job.TargetCell);
-                    Game.Views.DropItems(plant.Def.HarvestItem, dropCell, plant.Def.HarvestYield);
+                    Game.Map.DropItems(plant.Def.HarvestItem, dropCell, plant.Def.HarvestYield);
                 }
 
                 if (plant.Def.RegrowDays > 0)
@@ -58,12 +58,10 @@ public class JobDriver_Harvest : JobDriver
                 else
                 {
                     Game.Map.RemovePlant(plant);
-                    Game.Views.RemovePlantView(plant);
                     Game.Pathing.RefreshCell(Game.Map, job.TargetCell);
                 }
 
                 Game.Map.Designations.Remove(DesignationType.Harvest, job.TargetCell);
-                Game.MapView.ClearDesignation(job.TargetCell);
             },
             IsComplete = () => true,
         };

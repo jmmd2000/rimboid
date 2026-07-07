@@ -12,6 +12,16 @@ public partial class MapView : Node2D
 
     GameMap _map;
 
+    /// <summary>Subscribes the view to the map's terrain and designation events. Call once, before the map is populated.</summary>
+    /// <param name="map">The game map to observe.</param>
+    public void Bind(GameMap map)
+    {
+        _map = map;
+        map.TerrainChanged += PaintCell;
+        map.Designations.Added += MarkDesignation;
+        map.Designations.Removed += ClearDesignation;
+    }
+
     /// <summary>Repaints every cell on the map.</summary>
     /// <param name="map">The game map to read terrain from.</param>
     public void PaintAll(GameMap map)

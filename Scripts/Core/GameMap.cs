@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -24,6 +25,16 @@ public class GameMap
     readonly Dictionary<Vector2I, Frame> _frameByCell = new();
     public IReadOnlyList<Frame> Frames => _frames;
 
+    public event Action<Item> ItemSpawned;
+    public event Action<Item> ItemRemoved;
+    public event Action<Plant> PlantSpawned;
+    public event Action<Plant> PlantRemoved;
+    public event Action<Frame> FrameAdded;
+    public event Action<Frame> FrameRemoved;
+    public event Action<Building> BuildingSpawned;
+    public event Action<Vector2I> TerrainChanged;
+    public event Action<Guy> GuyAdded;
+
 
     /// <summary>Creates a new map with the given dimensions.</summary>
     /// <param name="width">Map width in cells.</param>
@@ -48,6 +59,18 @@ public class GameMap
         Stats.Gauge("loose items", _looseItems.Count);
         Stats.Gauge("frames", _frames.Count);
         Stats.Gauge("buildings", Buildings.Count);
+    }
+
+    // ---------- terrain ----------
+
+    /// <summary>Swaps a cell's terrain, refreshes pathing, and raises TerrainChanged so the view repaints.</summary>
+    /// <param name="cell">The cell to change.</param>
+    /// <param name="def">The new terrain def.</param>
+    public void SetTerrain(Vector2I cell, TerrainDef def)
+    {
+        Terrain[cell.X, cell.Y] = def;
+        Game.Pathing.RefreshCell(this, cell);
+        TerrainChanged?.Invoke(cell);
     }
 
     // ---------- items ----------
@@ -77,6 +100,7 @@ public class GameMap
         var item = new Item { Def = def, Cell = cell, Count = initial };
         _looseItems.Add(item);
         IndexItem(item);
+        ItemSpawned?.Invoke(item);
         return (item, true, count - initial);
     }
 
@@ -117,6 +141,7 @@ public class GameMap
             list.Remove(item);
             if (list.Count == 0) _itemsByCell.Remove(item.Cell);
         }
+        ItemRemoved?.Invoke(item);
     }
 
     /// <summary>Returns the item at a cell, or null if none. Optionally filters to one def.</summary>
@@ -170,6 +195,7 @@ public class GameMap
     {
         _frames.Add(frame);
         foreach (var c in frame.OccupiedCells) _frameByCell[c] = frame;
+        FrameAdded?.Invoke(frame);
     }
 
     /// <summary>Removes a construction frame (cancelled or finished).</summary>
@@ -177,6 +203,7 @@ public class GameMap
     {
         _frames.Remove(frame);
         foreach (var c in frame.OccupiedCells) _frameByCell.Remove(c);
+        FrameRemoved?.Invoke(frame);
     }
 
     /// <summary>Returns the construction frame at a cell, or null if none.</summary>
@@ -206,26 +233,44 @@ public class GameMap
         var building = new Building { Def = def, Cell = cell, Rotation = rotation };
         if (def.WorkBench != null) building.WorkBench = new WorkBench();
         foreach (var c in building.OccupiedCells) Buildings[c] = building;
+        BuildingSpawned?.Invoke(building);
         return building;
     }
 
     // ---------- plants ----------
 
     /// <summary>Spawns a plant at a cell (rolling its draw size) and returns it.</summary>
-    public Plant SpawnPlant(PlantDef def, Vector2I cell, bool sown = false)
+    /// <param name="drawWidth">Optional draw-width override (e.g. a stump inheriting a felled tree's girth), applied before the view is made.</param>
+    public Plant SpawnPlant(PlantDef def, Vector2I cell, bool sown = false, float? drawWidth = null)
     {
         var plant = Plant.Spawn(def, cell);
+        if (drawWidth.HasValue) plant.DrawWidth = drawWidth.Value;
         if (sown) plant.StartGrowing(def.GrowDays);
         Plants[cell] = plant;
+        PlantSpawned?.Invoke(plant);
         return plant;
     }
 
     /// <summary>Removes a plant (harvested or cleared).</summary>
-    public void RemovePlant(Plant plant) => Plants.Remove(plant.Cell);
+    public void RemovePlant(Plant plant)
+    {
+        Plants.Remove(plant.Cell);
+        PlantRemoved?.Invoke(plant);
+    }
 
     /// <summary>Returns the plant at a cell, or null if none.</summary>
     public Plant PlantAt(Vector2I cell) => Plants.GetValueOrDefault(cell);
 
     /// <summary>True if a plant occupies the cell.</summary>
     public bool HasPlant(Vector2I cell) => Plants.ContainsKey(cell);
+
+    // ---------- guys ----------
+
+    /// <summary>Adds a colonist to the map and raises GuyAdded so the view can spawn its nodes.</summary>
+    /// <param name="guy">The guy to add.</param>
+    public void AddGuy(Guy guy)
+    {
+        Guys.Add(guy);
+        GuyAdded?.Invoke(guy);
+    }
 }

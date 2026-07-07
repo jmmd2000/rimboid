@@ -39,15 +39,11 @@ public class JobDriver_Mine : JobDriver
             {
                 if (terrain.MinedItem != null)
                 {
-                    var (item, isNew, _) = Game.Map.SpawnItem(terrain.MinedItem, job.TargetCell, terrain.MineYield);
-                    if (isNew) Game.Views.SpawnItemView(item);
+                    Game.Map.SpawnItem(terrain.MinedItem, job.TargetCell, terrain.MineYield);
                 }
 
-                Game.Map.Terrain[job.TargetCell.X, job.TargetCell.Y] = terrain.TerrainAfterMined ?? TerrainDefOf.Dirt;
+                Game.Map.SetTerrain(job.TargetCell, terrain.TerrainAfterMined ?? TerrainDefOf.Dirt);
                 Game.Map.Designations.Remove(DesignationType.Mine, job.TargetCell);
-                Game.Pathing.RefreshCell(Game.Map, job.TargetCell);
-                Game.MapView.PaintCell(job.TargetCell);
-                Game.MapView.ClearDesignation(job.TargetCell);
             },
             IsComplete = () => true,
         };

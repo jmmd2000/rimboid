@@ -26,7 +26,6 @@ public class BuildPlacer
             var frame = Game.Map.FrameAt(cell);
             if (frame == null) continue;
             Game.Map.RemoveFrame(frame);
-            Game.Views.RemoveFrameView(frame);
         }
     }
 
@@ -67,6 +66,5 @@ public class BuildPlacer
         if (!CanPlace(def, origin)) return;
         var frame = new Frame { Def = def, Cell = origin, Rotation = _rotation };
         Game.Map.AddFrame(frame);
-        Game.Views.SpawnFrameView(frame);
     }
 }

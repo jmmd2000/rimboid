@@ -54,6 +54,14 @@ public partial class Main : Node2D
     {
         _map = new GameMap(MapWidth, MapHeight);
         DefLoader.LoadAll();
+
+        // the view subscribes to the model before world-gen, so generated plants spawn their views via events
+        var views = new ViewManager();
+        AddChild(views);
+        Game.Views = views;
+        views.Bind(_map);
+        MapView.Bind(_map);
+
         WorldGenerator.Generate(_map, this);
         MapView.PaintAll(_map);
 
@@ -64,13 +72,6 @@ public partial class Main : Node2D
         Game.Pathing = _pathing;
         Game.MapView = MapView;
 
-        var views = new ViewManager();
-        AddChild(views);
-        Game.Views = views;
-
-        foreach (var plant in Game.Map.Plants.Values)
-            Game.Views.SpawnPlantView(plant);
-
         _stockpile = Game.Map.Stockpiles.Create();
 
         _growZone = Game.Map.GrowZones.Create();
@@ -80,7 +81,6 @@ public partial class Main : Node2D
 
         var stoveCell = FindFootprintCell(BuildingDefOf.Stove.Size, taken);
         var stove = Game.Map.SpawnBuilding(BuildingDefOf.Stove, stoveCell);
-        Game.Views.SpawnBuildingView(stove);
         foreach (var c in stove.OccupiedCells)
         {
             taken.Add(c);
@@ -91,8 +91,7 @@ public partial class Main : Node2D
         {
             var guy = new Guy { Position = FindWalkableCell(taken) };
             taken.Add(guy.Cell);
-            Game.Map.Guys.Add(guy);
-            Game.Views.SpawnGuyViews(guy);
+            Game.Map.AddGuy(guy);
         }
 
         Game.SelectedGuy = Game.Map.Guys[0];

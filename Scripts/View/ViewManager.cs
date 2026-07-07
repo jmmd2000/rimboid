@@ -11,6 +11,19 @@ public partial class ViewManager : Node2D
 
     public override void _Ready() => YSortEnabled = true;
 
+    /// <summary>Subscribes the view to the model's change events. Call once, before the map is populated.</summary>
+    public void Bind(GameMap map)
+    {
+        map.ItemSpawned += SpawnItemView;
+        map.ItemRemoved += RemoveItemView;
+        map.PlantSpawned += SpawnPlantView;
+        map.PlantRemoved += OnPlantRemoved;
+        map.FrameAdded += SpawnFrameView;
+        map.FrameRemoved += RemoveFrameView;
+        map.BuildingSpawned += SpawnBuildingView;
+        map.GuyAdded += SpawnGuyViews;
+    }
+
     // ---------- items ----------
 
     /// <summary>Creates a visual node for a loose item on the map.</summary>
@@ -32,15 +45,6 @@ public partial class ViewManager : Node2D
         {
             view.QueueFree();
             _itemViews.Remove(item);
-        }
-    }
-
-    /// <summary>Drops items on the map (capping and spilling as needed) and creates their views.</summary>
-    public void DropItems(ItemDef def, Vector2I cell, int count)
-    {
-        foreach (var pile in Game.Map.DropItems(def, cell, count))
-        {
-            SpawnItemView(pile);
         }
     }
 
@@ -138,4 +142,10 @@ public partial class ViewManager : Node2D
         }
     }
 
+    /// <summary>Handles a removed plant, topples the view if the def topples, otherwise a plain remove.</summary>
+    void OnPlantRemoved(Plant plant)
+    {
+        if (plant.Def.Topples) ToppleAndRemovePlantView(plant);
+        else RemovePlantView(plant);
+    }
 }
