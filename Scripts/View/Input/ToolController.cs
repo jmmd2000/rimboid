@@ -11,13 +11,13 @@ public partial class ToolController : Node2D
     TileMapLayer _terrainLayer;
     SelectionBox _selectionBox;
 
-    int _buildRotation;   // 0-3, the pending placement orientation
-
     Vector2I? _dragStart;
     MouseButton _dragButton;
 
     Dictionary<ToolDef, Designator> _designators;  // the behaviour for each tool
     Dictionary<Key, ToolDef> _toolKeys;
+
+    readonly BuildPlacer _build = new(); // building placement (rotation, ghost, place/cancel)
 
     /// <summary>Binds the controller to what it acts on. Call before adding to the tree.</summary>
     /// <param name="stockpile">The stockpile the stockpile tool edits.</param>
@@ -52,7 +52,7 @@ public partial class ToolController : Node2D
     {
         bool show = Game.SelectedBuildable != null;
         if (show || _ghostShown) QueueRedraw();
-        if (!show && _ghostShown) _buildRotation = 0;
+        if (!show && _ghostShown) _build.Reset();
         _ghostShown = show;
     }
 
@@ -63,17 +63,7 @@ public partial class ToolController : Node2D
         var origin = CellUnderMouse();
         if (!Game.Map.InBounds(origin)) return;
 
-        int t = Game.TileSize;
-        var tint = CanPlaceBuilding(def, origin)
-            ? new Color(0.4f, 1f, 0.4f, 0.55f)
-            : new Color(1f, 0.4f, 0.4f, 0.55f);
-
-        var pivot = new Vector2(origin.X * t + t / 2f, origin.Y * t + t / 2f);
-        DrawSetTransform(pivot, _buildRotation * Mathf.Pi / 2f, Vector2.One);
-        var rect = new Rect2(-t / 2f, -t / 2f, def.Size.X * t, def.Size.Y * t);
-        if (def.Texture != null) DrawTextureRect(def.Texture, rect, tile: false, modulate: tint);
-        else DrawRect(rect, tint);
-        DrawSetTransform(Vector2.Zero, 0, Vector2.One);
+        _build.DrawGhost(this, def, origin);
     }
 
     public override void _UnhandledInput(InputEvent e)
@@ -88,7 +78,7 @@ public partial class ToolController : Node2D
             }
             else if (key.Keycode == Key.R && Game.SelectedBuildable != null)
             {
-                _buildRotation = (_buildRotation + 1) % 4;
+                _build.Rotate();
             }
             else if (_toolKeys.TryGetValue(key.Keycode, out var tool))
             {
@@ -173,13 +163,13 @@ public partial class ToolController : Node2D
         }
     }
 
-    /// <summary>Applies a finished drag rectangle: build placement, or the active tools designator.</summary>
+    /// <summary>Applies a finished drag rectangle: build placement, or the active tool's designator.</summary>
     void ApplyDrag(Vector2I a, Vector2I b, MouseButton button)
     {
         if (Game.SelectedBuildable != null)
         {
-            if (button == MouseButton.Left) PlaceBuildableRectangle(a, b);
-            else CancelBuildableRectangle(a, b);
+            if (button == MouseButton.Left) _build.Place(Game.SelectedBuildable, a, b);
+            else _build.Cancel(a, b);
             return;
         }
 
@@ -191,48 +181,5 @@ public partial class ToolController : Node2D
             else designator.Cancel(cell);
         }
         designator.OnDragFinished();
-    }
-
-    // ---------- building ----------
-
-    /// <summary>Places a buildable frame on every valid cell in the rectangle.</summary>
-    void PlaceBuildableRectangle(Vector2I a, Vector2I b)
-    {
-        var def = Game.SelectedBuildable;
-        if (def.Size != Vector2I.One) { TryPlaceFrame(def, b); return; } // benches: one at the cursor
-        foreach (var cell in Grid.CellsInRect(a, b)) TryPlaceFrame(def, cell); // walls: fill the line
-    }
-
-    void TryPlaceFrame(BuildingDef def, Vector2I origin)
-    {
-        if (!CanPlaceBuilding(def, origin)) return;
-        var frame = new Frame { Def = def, Cell = origin, Rotation = _buildRotation };
-        Game.Map.AddFrame(frame);
-        Game.Views.SpawnFrameView(frame);
-    }
-
-    /// <summary>True if a blueprint can be placed on the cell.</summary>
-    bool CanPlaceBuilding(BuildingDef def, Vector2I origin)
-    {
-        foreach (var cell in Footprint.Cells(origin, def.Size, _buildRotation))
-        {
-            if (!Game.Map.InBounds(cell)) return false;
-            if (!Game.Map.Terrain[cell.X, cell.Y].Walkable) return false;
-            if (Game.Map.HasPlant(cell) || Game.Map.HasFrame(cell)) return false;
-            if (Game.Map.BuildingAt(cell) != null) return false;
-        }
-        return true;
-    }
-
-    /// <summary>Removes any wall blueprint frames in the rectangle.</summary>
-    void CancelBuildableRectangle(Vector2I a, Vector2I b)
-    {
-        foreach (var cell in Grid.CellsInRect(a, b))
-        {
-            var frame = Game.Map.FrameAt(cell);
-            if (frame == null) continue;
-            Game.Map.RemoveFrame(frame);
-            Game.Views.RemoveFrameView(frame);
-        }
     }
 }
