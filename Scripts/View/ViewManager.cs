@@ -18,6 +18,9 @@ public partial class ViewManager : Node2D
         map.ItemRemoved += RemoveItemView;
         map.PlantSpawned += SpawnPlantView;
         map.PlantRemoved += OnPlantRemoved;
+        map.FrameAdded += SpawnFrameView;
+        map.FrameRemoved += RemoveFrameView;
+        map.BuildingSpawned += SpawnBuildingView;
     }
 
     // ---------- items ----------

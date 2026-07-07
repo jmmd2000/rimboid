@@ -80,7 +80,6 @@ public partial class Main : Node2D
 
         var stoveCell = FindFootprintCell(BuildingDefOf.Stove.Size, taken);
         var stove = Game.Map.SpawnBuilding(BuildingDefOf.Stove, stoveCell);
-        Game.Views.SpawnBuildingView(stove);
         foreach (var c in stove.OccupiedCells)
         {
             taken.Add(c);

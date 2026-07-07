@@ -47,8 +47,6 @@ public class JobDriver_Build : JobDriver
 
                 var building = Game.Map.SpawnBuilding(frame.Def, frame.Cell, frame.Rotation);
                 Game.Map.RemoveFrame(frame);
-                Game.Views.RemoveFrameView(frame);
-                Game.Views.SpawnBuildingView(building);
                 foreach (var c in building.OccupiedCells) Game.Pathing.RefreshCell(Game.Map, c);
             },
             IsComplete = () => true,

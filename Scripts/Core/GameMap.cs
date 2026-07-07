@@ -29,6 +29,9 @@ public class GameMap
     public event Action<Item> ItemRemoved;
     public event Action<Plant> PlantSpawned;
     public event Action<Plant> PlantRemoved;
+    public event Action<Frame> FrameAdded;
+    public event Action<Frame> FrameRemoved;
+    public event Action<Building> BuildingSpawned;
 
 
     /// <summary>Creates a new map with the given dimensions.</summary>
@@ -178,6 +181,7 @@ public class GameMap
     {
         _frames.Add(frame);
         foreach (var c in frame.OccupiedCells) _frameByCell[c] = frame;
+        FrameAdded?.Invoke(frame);
     }
 
     /// <summary>Removes a construction frame (cancelled or finished).</summary>
@@ -185,6 +189,7 @@ public class GameMap
     {
         _frames.Remove(frame);
         foreach (var c in frame.OccupiedCells) _frameByCell.Remove(c);
+        FrameRemoved?.Invoke(frame);
     }
 
     /// <summary>Returns the construction frame at a cell, or null if none.</summary>
@@ -214,6 +219,7 @@ public class GameMap
         var building = new Building { Def = def, Cell = cell, Rotation = rotation };
         if (def.WorkBench != null) building.WorkBench = new WorkBench();
         foreach (var c in building.OccupiedCells) Buildings[c] = building;
+        BuildingSpawned?.Invoke(building);
         return building;
     }
 
