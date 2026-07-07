@@ -131,6 +131,8 @@ public partial class ToolController : Node2D
             .FirstOrDefault();
     }
 
+    bool ShowSelectionBox => Game.SelectedBuildable == null || Game.SelectedBuildable.Size == Vector2I.One;
+
     /// <summary>Tracks a press/drag/release selection and updates the preview outline.</summary>
     void HandleDrag(InputEvent e)
     {
@@ -141,7 +143,7 @@ public partial class ToolController : Node2D
             {
                 _dragStart = Game.Map.InBounds(cell) ? cell : (Vector2I?)null;
                 _dragButton = mb.ButtonIndex;
-                if (_dragStart != null) _selectionBox.SetSelection(cell, cell);
+                if (_dragStart != null && ShowSelectionBox) _selectionBox.SetSelection(cell, cell);
             }
             else if (_dragStart != null && mb.ButtonIndex == _dragButton)
             {
@@ -156,7 +158,7 @@ public partial class ToolController : Node2D
         else if (e is InputEventMouseMotion && _dragStart != null)
         {
             Vector2I cell = CellUnderMouse();
-            if (Game.Map.InBounds(cell))
+            if (Game.Map.InBounds(cell) && ShowSelectionBox)
             {
                 _selectionBox.SetSelection(_dragStart.Value, cell);
             }
