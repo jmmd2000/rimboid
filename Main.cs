@@ -91,8 +91,7 @@ public partial class Main : Node2D
         {
             var guy = new Guy { Position = FindWalkableCell(taken) };
             taken.Add(guy.Cell);
-            Game.Map.Guys.Add(guy);
-            Game.Views.SpawnGuyViews(guy);
+            Game.Map.AddGuy(guy);
         }
 
         Game.SelectedGuy = Game.Map.Guys[0];

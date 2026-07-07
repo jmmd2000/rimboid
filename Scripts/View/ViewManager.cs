@@ -21,6 +21,7 @@ public partial class ViewManager : Node2D
         map.FrameAdded += SpawnFrameView;
         map.FrameRemoved += RemoveFrameView;
         map.BuildingSpawned += SpawnBuildingView;
+        map.GuyAdded += SpawnGuyViews;
     }
 
     // ---------- items ----------

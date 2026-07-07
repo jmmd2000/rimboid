@@ -33,6 +33,7 @@ public class GameMap
     public event Action<Frame> FrameRemoved;
     public event Action<Building> BuildingSpawned;
     public event Action<Vector2I> TerrainChanged;
+    public event Action<Guy> GuyAdded;
 
 
     /// <summary>Creates a new map with the given dimensions.</summary>
@@ -262,4 +263,14 @@ public class GameMap
 
     /// <summary>True if a plant occupies the cell.</summary>
     public bool HasPlant(Vector2I cell) => Plants.ContainsKey(cell);
+
+    // ---------- guys ----------
+
+    /// <summary>Adds a colonist to the map and raises GuyAdded so the view can spawn its nodes.</summary>
+    /// <param name="guy">The guy to add.</param>
+    public void AddGuy(Guy guy)
+    {
+        Guys.Add(guy);
+        GuyAdded?.Invoke(guy);
+    }
 }
