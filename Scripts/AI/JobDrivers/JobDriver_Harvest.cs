@@ -62,7 +62,6 @@ public class JobDriver_Harvest : JobDriver
                 }
 
                 Game.Map.Designations.Remove(DesignationType.Harvest, job.TargetCell);
-                Game.MapView.ClearDesignation(job.TargetCell);
             },
             IsComplete = () => true,
         };

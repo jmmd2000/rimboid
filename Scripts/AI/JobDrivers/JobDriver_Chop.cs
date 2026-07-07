@@ -43,7 +43,6 @@ public class JobDriver_Chop : JobDriver
 
                 Game.Map.Designations.Remove(DesignationType.Chop, job.TargetCell);
                 Game.Pathing.RefreshCell(Game.Map, job.TargetCell);
-                Game.MapView.ClearDesignation(job.TargetCell);
             },
             IsComplete = () => true,
         };

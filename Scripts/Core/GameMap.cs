@@ -32,6 +32,7 @@ public class GameMap
     public event Action<Frame> FrameAdded;
     public event Action<Frame> FrameRemoved;
     public event Action<Building> BuildingSpawned;
+    public event Action<Vector2I> TerrainChanged;
 
 
     /// <summary>Creates a new map with the given dimensions.</summary>
@@ -57,6 +58,18 @@ public class GameMap
         Stats.Gauge("loose items", _looseItems.Count);
         Stats.Gauge("frames", _frames.Count);
         Stats.Gauge("buildings", Buildings.Count);
+    }
+
+    // ---------- terrain ----------
+
+    /// <summary>Swaps a cell's terrain, refreshes pathing, and raises TerrainChanged so the view repaints.</summary>
+    /// <param name="cell">The cell to change.</param>
+    /// <param name="def">The new terrain def.</param>
+    public void SetTerrain(Vector2I cell, TerrainDef def)
+    {
+        Terrain[cell.X, cell.Y] = def;
+        Game.Pathing.RefreshCell(this, cell);
+        TerrainChanged?.Invoke(cell);
     }
 
     // ---------- items ----------

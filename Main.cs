@@ -60,6 +60,7 @@ public partial class Main : Node2D
         AddChild(views);
         Game.Views = views;
         views.Bind(_map);
+        MapView.Bind(_map);
 
         WorldGenerator.Generate(_map, this);
         MapView.PaintAll(_map);
