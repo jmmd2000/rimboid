@@ -98,7 +98,6 @@ public abstract class JobDriver
                     if (take >= source.Count)
                     {
                         Game.Map.RemoveItem(source);
-                        Game.Views.RemoveItemView(source);
                     }
                     else
                     {

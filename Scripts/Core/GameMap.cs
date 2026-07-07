@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -23,6 +24,9 @@ public class GameMap
     readonly List<Frame> _frames = new();
     readonly Dictionary<Vector2I, Frame> _frameByCell = new();
     public IReadOnlyList<Frame> Frames => _frames;
+
+    public event Action<Item> ItemSpawned;
+    public event Action<Item> ItemRemoved;
 
 
     /// <summary>Creates a new map with the given dimensions.</summary>
@@ -77,6 +81,7 @@ public class GameMap
         var item = new Item { Def = def, Cell = cell, Count = initial };
         _looseItems.Add(item);
         IndexItem(item);
+        ItemSpawned?.Invoke(item);
         return (item, true, count - initial);
     }
 
@@ -117,6 +122,7 @@ public class GameMap
             list.Remove(item);
             if (list.Count == 0) _itemsByCell.Remove(item.Cell);
         }
+        ItemRemoved?.Invoke(item);
     }
 
     /// <summary>Returns the item at a cell, or null if none. Optionally filters to one def.</summary>

@@ -52,11 +52,7 @@ public class JobDriver_DoBill : JobDriver
         // produce the output on the floor, the haul work-giver moves it to a stockpile
         yield return new Task
         {
-            OnStart = () =>
-            {
-                foreach (var pile in Game.Map.DropItems(recipe.Output, guy.Cell, recipe.OutputCount))
-                    Game.Views.SpawnItemView(pile);
-            },
+            OnStart = () => Game.Map.DropItems(recipe.Output, guy.Cell, recipe.OutputCount),
             IsComplete = () => true,
         };
     }

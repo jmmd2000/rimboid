@@ -30,7 +30,6 @@ public class JobDriver_Eat : JobDriver
                 if (job.TargetItem.Count <= 0)
                 {
                     Game.Map.RemoveItem(job.TargetItem);
-                    Game.Views.RemoveItemView(job.TargetItem);
                 }
             },
             IsComplete = () => guy.Needs.Food.Level >= 0.99f || !Game.Map.HasItem(job.TargetItem),

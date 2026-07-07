@@ -33,7 +33,7 @@ public class JobDriver_Chop : JobDriver
                 if (plant.Def.HarvestItem != null)
                 {
                     var dropCell = Game.Map.FreeDropCell(job.TargetCell);
-                    Game.Views.DropItems(plant.Def.HarvestItem, dropCell, plant.Def.HarvestYield);
+                    Game.Map.DropItems(plant.Def.HarvestItem, dropCell, plant.Def.HarvestYield);
                 }
 
                 Game.Map.RemovePlant(plant);

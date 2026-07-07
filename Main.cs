@@ -67,6 +67,7 @@ public partial class Main : Node2D
         var views = new ViewManager();
         AddChild(views);
         Game.Views = views;
+        views.Bind(_map);
 
         foreach (var plant in Game.Map.Plants.Values)
             Game.Views.SpawnPlantView(plant);
