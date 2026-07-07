@@ -58,7 +58,6 @@ public class JobDriver_Harvest : JobDriver
                 else
                 {
                     Game.Map.RemovePlant(plant);
-                    Game.Views.RemovePlantView(plant);
                     Game.Pathing.RefreshCell(Game.Map, job.TargetCell);
                 }
 

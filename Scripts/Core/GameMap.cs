@@ -27,6 +27,8 @@ public class GameMap
 
     public event Action<Item> ItemSpawned;
     public event Action<Item> ItemRemoved;
+    public event Action<Plant> PlantSpawned;
+    public event Action<Plant> PlantRemoved;
 
 
     /// <summary>Creates a new map with the given dimensions.</summary>
@@ -218,16 +220,23 @@ public class GameMap
     // ---------- plants ----------
 
     /// <summary>Spawns a plant at a cell (rolling its draw size) and returns it.</summary>
-    public Plant SpawnPlant(PlantDef def, Vector2I cell, bool sown = false)
+    /// <param name="drawWidth">Optional draw-width override (e.g. a stump inheriting a felled tree's girth), applied before the view is made.</param>
+    public Plant SpawnPlant(PlantDef def, Vector2I cell, bool sown = false, float? drawWidth = null)
     {
         var plant = Plant.Spawn(def, cell);
+        if (drawWidth.HasValue) plant.DrawWidth = drawWidth.Value;
         if (sown) plant.StartGrowing(def.GrowDays);
         Plants[cell] = plant;
+        PlantSpawned?.Invoke(plant);
         return plant;
     }
 
     /// <summary>Removes a plant (harvested or cleared).</summary>
-    public void RemovePlant(Plant plant) => Plants.Remove(plant.Cell);
+    public void RemovePlant(Plant plant)
+    {
+        Plants.Remove(plant.Cell);
+        PlantRemoved?.Invoke(plant);
+    }
 
     /// <summary>Returns the plant at a cell, or null if none.</summary>
     public Plant PlantAt(Vector2I cell) => Plants.GetValueOrDefault(cell);

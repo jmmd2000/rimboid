@@ -34,11 +34,7 @@ public class JobDriver_Sow : JobDriver
         // spawn the crop at stage 0 (sown: true sets its grow timing)
         yield return new Task
         {
-            OnStart = () =>
-            {
-                var plant = Game.Map.SpawnPlant(crop, job.TargetCell, sown: true);
-                Game.Views.SpawnPlantView(plant);
-            },
+            OnStart = () => Game.Map.SpawnPlant(crop, job.TargetCell, sown: true),
             IsComplete = () => true,
         };
     }

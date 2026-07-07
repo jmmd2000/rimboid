@@ -37,15 +37,9 @@ public class JobDriver_Chop : JobDriver
                 }
 
                 Game.Map.RemovePlant(plant);
-                if (plant.Def.Topples) Game.Views.ToppleAndRemovePlantView(plant);
-                else Game.Views.RemovePlantView(plant);
 
                 if (plant.Def.LeavesBehind != null)
-                {
-                    var stump = Game.Map.SpawnPlant(plant.Def.LeavesBehind, job.TargetCell);
-                    stump.DrawWidth = plant.DrawWidth;
-                    Game.Views.SpawnPlantView(stump);
-                }
+                    Game.Map.SpawnPlant(plant.Def.LeavesBehind, job.TargetCell, drawWidth: plant.DrawWidth);
 
                 Game.Map.Designations.Remove(DesignationType.Chop, job.TargetCell);
                 Game.Pathing.RefreshCell(Game.Map, job.TargetCell);

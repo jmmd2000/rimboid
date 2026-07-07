@@ -54,6 +54,13 @@ public partial class Main : Node2D
     {
         _map = new GameMap(MapWidth, MapHeight);
         DefLoader.LoadAll();
+
+        // the view subscribes to the model before world-gen, so generated plants spawn their views via events
+        var views = new ViewManager();
+        AddChild(views);
+        Game.Views = views;
+        views.Bind(_map);
+
         WorldGenerator.Generate(_map, this);
         MapView.PaintAll(_map);
 
@@ -63,14 +70,6 @@ public partial class Main : Node2D
         Game.Map = _map;
         Game.Pathing = _pathing;
         Game.MapView = MapView;
-
-        var views = new ViewManager();
-        AddChild(views);
-        Game.Views = views;
-        views.Bind(_map);
-
-        foreach (var plant in Game.Map.Plants.Values)
-            Game.Views.SpawnPlantView(plant);
 
         _stockpile = Game.Map.Stockpiles.Create();
 

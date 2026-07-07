@@ -16,6 +16,8 @@ public partial class ViewManager : Node2D
     {
         map.ItemSpawned += SpawnItemView;
         map.ItemRemoved += RemoveItemView;
+        map.PlantSpawned += SpawnPlantView;
+        map.PlantRemoved += OnPlantRemoved;
     }
 
     // ---------- items ----------
@@ -136,4 +138,10 @@ public partial class ViewManager : Node2D
         }
     }
 
+    /// <summary>Handles a removed plant, topples the view if the def topples, otherwise a plain remove.</summary>
+    void OnPlantRemoved(Plant plant)
+    {
+        if (plant.Def.Topples) ToppleAndRemovePlantView(plant);
+        else RemovePlantView(plant);
+    }
 }
