@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -87,9 +88,11 @@ public partial class Main : Node2D
             _pathing.RefreshCell(_map, c);
         }
 
+        var rng = new Random(Seed); // seed-derived, same world seed = same starting colonists for now
         for (int i = 0; i < StartingGuys; i++)
         {
             var guy = new Guy { Position = FindWalkableCell(taken) };
+            guy.Attributes.Roll(rng);
             taken.Add(guy.Cell);
             Game.Map.AddGuy(guy);
         }
@@ -107,6 +110,7 @@ public partial class Main : Node2D
 
         AddChild(GD.Load<PackedScene>("res://Scenes/NeedsPanel.tscn").Instantiate());
         AddChild(GD.Load<PackedScene>("res://Scenes/SkillsPanel.tscn").Instantiate());
+        AddChild(GD.Load<PackedScene>("res://Scenes/AttributesPanel.tscn").Instantiate());
         AddChild(GD.Load<PackedScene>("res://Scenes/BillPanel.tscn").Instantiate());
         AddChild(GD.Load<PackedScene>("res://Scenes/BuildMenu.tscn").Instantiate());
         AddChild(GD.Load<PackedScene>("res://Scenes/ToolBar.tscn").Instantiate());

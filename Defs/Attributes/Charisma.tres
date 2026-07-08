@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="AttributeDef" format=3 uid="uid://b4dvyp074vsf"]
+
+[ext_resource type="Script" uid="uid://d3gvh88u2c7av" path="res://Scripts/Defs/AttributeDef.cs" id="1_3fanb"]
+
+[resource]
+script = ExtResource("1_3fanb")
+DefName = "Charisma"
+Label = "charisma"
+metadata/_custom_type_script = "uid://d3gvh88u2c7av"

@@ -1,0 +1,15 @@
+[gd_scene format=3 uid="uid://wep3etpyoqrm"]
+
+[ext_resource type="Script" uid="uid://by4aj4c4thyn0" path="res://Scripts/View/UI/AttributesPanel.cs" id="1_uylu5"]
+[ext_resource type="PackedScene" uid="uid://cik6kqvlg2qmi" path="res://Scenes/LabelledBar.tscn" id="2_xian3"]
+
+[node name="AttributesPanel" type="CanvasLayer" unique_id=1713119577 node_paths=PackedStringArray("Box")]
+script = ExtResource("1_uylu5")
+Box = NodePath("Box")
+RowScene = ExtResource("2_xian3")
+
+[node name="Box" type="VBoxContainer" parent="." unique_id=1490941614]
+offset_left = 10.0
+offset_top = 450.0
+offset_right = 50.0
+offset_bottom = 490.0

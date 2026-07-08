@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="AttributeDef" format=3 uid="uid://c8mhp3klossfd"]
+
+[ext_resource type="Script" uid="uid://d3gvh88u2c7av" path="res://Scripts/Defs/AttributeDef.cs" id="1_oyebi"]
+
+[resource]
+script = ExtResource("1_oyebi")
+DefName = "Agility"
+Label = "agility"
+metadata/_custom_type_script = "uid://d3gvh88u2c7av"
