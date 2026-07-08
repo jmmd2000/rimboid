@@ -16,7 +16,7 @@ public class Attribute
 public class Attributes
 {
     /// <summary>The neutral level, where an attribute's factor is exactly 1.</summary>
-    public const int Baseline = 5;
+    public const int Baseline = 10;
 
     /// <summary>Highest reachable level.</summary>
     public const int MaxLevel = 20;
@@ -65,11 +65,22 @@ public class Attributes
         if (attribute.Level >= MaxLevel) attribute.XP = XPToLevel(attribute.Level);
     }
 
-    /// <summary>Rolls each attribute's starting level around the baseline (+/-2)</summary>
+    /// <summary>Number of dice summed into a starting roll. More dice cluster it tighter on the baseline.</summary>
+    const int RollDice = 3;
+    /// <summary>Each die's half-range: one die rolls -RollSpread...+RollSpread.</summary>
+    const int RollSpread = 3;
+
+    /// <summary>Rolls each attribute's starting level: a bell centred on the baseline (most colonists are
+    /// near average), with rare tails for a strong or weak one.</summary>
     /// <param name="rng">The random source, seed-derived so spawns are reproducible.</param>
     public void Roll(Random rng)
     {
         foreach (var attribute in _attributes.Values)
-            attribute.Level = Baseline + rng.Next(-2, 3); // Next's max is exclusive, so -2...+2
+        {
+            int delta = 0;
+            for (int d = 0; d < RollDice; d++)
+                delta += rng.Next(-RollSpread, RollSpread + 1); // each die: -spread..+spread, uniform
+            attribute.Level = Math.Clamp(Baseline + delta, 0, MaxLevel);
+        }
     }
 }

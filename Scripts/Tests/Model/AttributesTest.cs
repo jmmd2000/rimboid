@@ -52,8 +52,8 @@ public class AttributesTest
     public void LevellingUpCarriesTheRemainder()
     {
         var attributes = new Attributes();
-        // from level 5 the next level costs 400 * 6 = 2400
-        attributes.Gain(Def, 2500f);
+        // exactly one levels worth of XP from the baseline, plus a 100 remainder
+        attributes.Gain(Def, Attributes.XPToLevel(Attributes.Baseline) + 100f);
         AssertInt(attributes.Get(Def).Level).IsEqual(Attributes.Baseline + 1);
         AssertFloat(attributes.Get(Def).XP).IsEqual(100f);
     }
@@ -76,12 +76,29 @@ public class AttributesTest
     }
 
     [TestCase]
-    public void RollStaysWithinTwoOfBaseline()
+    public void RollCentresOnBaselineWithTails()
     {
         var attributes = new Attributes();
-        attributes.Get(Def); // ensure the record exists even when no defs are loaded
-        attributes.Roll(new Random(123));
-        AssertInt(attributes.Get(Def).Level).IsBetween(Attributes.Baseline - 2, Attributes.Baseline + 2);
+        attributes.Get(Def); // seed one record to roll (defs aren't loaded in this suite)
+        var rng = new Random(42);
+
+        int min = int.MaxValue, max = int.MinValue;
+        long sum = 0;
+        const int samples = 2000;
+        for (int i = 0; i < samples; i++)
+        {
+            attributes.Roll(rng);
+            int level = attributes.Get(Def).Level;
+            sum += level;
+            min = Math.Min(min, level);
+            max = Math.Max(max, level);
+        }
+
+        AssertFloat((float)sum / samples).IsBetween(Attributes.Baseline - 1f, Attributes.Baseline + 1f); // clusters on centre
+        AssertInt(min).IsLess(Attributes.Baseline); // weak rolls happen
+        AssertInt(max).IsGreater(Attributes.Baseline); // gifted rolls happen
+        AssertInt(min).IsGreaterEqual(0);   // never off the scale
+        AssertInt(max).IsLessEqual(Attributes.MaxLevel);
     }
 
     [TestCase]
