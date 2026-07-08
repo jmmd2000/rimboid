@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Godot;
 
@@ -87,9 +88,11 @@ public partial class Main : Node2D
             _pathing.RefreshCell(_map, c);
         }
 
+        var rng = new Random(Seed); // seed-derived, same world seed = same starting colonists for now
         for (int i = 0; i < StartingGuys; i++)
         {
             var guy = new Guy { Position = FindWalkableCell(taken) };
+            guy.Attributes.Roll(rng);
             taken.Add(guy.Cell);
             Game.Map.AddGuy(guy);
         }

@@ -13,6 +13,7 @@ public class Guy
 
     public Needs Needs = new();
     public Skills Skills = new();
+    public Attributes Attributes = new();
     public Social Social = new();
     public bool IsSleeping;
 
@@ -133,12 +134,14 @@ public class Guy
         _ => 1f,
     };
 
-    /// <summary>Work-speed multiplier for a task using the given skill, 1.0 at level 0, rising with level.
+    /// <summary>Work-speed multiplier for a task: the skill's training blended with its linked
+    /// attribute. 1.0 for an unskilled task, and 1.0 at skill level 0 with the attribute at baseline.</summary>
     /// <param name="skill">The skill the task trains, or null for an unskilled task.</param>
     public float WorkRate(SkillDef skill)
     {
         if (skill == null) return 1f;
-        return 1f + Skills.Get(skill).Level * Skills.WorkRatePerLevel;
+        float skillFactor = 1f + Skills.Get(skill).Level * Skills.WorkRatePerLevel;
+        return skillFactor * Attributes.Factor(skill.Attribute);
     }
 
     /// <summary>Builds the driver that executes a job of the given type.</summary>

@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="AttributeDef" format=3 uid="uid://b1t40a1e4s48y"]
+
+[ext_resource type="Script" uid="uid://d3gvh88u2c7av" path="res://Scripts/Defs/AttributeDef.cs" id="1_edtan"]
+
+[resource]
+script = ExtResource("1_edtan")
+DefName = "Perception"
+Label = "perception"
+metadata/_custom_type_script = "uid://d3gvh88u2c7av"

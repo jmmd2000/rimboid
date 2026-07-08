@@ -1,9 +1,11 @@
 [gd_resource type="Resource" script_class="SkillDef" format=3 uid="uid://dcq23rwmjhcs5"]
 
 [ext_resource type="Script" uid="uid://viiglsgipkuo" path="res://Scripts/Defs/SkillDef.cs" id="1_12rmg"]
+[ext_resource type="Resource" uid="uid://dfe6kqxtswu3i" path="res://Defs/Attributes/Endurance.tres" id="1_qlf6f"]
 
 [resource]
 script = ExtResource("1_12rmg")
+Attribute = ExtResource("1_qlf6f")
 DefName = "Farming"
 Label = "farming"
 metadata/_custom_type_script = "uid://viiglsgipkuo"

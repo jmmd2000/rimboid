@@ -28,6 +28,7 @@ public static class DefLoader
         LoadFolder<BuildingDef>("res://Defs/Buildings");
         LoadFolder<PlantDef>("res://Defs/Plants");
         LoadFolder<RecipeDef>("res://Defs/Recipes");
+        LoadFolder<AttributeDef>("res://Defs/Attributes");
         LoadFolder<SkillDef>("res://Defs/Skills");
         LoadFolder<ToolDef>("res://Defs/Tools");
 
@@ -37,6 +38,7 @@ public static class DefLoader
         BuildingDefOf.Resolve();
         PlantDefOf.Resolve();
         RecipeDefOf.Resolve();
+        AttributeDefOf.Resolve();
         SkillDefOf.Resolve();
         ToolDefOf.Resolve();
     }

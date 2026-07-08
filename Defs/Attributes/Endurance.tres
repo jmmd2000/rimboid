@@ -1,0 +1,9 @@
+[gd_resource type="Resource" script_class="AttributeDef" format=3 uid="uid://dfe6kqxtswu3i"]
+
+[ext_resource type="Script" uid="uid://d3gvh88u2c7av" path="res://Scripts/Defs/AttributeDef.cs" id="1_t31dc"]
+
+[resource]
+script = ExtResource("1_t31dc")
+DefName = "Endurance"
+Label = "endurance"
+metadata/_custom_type_script = "uid://d3gvh88u2c7av"
