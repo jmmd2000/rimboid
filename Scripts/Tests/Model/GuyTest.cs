@@ -90,4 +90,50 @@ public class GuyTest
         float tough = RestDropWhileMining(Attributes.Baseline + 5, new Vector2I(5, 8));
         AssertFloat(tough).IsLess(baseline); // same job, tougher colonist tires less
     }
+
+    // a guy placed adjacent to a fresh mine designation, ticked once so he's already mining
+    static Guy MiningAt(Vector2I cell)
+    {
+        Game.Map.Designations.Add(DesignationType.Mine, cell);
+        var guy = new Guy { Position = new Vector2(cell.X - 1, cell.Y) }; // adjacent, so tick 1 mines
+        guy.Tick();
+        return guy;
+    }
+
+    [TestCase]
+    public void MiningCreepsStrength()
+    {
+        var guy = MiningAt(new Vector2I(5, 5)); // Mining is linked to Strength
+        AssertFloat(guy.Attributes.Get(AttributeDefOf.Strength).XP).IsGreater(0f);
+    }
+
+    [TestCase]
+    public void ExertionCreepsEndurance()
+    {
+        var guy = MiningAt(new Vector2I(5, 5)); // tick 1 started mining
+        guy.Tick();// tick 2 exerts, Endurance creeps
+        AssertFloat(guy.Attributes.Get(AttributeDefOf.Endurance).XP).IsGreater(0f);
+    }
+
+    [TestCase]
+    public void MovingCreepsAgility()
+    {
+        var guy = new Guy { Position = Vector2.Zero };
+        guy.GoTo(Game.Pathing.GetPath(guy.Cell, new Vector2I(5, 5)));
+        guy.Tick(); // one step along the path
+        AssertFloat(guy.Attributes.Get(AttributeDefOf.Agility).XP).IsGreater(0f);
+    }
+
+    [TestCase]
+    public void SleepingColonistCreepsNothing()
+    {
+        var guy = new Guy { Position = Vector2.Zero };
+        guy.Needs.Rest.Level = 0.01f; // collapse -> sleep in place, no exertion or movement
+        guy.Tick(); // picks Sleep
+        guy.Tick(); // a tick of sleeping
+
+        AssertFloat(guy.Attributes.Get(AttributeDefOf.Strength).XP).IsEqual(0f);
+        AssertFloat(guy.Attributes.Get(AttributeDefOf.Endurance).XP).IsEqual(0f);
+        AssertFloat(guy.Attributes.Get(AttributeDefOf.Agility).XP).IsEqual(0f);
+    }
 }

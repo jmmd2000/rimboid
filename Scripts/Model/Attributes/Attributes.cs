@@ -24,6 +24,9 @@ public class Attributes
     /// <summary>Multiplier gained (or lost) per level away from the baseline.</summary>
     public const float FactorPerLevel = 0.05f;
 
+    /// <summary>XP an attribute creeps per tick of the use that trains it.</summary>
+    public const float XPPerUse = 0.02f;
+
     /// <summary>XP needed to climb from the given level to the next. Much steeper than skills, attributes creep.</summary>
     public static float XPToLevel(int level) => 400f * (level + 1);
 

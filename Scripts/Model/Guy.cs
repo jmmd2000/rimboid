@@ -62,6 +62,7 @@ public class Guy
     {
         if (AtPathEnd) return;
         Position = Position.MoveToward(_path[_pathIndex], MoveSpeed);
+        Attributes.Gain(AttributeDefOf.Agility, Attributes.XPPerUse);
         if (Position.DistanceTo(_path[_pathIndex]) < 0.01f)
             _pathIndex++;
     }
@@ -70,6 +71,7 @@ public class Guy
     public void Tick()
     {
         Needs.Tick(DampenedExertion);
+        if (Exertion > 1f) Attributes.Gain(AttributeDefOf.Endurance, (Exertion - 1f) * Attributes.XPPerUse);
 
         if (_commanded)
         {

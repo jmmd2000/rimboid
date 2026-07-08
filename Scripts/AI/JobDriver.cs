@@ -122,6 +122,7 @@ public abstract class JobDriver
     {
         float work = guy.WorkRate(skill);
         guy.Skills.Gain(skill, work * Skills.XPPerWork * guy.LearningRate);
+        guy.Attributes.Gain(skill?.Attribute, Attributes.XPPerUse);
         return work;
     }
 
