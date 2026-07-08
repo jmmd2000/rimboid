@@ -50,4 +50,44 @@ public class GuyTest
 
         AssertBool(guy.IsSleeping).IsFalse();
     }
+
+    // a fresh guy with the given Endurance, mining at a cell, returns how much Rest fell in one exerted tick
+    static float RestDropWhileMining(int endurance, Vector2I cell)
+    {
+        Game.Map.Designations.Add(DesignationType.Mine, cell);
+        var guy = new Guy { Position = new Vector2(cell.X - 1, cell.Y) }; // start adjacent, so it mines at once
+        guy.Attributes.Get(AttributeDefOf.Endurance).Level = endurance;
+        guy.Tick(); // assigns the job; this tick's decay is still idle-rate
+        float before = guy.Needs.Rest.Level;
+        guy.Tick();// one tick of actual mining, exerted
+        return before - guy.Needs.Rest.Level;
+    }
+
+    [TestCase]
+    public void MoveSpeedScalesWithAgility()
+    {
+        var guy = new Guy { Position = Vector2.Zero };
+        AssertFloat(guy.MoveSpeed).IsEqual(Guy.BaseMoveSpeed); // baseline agility = base speed
+
+        guy.Attributes.Get(AttributeDefOf.Agility).Level = Attributes.Baseline + 4;
+        AssertFloat(guy.MoveSpeed).IsEqual(Guy.BaseMoveSpeed * (1f + 4 * Attributes.FactorPerLevel));
+    }
+
+    [TestCase]
+    public void LearningRateScalesWithIntelligence()
+    {
+        var guy = new Guy { Position = Vector2.Zero };
+        AssertFloat(guy.LearningRate).IsEqual(1f); // baseline
+
+        guy.Attributes.Get(AttributeDefOf.Intelligence).Level = Attributes.Baseline - 2;
+        AssertFloat(guy.LearningRate).IsEqual(1f - 2 * Attributes.FactorPerLevel); // dimmer = slower learner
+    }
+
+    [TestCase]
+    public void HighEnduranceDrainsNeedsSlowerUnderExertion()
+    {
+        float baseline = RestDropWhileMining(Attributes.Baseline, new Vector2I(5, 5));
+        float tough = RestDropWhileMining(Attributes.Baseline + 5, new Vector2I(5, 8));
+        AssertFloat(tough).IsLess(baseline); // same job, tougher colonist tires less
+    }
 }

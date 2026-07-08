@@ -7,7 +7,11 @@ public class Guy
     public Vector2 Position;
     public Vector2I Cell => new((int)Mathf.Round(Position.X), (int)Mathf.Round(Position.Y));
 
-    public float MoveSpeed = 0.05f;
+    /// <summary>Base tiles-per-tick, before the Agility factor.</summary>
+    public const float BaseMoveSpeed = 0.05f;
+    /// <summary>Tiles per tick: base speed scaled by Agility.</summary>
+    public float MoveSpeed => BaseMoveSpeed * Attributes.Factor(AttributeDefOf.Agility);
+
     /// <summary>The item the colonist is currently carrying, or null.</summary>
     public Item Carrying;
 
@@ -65,7 +69,7 @@ public class Guy
     /// <summary>Per sim tick update. Runs the active job, or asks the think tree for a new one.</summary>
     public void Tick()
     {
-        Needs.Tick(Exertion);
+        Needs.Tick(DampenedExertion);
 
         if (_commanded)
         {
@@ -134,6 +138,11 @@ public class Guy
         _ => 1f,
     };
 
+    /// <summary>Exertion after Endurance dampening: a high-Endurance colonist softens how hard heavy
+    /// work drains their needs. Idle exertion (1) is never dampened, only the extra above it. A low-END
+    /// colonist (factor below 1) is the opposite, they tire out faster.</summary>
+    float DampenedExertion => 1f + (Exertion - 1f) / Attributes.Factor(AttributeDefOf.Endurance);
+
     /// <summary>Work-speed multiplier for a task: the skill's training blended with its linked
     /// attribute. 1.0 for an unskilled task, and 1.0 at skill level 0 with the attribute at baseline.</summary>
     /// <param name="skill">The skill the task trains, or null for an unskilled task.</param>
@@ -143,6 +152,9 @@ public class Guy
         float skillFactor = 1f + Skills.Get(skill).Level * Skills.WorkRatePerLevel;
         return skillFactor * Attributes.Factor(skill.Attribute);
     }
+
+    /// <summary>How fast this colonist banks skill XP, scaled by Intelligence.</summary>
+    public float LearningRate => Attributes.Factor(AttributeDefOf.Intelligence);
 
     /// <summary>Builds the driver that executes a job of the given type.</summary>
     /// <param name="type">The job type to build a driver for.</param>
