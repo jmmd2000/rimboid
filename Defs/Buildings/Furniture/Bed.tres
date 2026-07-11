@@ -1,0 +1,24 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3 uid="uid://dayaxwveh1s0j"]
+
+[ext_resource type="Script" uid="uid://ckce7mbw243xc" path="res://Scripts/Defs/Components/ComponentProperties.cs" id="1_pwlxm"]
+[ext_resource type="Script" uid="uid://218scsot113k" path="res://Scripts/Defs/Components/ComponentProperties_Bed.cs" id="2_e50hk"]
+[ext_resource type="Script" uid="uid://c3va7b7e8qx0" path="res://Scripts/Defs/BuildingDef.cs" id="2_en2o5"]
+[ext_resource type="Resource" uid="uid://e6i03qklm0y2" path="res://Defs/Items/Wood.tres" id="3_e50hk"]
+[ext_resource type="Texture2D" uid="uid://cjmv5twu22yyh" path="res://Assets/Buildings/bed.png" id="4_jee62"]
+
+[sub_resource type="Resource" id="Resource_jee62"]
+script = ExtResource("2_e50hk")
+metadata/_custom_type_script = "uid://218scsot113k"
+
+[resource]
+script = ExtResource("2_en2o5")
+BlocksMovement = false
+Materials = ExtResource("3_e50hk")
+MaterialCost = 10
+Colour = Color(0.99607843, 0.19607843, 0.43529412, 1)
+Size = Vector2i(2, 1)
+Texture = ExtResource("4_jee62")
+Components = Array[ExtResource("1_pwlxm")]([SubResource("Resource_jee62")])
+DefName = "Bed"
+Label = "bed"
+metadata/_custom_type_script = "uid://c3va7b7e8qx0"
