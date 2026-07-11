@@ -21,6 +21,7 @@ public partial class ViewManager : Node2D
         map.FrameAdded += SpawnFrameView;
         map.FrameRemoved += RemoveFrameView;
         map.BuildingSpawned += SpawnBuildingView;
+        map.BuildingRemoved += RemoveBuildingView;
         map.GuyAdded += SpawnGuyViews;
     }
 
@@ -74,10 +75,20 @@ public partial class ViewManager : Node2D
     /// <summary>Creates a visual node for a finished building.</summary>
     public void SpawnBuildingView(Building building)
     {
-        var view = new BuildingView();
+        BuildingView view = building.GetComponent<BuildingComponent_Door>() != null ? new DoorView() : new BuildingView();
         view.Init(building, Game.TileSize);
         AddChild(view);
         _buildingViews[building] = view;
+    }
+
+    /// <summary>Removes the visual node for a deconstructed building.</summary>
+    public void RemoveBuildingView(Building building)
+    {
+        if (_buildingViews.TryGetValue(building, out var view))
+        {
+            view.QueueFree();
+            _buildingViews.Remove(building);
+        }
     }
 
     // ------------ guys ------------

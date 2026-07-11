@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3 uid="uid://bc1fluhfqny0s"]
+
+[ext_resource type="Script" uid="uid://ckce7mbw243xc" path="res://Scripts/Defs/Components/ComponentProperties.cs" id="1_bgqwj"]
+[ext_resource type="Resource" uid="uid://e6i03qklm0y2" path="res://Defs/Items/Wood.tres" id="2_dek8k"]
+[ext_resource type="Script" uid="uid://c3va7b7e8qx0" path="res://Scripts/Defs/BuildingDef.cs" id="2_wtt15"]
+[ext_resource type="Texture2D" uid="uid://8vnubyls7drm" path="res://Assets/Buildings/table.png" id="3_7weno"]
+
+[resource]
+script = ExtResource("2_wtt15")
+WorkToBuild = 150.0
+Materials = ExtResource("2_dek8k")
+MaterialCost = 15
+Size = Vector2i(2, 2)
+Texture = ExtResource("3_7weno")
+DefName = "Table"
+Label = "table"
+metadata/_custom_type_script = "uid://c3va7b7e8qx0"

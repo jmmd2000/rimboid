@@ -34,6 +34,7 @@ public partial class ToolController : Node2D
             [ToolDefOf.GrowZone] = new Designator_GrowZone(growZone),
             [ToolDefOf.Harvest] = new Designator_Harvest(),
             [ToolDefOf.Chop] = new Designator_Chop(),
+            [ToolDefOf.Deconstruct] = new Designator_Deconstruct(),
         };
 
         _toolKeys = new();
@@ -131,7 +132,7 @@ public partial class ToolController : Node2D
             .FirstOrDefault();
     }
 
-    bool ShowSelectionBox => Game.SelectedBuildable == null || Game.SelectedBuildable.Size == Vector2I.One;
+    bool ShowSelectionBox => Game.SelectedBuildable == null || (Game.SelectedBuildable.Size == Vector2I.One && Game.SelectedBuildable.DragPlace);
 
     /// <summary>Tracks a press/drag/release selection and updates the preview outline.</summary>
     void HandleDrag(InputEvent e)

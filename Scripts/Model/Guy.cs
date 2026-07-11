@@ -136,6 +136,7 @@ public class Guy
         JobType.Haul => 1.2f,
         JobType.HaulToFrame => 1.2f,
         JobType.Build => 1.6f,
+        JobType.Deconstruct => 1.6f,
         JobType.DoBill => 1.2f,
         _ => 1f,
     };
@@ -170,6 +171,7 @@ public class Guy
         JobType.Haul => new JobDriver_Haul(),
         JobType.HaulToFrame => new JobDriver_HaulToFrame(),
         JobType.Build => new JobDriver_Build(),
+        JobType.Deconstruct => new JobDriver_Deconstruct(),
         JobType.DoBill => new JobDriver_DoBill(),
         JobType.Wander => new JobDriver_Wander(),
         JobType.Sleep => new JobDriver_Sleep(),

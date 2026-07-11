@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3 uid="uid://cydmyh5tjac20"]
+
+[ext_resource type="Script" uid="uid://ckce7mbw243xc" path="res://Scripts/Defs/Components/ComponentProperties.cs" id="1_3g0tc"]
+[ext_resource type="Script" uid="uid://c3va7b7e8qx0" path="res://Scripts/Defs/BuildingDef.cs" id="2_bwq3j"]
+[ext_resource type="Resource" uid="uid://dgfuctn0u4xts" path="res://Defs/Items/Stone.tres" id="2_ufoyt"]
+
+[resource]
+script = ExtResource("2_bwq3j")
+Materials = ExtResource("2_ufoyt")
+Colour = Color(0.55, 0.62, 0.68, 1)
+DragPlace = true
+DefName = "WindowStone"
+Label = "stone window"
+metadata/_custom_type_script = "uid://c3va7b7e8qx0"

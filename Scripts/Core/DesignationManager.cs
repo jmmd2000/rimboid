@@ -4,7 +4,7 @@ using System.Linq;
 using Godot;
 
 /// <summary>Types of player-placed work designations.</summary>
-public enum DesignationType { Mine, Harvest, Chop };
+public enum DesignationType { Mine, Harvest, Chop, Deconstruct };
 
 /// <summary>Tracks active designations on the map. Add, remove, query by type and cell.</summary>
 public class DesignationManager

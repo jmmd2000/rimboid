@@ -1,0 +1,20 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3 uid="uid://d3jj3ypd8f2xq"]
+
+[ext_resource type="Script" uid="uid://ckce7mbw243xc" path="res://Scripts/Defs/Components/ComponentProperties.cs" id="1_ijlwr"]
+[ext_resource type="Script" uid="uid://ckj5g82c7cx8g" path="res://Scripts/Defs/Components/ComponentProperties_Door.cs" id="2_2q8wy"]
+[ext_resource type="Script" uid="uid://c3va7b7e8qx0" path="res://Scripts/Defs/BuildingDef.cs" id="2_bhc1b"]
+[ext_resource type="Resource" uid="uid://e6i03qklm0y2" path="res://Defs/Items/Wood.tres" id="3_as6s2"]
+
+[sub_resource type="Resource" id="Resource_v6bq3"]
+script = ExtResource("2_2q8wy")
+metadata/_custom_type_script = "uid://ckj5g82c7cx8g"
+
+[resource]
+script = ExtResource("2_bhc1b")
+BlocksMovement = false
+Materials = ExtResource("3_as6s2")
+Colour = Color(0.65926594, 0.30923426, 0.028986841, 1)
+Components = Array[ExtResource("1_ijlwr")]([SubResource("Resource_v6bq3")])
+DefName = "DoorWood"
+Label = "wooden door"
+metadata/_custom_type_script = "uid://c3va7b7e8qx0"

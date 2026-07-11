@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3 uid="uid://capsgb7bjqkhx"]
+
+[ext_resource type="Script" uid="uid://ckce7mbw243xc" path="res://Scripts/Defs/Components/ComponentProperties.cs" id="1_40aw2"]
+[ext_resource type="Resource" uid="uid://e6i03qklm0y2" path="res://Defs/Items/Wood.tres" id="2_k2qfq"]
+[ext_resource type="Script" uid="uid://c3va7b7e8qx0" path="res://Scripts/Defs/BuildingDef.cs" id="2_w337j"]
+
+[resource]
+script = ExtResource("2_w337j")
+WorkToBuild = 90.0
+Materials = ExtResource("2_k2qfq")
+Colour = Color(0.5, 0.33, 0.16, 1)
+DragPlace = true
+DefName = "WallWood"
+Label = "wooden wall"
+metadata/_custom_type_script = "uid://c3va7b7e8qx0"
