@@ -9,6 +9,7 @@ script = ExtResource("2_twkck")
 WorkToBuild = 90.0
 Materials = ExtResource("2_8cfof")
 Colour = Color(0.6, 0.76, 0.85, 1)
+DragPlace = true
 DefName = "WindowWood"
 Label = "wooden window"
 metadata/_custom_type_script = "uid://c3va7b7e8qx0"

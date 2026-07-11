@@ -1,12 +1,14 @@
 [gd_resource type="Resource" script_class="BuildingDef" format=3 uid="uid://b2sshdwemvwca"]
 
 [ext_resource type="Script" uid="uid://c3va7b7e8qx0" path="res://Scripts/Defs/BuildingDef.cs" id="1_odcpg"]
+[ext_resource type="Script" uid="uid://ckce7mbw243xc" path="res://Scripts/Defs/Components/ComponentProperties.cs" id="1_rx7k7"]
 [ext_resource type="Resource" uid="uid://dgfuctn0u4xts" path="res://Defs/Items/Stone.tres" id="1_waob5"]
 [ext_resource type="Texture2D" uid="uid://bkx7kvqwpy447" path="res://Assets/Buildings/stone_wall.png" id="2_wklgm"]
 
 [resource]
 script = ExtResource("1_odcpg")
 Materials = ExtResource("1_waob5")
+DragPlace = true
 Texture = ExtResource("2_wklgm")
 DefName = "WallStone"
 Label = "stone wall"

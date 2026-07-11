@@ -14,8 +14,12 @@ public class BuildPlacer
     /// <summary>Places a frame on each valid cell: a wall fills the line, a multi-cell building goes at the cursor.</summary>
     public void Place(BuildingDef def, Vector2I a, Vector2I b)
     {
-        if (def.Size != Vector2I.One) { TryPlaceFrame(def, b); return; }
-        foreach (var cell in Grid.CellsInRect(a, b)) TryPlaceFrame(def, cell);
+        if (def.Size == Vector2I.One && def.DragPlace)
+        {
+            foreach (var cell in Grid.CellsInRect(a, b)) TryPlaceFrame(def, cell);
+            return;
+        }
+        TryPlaceFrame(def, b); // ghost placement, one at a time
     }
 
     /// <summary>Removes any blueprint frames in the rectangle.</summary>
@@ -40,12 +44,28 @@ public class BuildPlacer
             ? new Color(0.4f, 1f, 0.4f, 0.55f)
             : new Color(1f, 0.4f, 0.4f, 0.55f);
 
-        var pivot = new Vector2(origin.X * t + t / 2f, origin.Y * t + t / 2f);
+        var cellOrigin = new Vector2(origin.X * t, origin.Y * t);
+
+        // a textureless door draws its leaf so the rotation reads (a plain square looks identical rotated)
+        if (def.Texture == null && IsDoor(def))
+        {
+            canvas.DrawRect(new Rect2(cellOrigin, new Vector2(t, t)), tint);
+            DoorView.DrawLeaf(canvas, cellOrigin, t, _rotation, 0f, new Color(def.Colour, 0.85f));
+            return;
+        }
+
+        var pivot = cellOrigin + new Vector2(t / 2f, t / 2f);
         canvas.DrawSetTransform(pivot, _rotation * Mathf.Pi / 2f, Vector2.One);
         var rect = new Rect2(-t / 2f, -t / 2f, def.Size.X * t, def.Size.Y * t);
         if (def.Texture != null) canvas.DrawTextureRect(def.Texture, rect, tile: false, modulate: tint);
         else canvas.DrawRect(rect, tint);
         canvas.DrawSetTransform(Vector2.Zero, 0, Vector2.One);
+    }
+
+    static bool IsDoor(BuildingDef def)
+    {
+        foreach (var c in def.Components) if (c is ComponentProperties_Door) return true;
+        return false;
     }
 
     /// <summary>True if a blueprint can be placed with its origin on the cell.</summary>

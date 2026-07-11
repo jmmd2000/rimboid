@@ -21,6 +21,9 @@ public class GameMap
     readonly Dictionary<Vector2I, List<Item>> _itemsByCell = new();
     public IReadOnlyList<Item> LooseItems => _looseItems;
 
+    // components that opt into per-tick updates
+    readonly List<BuildingComponent> _tickingComponents = new();
+
     readonly List<Frame> _frames = new();
     readonly Dictionary<Vector2I, Frame> _frameByCell = new();
     public IReadOnlyList<Frame> Frames => _frames;
@@ -54,6 +57,9 @@ public class GameMap
     {
         using (Prof.Sample("Sim.Tick"))
             foreach (var guy in Guys) guy.Tick();
+
+        using (Prof.Sample("Comp.Tick"))
+            foreach (var comp in _tickingComponents) comp.Tick();
 
         Stats.Gauge("guys", Guys.Count);
         Stats.Gauge("loose items", _looseItems.Count);
@@ -232,6 +238,8 @@ public class GameMap
     {
         var building = new Building { Def = def, Cell = cell, Rotation = rotation };
         building.InitComponents();
+        foreach (var comp in building.Components)
+            if (comp.Ticks) _tickingComponents.Add(comp);
         foreach (var c in building.OccupiedCells) Buildings[c] = building;
         BuildingSpawned?.Invoke(building);
         return building;

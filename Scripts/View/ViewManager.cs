@@ -74,7 +74,7 @@ public partial class ViewManager : Node2D
     /// <summary>Creates a visual node for a finished building.</summary>
     public void SpawnBuildingView(Building building)
     {
-        var view = new BuildingView();
+        BuildingView view = building.GetComponent<BuildingComponent_Door>() != null ? new DoorView() : new BuildingView();
         view.Init(building, Game.TileSize);
         AddChild(view);
         _buildingViews[building] = view;

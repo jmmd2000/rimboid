@@ -8,6 +8,7 @@
 script = ExtResource("2_bwq3j")
 Materials = ExtResource("2_ufoyt")
 Colour = Color(0.55, 0.62, 0.68, 1)
+DragPlace = true
 DefName = "WindowStone"
 Label = "stone window"
 metadata/_custom_type_script = "uid://c3va7b7e8qx0"

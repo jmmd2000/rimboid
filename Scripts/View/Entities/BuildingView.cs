@@ -4,8 +4,8 @@ using Godot;
 public partial class BuildingView : Node2D
 {
     public Building Building;
-    int _tileSize;
-    bool _selected;
+    protected int _tileSize;
+    protected bool _selected;
 
     /// <summary>Positions this view at the building's cell.</summary>
     /// <param name="building">The building to display.</param>
