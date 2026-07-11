@@ -21,7 +21,7 @@ public class WorkGiver_DoBill : WorkGiver
         // a building registers under every footprint cell, so dedupe to distinct benches
         var benches = new HashSet<Building>();
         foreach (var b in Game.Map.Buildings.Values)
-            if (b.Def.WorkBench != null) benches.Add(b);
+            if (b.WorkBench != null) benches.Add(b);
 
         Building bestBench = null;
         Bill bestBill = null;

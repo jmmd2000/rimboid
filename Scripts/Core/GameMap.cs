@@ -231,7 +231,7 @@ public class GameMap
     public Building SpawnBuilding(BuildingDef def, Vector2I cell, int rotation = 0)
     {
         var building = new Building { Def = def, Cell = cell, Rotation = rotation };
-        if (def.WorkBench != null) building.WorkBench = new WorkBench();
+        building.InitComponents();
         foreach (var c in building.OccupiedCells) Buildings[c] = building;
         BuildingSpawned?.Invoke(building);
         return building;

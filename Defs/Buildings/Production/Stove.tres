@@ -2,25 +2,26 @@
 
 [ext_resource type="Script" uid="uid://c3va7b7e8qx0" path="res://Scripts/Defs/BuildingDef.cs" id="1_l82ya"]
 [ext_resource type="Resource" uid="uid://dgfuctn0u4xts" path="res://Defs/Items/Stone.tres" id="1_mmcq3"]
+[ext_resource type="Script" uid="uid://ckce7mbw243xc" path="res://Scripts/Defs/Components/ComponentProperties.cs" id="1_nwu1i"]
 [ext_resource type="Script" uid="uid://bcnqc0yvoc0pa" path="res://Scripts/Defs/RecipeDef.cs" id="2_oo31d"]
 [ext_resource type="Texture2D" uid="uid://b144ae81fvk1p" path="res://Assets/Buildings/stove.png" id="2_td64m"]
+[ext_resource type="Script" uid="uid://b361laospeegi" path="res://Scripts/Defs/Components/ComponentProperties_WorkBench.cs" id="3_52xi8"]
 [ext_resource type="Resource" uid="uid://wgylvtjemm7p" path="res://Defs/Recipes/CookSimpleMeal.tres" id="3_td64m"]
-[ext_resource type="Script" uid="uid://dy0fsy30ubvpa" path="res://Scripts/Defs/WorkBenchDef.cs" id="4_1i7u5"]
 
-[sub_resource type="Resource" id="Resource_06ump"]
-script = ExtResource("4_1i7u5")
+[sub_resource type="Resource" id="Resource_m1iit"]
+script = ExtResource("3_52xi8")
 Recipes = Array[ExtResource("2_oo31d")]([ExtResource("3_td64m")])
-metadata/_custom_type_script = "uid://dy0fsy30ubvpa"
+metadata/_custom_type_script = "uid://b361laospeegi"
 
 [resource]
 script = ExtResource("1_l82ya")
-DefName = "Stove"
-Label = "stove"
 WorkToBuild = 240.0
 Materials = ExtResource("1_mmcq3")
 MaterialCost = 15
 Colour = Color(0.9262128, 0.7030757, 0.2991535, 1)
 Size = Vector2i(2, 1)
 Texture = ExtResource("2_td64m")
-WorkBench = SubResource("Resource_06ump")
+Components = Array[ExtResource("1_nwu1i")]([SubResource("Resource_m1iit")])
+DefName = "Stove"
+Label = "stove"
 metadata/_custom_type_script = "uid://c3va7b7e8qx0"

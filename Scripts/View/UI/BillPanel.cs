@@ -39,7 +39,7 @@ public partial class BillPanel : CanvasLayer
         }
 
         // one "add" button per recipe the bench allows
-        foreach (var recipe in bench.Def.WorkBench.Recipes)
+        foreach (var recipe in bench.WorkBench.Recipes)
         {
             var add = new Button { Text = $"+ {recipe.Label}" };
             add.Pressed += () => bench.WorkBench.Bills.Add(new Bill { Recipe = recipe });
