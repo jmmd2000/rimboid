@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Godot;
 
 /// <summary>Paints terrain and overlay tile layers from map data.</summary>
@@ -11,6 +12,9 @@ public partial class MapView : Node2D
     static readonly Vector2I GrowZoneAtlas = new(0, 0);
 
     GameMap _map;
+
+    // deconstruct marks are sprites centred on the building footprint, keyed by its origin cell
+    readonly Dictionary<Vector2I, Sprite2D> _deconstructMarkers = new();
 
     /// <summary>Subscribes the view to the map's terrain and designation events. Call once, before the map is populated.</summary>
     /// <param name="map">The game map to observe.</param>
@@ -45,6 +49,9 @@ public partial class MapView : Node2D
     /// <param name="cell">The cell to mark.</param>
     public void MarkDesignation(DesignationType type, Vector2I cell)
     {
+        // a building's mark is a sprite centred on its footprint, not a cell-locked tile
+        if (type == DesignationType.Deconstruct) { MarkDeconstruct(cell); return; }
+
         var atlas = type switch
         {
             DesignationType.Mine => new Vector2I(0, 0),
@@ -59,7 +66,42 @@ public partial class MapView : Node2D
     /// <param name="cell">The cell to clear.</param>
     public void ClearDesignation(Vector2I cell)
     {
+        if (_deconstructMarkers.TryGetValue(cell, out var marker))
+        {
+            marker.QueueFree();
+            _deconstructMarkers.Remove(cell);
+            return;
+        }
         DesignationLayer.EraseCell(cell);
+    }
+
+    /// <summary>Marks a building for deconstruction with a sprite centred on its footprint, so a
+    /// multi-cell building is marked in its middle rather than on its origin cell.</summary>
+    void MarkDeconstruct(Vector2I origin)
+    {
+        var building = _map.BuildingAt(origin);
+        if (building == null) return;
+
+        var marker = new Sprite2D
+        {
+            Texture = ToolDefOf.Deconstruct.Icon,
+            Position = FootprintCentre(building),
+        };
+        DesignationLayer.AddChild(marker);
+        _deconstructMarkers[origin] = marker;
+    }
+
+    /// <summary>The pixel centre of a building's footprint (the centroid of its occupied cells).</summary>
+    static Vector2 FootprintCentre(Building building)
+    {
+        var sum = Vector2.Zero;
+        int count = 0;
+        foreach (var c in building.OccupiedCells)
+        {
+            sum += new Vector2(c.X + 0.5f, c.Y + 0.5f);
+            count++;
+        }
+        return sum / count * Game.TileSize;
     }
 
     /// <summary>Places the stockpile overlay on a cell. </summary>

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="ToolDef" format=3 uid="uid://ccifyrnf0yo0f"]
+
+[ext_resource type="Script" uid="uid://d162lhnn3dfxr" path="res://Scripts/Defs/ToolDef.cs" id="1_8f2ij"]
+[ext_resource type="Texture2D" uid="uid://bqxu8tou755i3" path="res://Assets/UI/designations.png" id="1_xhehm"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_6fw7o"]
+atlas = ExtResource("1_xhehm")
+region = Rect2(48, 0, 16, 16)
+
+[resource]
+script = ExtResource("1_8f2ij")
+Icon = SubResource("AtlasTexture_6fw7o")
+Shortcut = 88
+Order = 3
+DefName = "Deconstruct"
+Label = "deconstruct"
+metadata/_custom_type_script = "uid://d162lhnn3dfxr"

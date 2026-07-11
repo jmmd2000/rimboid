@@ -23,6 +23,7 @@ public class GameMap
 
     // components that opt into per-tick updates
     readonly List<BuildingComponent> _tickingComponents = new();
+    public IReadOnlyList<BuildingComponent> TickingComponents => _tickingComponents;
 
     readonly List<Frame> _frames = new();
     readonly Dictionary<Vector2I, Frame> _frameByCell = new();
@@ -35,6 +36,7 @@ public class GameMap
     public event Action<Frame> FrameAdded;
     public event Action<Frame> FrameRemoved;
     public event Action<Building> BuildingSpawned;
+    public event Action<Building> BuildingRemoved;
     public event Action<Vector2I> TerrainChanged;
     public event Action<Guy> GuyAdded;
 
@@ -243,6 +245,17 @@ public class GameMap
         foreach (var c in building.OccupiedCells) Buildings[c] = building;
         BuildingSpawned?.Invoke(building);
         return building;
+    }
+
+    /// <summary>Removes a building from the map: frees its cells, deregisters any ticking
+    /// components, and raises BuildingRemoved so the view drops its node. Pathing is refreshed
+    /// by the caller.</summary>
+    /// <param name="building">The building to remove.</param>
+    public void RemoveBuilding(Building building)
+    {
+        foreach (var c in building.OccupiedCells) Buildings.Remove(c);
+        _tickingComponents.RemoveAll(comp => comp.Building == building);
+        BuildingRemoved?.Invoke(building);
     }
 
     // ---------- plants ----------

@@ -34,6 +34,7 @@ public partial class ToolController : Node2D
             [ToolDefOf.GrowZone] = new Designator_GrowZone(growZone),
             [ToolDefOf.Harvest] = new Designator_Harvest(),
             [ToolDefOf.Chop] = new Designator_Chop(),
+            [ToolDefOf.Deconstruct] = new Designator_Deconstruct(),
         };
 
         _toolKeys = new();

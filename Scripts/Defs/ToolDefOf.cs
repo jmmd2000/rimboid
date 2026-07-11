@@ -5,6 +5,7 @@ public static class ToolDefOf
     public static ToolDef GrowZone;
     public static ToolDef Harvest;
     public static ToolDef Chop;
+    public static ToolDef Deconstruct;
 
     /// <summary>Binds the named tool defs from the database.</summary>
     public static void Resolve()
@@ -14,5 +15,6 @@ public static class ToolDefOf
         GrowZone = DefDatabase<ToolDef>.Get("GrowZone");
         Harvest = DefDatabase<ToolDef>.Get("Harvest");
         Chop = DefDatabase<ToolDef>.Get("Chop");
+        Deconstruct = DefDatabase<ToolDef>.Get("Deconstruct");
     }
 }
