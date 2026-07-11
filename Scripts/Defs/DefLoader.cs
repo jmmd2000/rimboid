@@ -18,6 +18,10 @@ public static class DefLoader
             var def = GD.Load<T>($"{path}/{name}");
             if (def != null) DefDatabase<T>.Add(def);
         }
+
+        // load subfolders
+        foreach (var sub in dir.GetDirectories())
+            LoadFolder<T>($"{path}/{sub}");
     }
 
     /// <summary>Loads every def folder.</summary>
