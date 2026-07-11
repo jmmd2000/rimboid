@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3 uid="uid://uypdqacdhnj7"]
+
+[ext_resource type="Script" uid="uid://ckce7mbw243xc" path="res://Scripts/Defs/Components/ComponentProperties.cs" id="1_rf8b1"]
+[ext_resource type="Resource" uid="uid://e6i03qklm0y2" path="res://Defs/Items/Wood.tres" id="2_8cfof"]
+[ext_resource type="Script" uid="uid://c3va7b7e8qx0" path="res://Scripts/Defs/BuildingDef.cs" id="2_twkck"]
+
+[resource]
+script = ExtResource("2_twkck")
+WorkToBuild = 90.0
+Materials = ExtResource("2_8cfof")
+Colour = Color(0.6, 0.76, 0.85, 1)
+DefName = "WindowWood"
+Label = "wooden window"
+metadata/_custom_type_script = "uid://c3va7b7e8qx0"
