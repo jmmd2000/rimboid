@@ -84,6 +84,14 @@ public class BuildPlacer
     void TryPlaceFrame(BuildingDef def, Vector2I origin)
     {
         if (!CanPlace(def, origin)) return;
+
+        if (Game.CreativeMode)
+        {
+            var building = Game.Map.SpawnBuilding(def, origin, _rotation);
+            foreach (var c in building.OccupiedCells) Game.Pathing.RefreshCell(Game.Map, c);
+            return;
+        }
+
         var frame = new Frame { Def = def, Cell = origin, Rotation = _rotation };
         Game.Map.AddFrame(frame);
     }

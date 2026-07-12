@@ -12,4 +12,5 @@ public static class Game
     public static Building SelectedBuilding;
     public static BuildingDef SelectedBuildable; // non-null = build placement mode
     public static ToolDef SelectedTool; // non-null = tool mode
+    public static bool CreativeMode;
 }

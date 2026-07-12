@@ -77,6 +77,11 @@ public partial class ToolController : Node2D
                 Game.SelectedBuildable = null;   // exit build placement
                 Game.SelectedTool = null;        // exit tool mode
             }
+            else if (key.Keycode == Key.F2)
+            {
+                Game.CreativeMode = !Game.CreativeMode;
+                GD.Print($"Creative mode {(Game.CreativeMode ? "on" : "off")}");
+            }
             else if (key.Keycode == Key.R && Game.SelectedBuildable != null)
             {
                 _build.Rotate();
