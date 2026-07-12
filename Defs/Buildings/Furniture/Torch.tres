@@ -9,7 +9,11 @@
 [sub_resource type="Resource" id="Resource_rgpho"]
 script = ExtResource("2_vggid")
 Colour = Color(0.8977844, 0.51148766, 0.26300666, 1)
+Energy = 0.5
 CastsShadow = true
+Flicker = true
+FlickerAmount = 0.1
+FlickerSpeed = 4.0
 metadata/_custom_type_script = "uid://c4u18dqgvw58t"
 
 [resource]
@@ -18,6 +22,7 @@ WorkToBuild = 20.0
 BlocksMovement = false
 Materials = ExtResource("2_3cfsv")
 MaterialCost = 2
+DragPlace = true
 Texture = ExtResource("3_vggid")
 Components = Array[ExtResource("1_un6xa")]([SubResource("Resource_rgpho")])
 DefName = "Torch"

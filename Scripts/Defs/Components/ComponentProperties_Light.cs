@@ -9,6 +9,9 @@ public partial class ComponentProperties_Light : ComponentProperties
     [Export] public float Energy { get; set; } = 1f; // brightness at deepest night
     [Export] public float Scale { get; set; } = 1f; // light size (PointLight2D texture scale)
     [Export] public bool CastsShadow { get; set; } // opt-in; keep few (perf)
+    [Export] public bool Flicker { get; set; }
+    [Export] public float FlickerAmount { get; set; } = 0.15f; // energy variation
+    [Export] public float FlickerSpeed { get; set; } = 8f;
 
     public override BuildingComponent MakeComponent() => new BuildingComponent_Light();
 }

@@ -8,4 +8,7 @@ public class BuildingComponent_Light : BuildingComponent
     public float Energy => ((ComponentProperties_Light)Props).Energy;
     public float Scale => ((ComponentProperties_Light)Props).Scale;
     public bool CastsShadow => ((ComponentProperties_Light)Props).CastsShadow;
+    public bool Flicker => ((ComponentProperties_Light)Props).Flicker;
+    public float FlickerAmount => ((ComponentProperties_Light)Props).FlickerAmount;
+    public float FlickerSpeed => ((ComponentProperties_Light)Props).FlickerSpeed;
 }

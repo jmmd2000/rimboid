@@ -24,7 +24,6 @@ metadata/_custom_type_script = "uid://c4u18dqgvw58t"
 [resource]
 script = ExtResource("1_l82ya")
 WorkToBuild = 240.0
-OccludesLight = true
 Materials = ExtResource("1_mmcq3")
 MaterialCost = 15
 Colour = Color(0.9262128, 0.7030757, 0.2991535, 1)
