@@ -12,6 +12,7 @@ metadata/_custom_type_script = "uid://ckj5g82c7cx8g"
 [resource]
 script = ExtResource("2_bhc1b")
 BlocksMovement = false
+OccludesLight = true
 Materials = ExtResource("3_as6s2")
 Colour = Color(0.65926594, 0.30923426, 0.028986841, 1)
 Components = Array[ExtResource("1_ijlwr")]([SubResource("Resource_v6bq3")])
