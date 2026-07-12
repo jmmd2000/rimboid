@@ -55,4 +55,24 @@ public class GameTimeTest
         AssertInt(GameTime.HourOfDay).IsEqual(0);
         AssertInt(GameTime.MinuteOfHour).IsEqual(0);
     }
+
+    [TestCase]
+    public void TimeOfDayIsZeroAtMidnight()
+    {
+        AssertFloat(GameTime.TimeOfDay).IsEqual(0f);
+    }
+
+    [TestCase]
+    public void TimeOfDayIsHalfAtNoon()
+    {
+        GameTime.Ticks = GameTime.TicksPerDay / 2;
+        AssertFloat(GameTime.TimeOfDay).IsEqual(0.5f);
+    }
+
+    [TestCase]
+    public void TimeOfDayWrapsBackToZeroNextMidnight()
+    {
+        GameTime.Ticks = GameTime.TicksPerDay; // exactly the next midnight
+        AssertFloat(GameTime.TimeOfDay).IsEqual(0f);
+    }
 }

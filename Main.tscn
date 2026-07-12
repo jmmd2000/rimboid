@@ -7,6 +7,7 @@
 [ext_resource type="Texture2D" uid="uid://bn2k8vxjm05cd" path="res://Assets/UI/stockpile.png" id="5_3dxm6"]
 [ext_resource type="Texture2D" uid="uid://bqxu8tou755i3" path="res://Assets/UI/designations.png" id="5_fos0i"]
 [ext_resource type="Texture2D" uid="uid://hrjp4uccuncc" path="res://Assets/UI/grow_zone.png" id="6_lgr22"]
+[ext_resource type="Script" uid="uid://c4fqywjf71q2b" path="res://Scripts/View/Entities/DayNightCycle.cs" id="8_trn2v"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fos0i"]
 texture = ExtResource("2_cm0pq")
@@ -39,6 +40,12 @@ texture = ExtResource("5_fos0i")
 
 [sub_resource type="TileSet" id="TileSet_lgr22"]
 sources/0 = SubResource("TileSetAtlasSource_3dxm6")
+
+[sub_resource type="Gradient" id="Gradient_03owx"]
+interpolation_mode = 2
+interpolation_color_space = 2
+offsets = PackedFloat32Array(0, 0.25, 0.5, 0.65, 0.8, 1)
+colors = PackedColorArray(0.25, 0.3, 0.48, 1, 0.8954843, 0.75831705, 0.7048162, 1, 0.8810723, 0.8810722, 0.8810722, 1, 0.88235295, 0.88235295, 0.88235295, 1, 0.95, 0.75, 0.55, 1, 0.2509804, 0.3019608, 0.47843137, 1)
 
 [node name="Main" type="Node2D" unique_id=523116754 node_paths=PackedStringArray("MapView", "TerrainLayer")]
 script = ExtResource("1_glv2v")
@@ -73,3 +80,8 @@ tile_set = SubResource("TileSet_trn2v")
 [node name="DesignationLayer" type="TileMapLayer" parent="." unique_id=406031738]
 z_index = 10
 tile_set = SubResource("TileSet_lgr22")
+
+[node name="CanvasModulate" type="CanvasModulate" parent="." unique_id=316144398]
+script = ExtResource("8_trn2v")
+DayGradient = SubResource("Gradient_03owx")
+VoidColour = Color(0.34901962, 0.49803922, 0.24313726, 1)
