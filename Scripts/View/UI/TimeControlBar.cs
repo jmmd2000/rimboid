@@ -46,7 +46,7 @@ public partial class TimeControlBar : CanvasLayer
             case Key.Key1: _tick.SetSpeed(1); break;
             case Key.Key2: _tick.SetSpeed(3); break;
             case Key.Key3: _tick.SetSpeed(6); break;
-            case Key.Key9: _tick.SetSpeed(25); break;
+            case Key.Key9: _tick.SetSpeed(50); break;
             case Key.Period: if (_tick.SpeedMultiplier == 0) _tick.DoSingleTick(); break;
         }
     }

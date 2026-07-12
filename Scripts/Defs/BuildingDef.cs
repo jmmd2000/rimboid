@@ -6,6 +6,7 @@ public partial class BuildingDef : Def
 {
     [Export] public float WorkToBuild { get; set; } = 120f;
     [Export] public bool BlocksMovement { get; set; } = true;
+    [Export] public bool OccludesLight { get; set; }
     [Export] public ItemDef Materials { get; set; }
     [Export] public int MaterialCost { get; set; } = 5;
     [Export] public Color Colour { get; set; } = Colors.Gray;

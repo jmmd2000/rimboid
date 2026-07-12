@@ -7,6 +7,7 @@
 
 [resource]
 script = ExtResource("1_odcpg")
+OccludesLight = true
 Materials = ExtResource("1_waob5")
 DragPlace = true
 Texture = ExtResource("2_wklgm")

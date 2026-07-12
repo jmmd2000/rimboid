@@ -16,6 +16,31 @@ public partial class BuildingView : Node2D
         _tileSize = tileSize;
         Position = new Vector2(building.Cell.X * tileSize, building.Cell.Y * tileSize);
         ZIndex = 1;
+        if (building.Def.OccludesLight) AddOccluder();
+    }
+
+    /// <summary>Adds a light occluder over the footprint so shadow-casting lights throw shadows behind
+    /// this building. SDF collision stays on (default) so a future SDF lighting shader reads it for free.</summary>
+    void AddOccluder()
+    {
+        var def = Building.Def;
+        var min = Footprint.MinOffset(def.Size, Building.Rotation);
+        var size = Footprint.Rotated(def.Size, Building.Rotation);
+        var rect = new Rect2(min.X * _tileSize, min.Y * _tileSize, size.X * _tileSize, size.Y * _tileSize);
+
+        AddChild(new LightOccluder2D
+        {
+            Occluder = new OccluderPolygon2D
+            {
+                Polygon = new[]
+                {
+                  rect.Position,
+                  rect.Position + new Vector2(rect.Size.X, 0),
+                  rect.End,
+                  rect.Position + new Vector2(0, rect.Size.Y),
+              }
+            }
+        });
     }
 
     public override void _Process(double delta)

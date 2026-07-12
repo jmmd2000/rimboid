@@ -19,6 +19,9 @@ public static class GameTime
     /// <summary>Minute of the current hour, 0..59.</summary>
     public static int MinuteOfHour => (int)(Ticks / TicksPerMinute % MinutesPerHour);
 
+    /// <summary>Fraction through the current day: 0 at midnight, 0.5 at noon, approaching 1 before the next midnight.</summary>
+    public static float TimeOfDay => (float)(Ticks % TicksPerDay) / TicksPerDay;
+
     public static void Advance() => Ticks++;
 
     public static void Reset() => Ticks = 0;

@@ -79,6 +79,14 @@ public partial class ViewManager : Node2D
         view.Init(building, Game.TileSize);
         AddChild(view);
         _buildingViews[building] = view;
+
+        var light = building.GetComponent<BuildingComponent_Light>();
+        if (light != null)
+        {
+            var lightView = new LightView();
+            lightView.Init(light, Game.TileSize);
+            view.AddChild(lightView); // child of the building view, so it frees with it
+        }
     }
 
     /// <summary>Removes the visual node for a deconstructed building.</summary>

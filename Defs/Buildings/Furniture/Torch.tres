@@ -1,0 +1,30 @@
+[gd_resource type="Resource" script_class="BuildingDef" format=3 uid="uid://cggaj7wdvxtah"]
+
+[ext_resource type="Script" uid="uid://ckce7mbw243xc" path="res://Scripts/Defs/Components/ComponentProperties.cs" id="1_un6xa"]
+[ext_resource type="Resource" uid="uid://e6i03qklm0y2" path="res://Defs/Items/Wood.tres" id="2_3cfsv"]
+[ext_resource type="Script" uid="uid://c3va7b7e8qx0" path="res://Scripts/Defs/BuildingDef.cs" id="2_op0vo"]
+[ext_resource type="Script" uid="uid://c4u18dqgvw58t" path="res://Scripts/Defs/Components/ComponentProperties_Light.cs" id="2_vggid"]
+[ext_resource type="Texture2D" uid="uid://dl0kjscb7237g" path="res://Assets/Buildings/torch.png" id="3_vggid"]
+
+[sub_resource type="Resource" id="Resource_rgpho"]
+script = ExtResource("2_vggid")
+Colour = Color(0.8977844, 0.51148766, 0.26300666, 1)
+Energy = 0.5
+CastsShadow = true
+Flicker = true
+FlickerAmount = 0.1
+FlickerSpeed = 4.0
+metadata/_custom_type_script = "uid://c4u18dqgvw58t"
+
+[resource]
+script = ExtResource("2_op0vo")
+WorkToBuild = 20.0
+BlocksMovement = false
+Materials = ExtResource("2_3cfsv")
+MaterialCost = 2
+DragPlace = true
+Texture = ExtResource("3_vggid")
+Components = Array[ExtResource("1_un6xa")]([SubResource("Resource_rgpho")])
+DefName = "Torch"
+Label = "torch"
+metadata/_custom_type_script = "uid://c3va7b7e8qx0"
