@@ -22,6 +22,15 @@ public class DoorTest
     }
 
     [TestCase]
+    public void OpensWhenAColonistIsOnTheDoorCell()
+    {
+        var door = Door(new Vector2I(5, 5));
+        Game.Map.Guys.Add(new Guy { Position = new Vector2(5, 5) });
+        door.Tick();
+        AssertBool(door.Open).IsTrue();
+    }
+
+    [TestCase]
     public void StaysShutWhenNobodyIsNear()
     {
         var door = Door(new Vector2I(5, 5));

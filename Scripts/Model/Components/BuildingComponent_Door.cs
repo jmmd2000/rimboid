@@ -10,8 +10,10 @@ public class BuildingComponent_Door : BuildingComponent
 
     bool AColonistIsNear()
     {
-        foreach (var guy in Game.Map.Guys)
-            if (Grid.DistanceSquared(guy.Cell, Building.Cell) <= 1) return true; // on it (0) or orthogonal (1)
+        var cell = Building.Cell;
+        if (Game.Map.GuyOnCell(cell)) return true;          // on the door
+        foreach (var d in Grid.Cardinal4)
+            if (Game.Map.GuyOnCell(cell + d)) return true;  // orthogonal neighbour
         return false;
     }
 }

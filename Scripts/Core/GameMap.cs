@@ -16,6 +16,11 @@ public class GameMap
     public List<Guy> Guys = new();
     public ReservationManager Reservations = new();
 
+    // occupied colonist cells, rebuilt once per tick and reused so per-tick "is a guy here" checks
+    // (doors etc.) don't each scan every guy
+    readonly HashSet<Vector2I> _guyCells = new();
+    long _guyCellsStamp = -1;
+
     // a flat list for iteration, plus per-cell and per-def indices for quicker lookup
     readonly List<Item> _looseItems = new();
     readonly Dictionary<Vector2I, List<Item>> _itemsByCell = new();
@@ -310,5 +315,18 @@ public class GameMap
     {
         Guys.Add(guy);
         GuyAdded?.Invoke(guy);
+    }
+
+    /// <summary>True if any colonist currently occupies the cell. The occupied-cell set is rebuilt once
+    /// per tick and reused, so callers (doors etc.) don't each scan every guy.</summary>
+    public bool GuyOnCell(Vector2I cell)
+    {
+        if (_guyCellsStamp != GameTime.Ticks)
+        {
+            _guyCells.Clear();
+            foreach (var guy in Guys) _guyCells.Add(guy.Cell);
+            _guyCellsStamp = GameTime.Ticks;
+        }
+        return _guyCells.Contains(cell);
     }
 }
