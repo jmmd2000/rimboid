@@ -12,18 +12,27 @@ public partial class ScheduleBar : Control
     static readonly Color WorkColour = new(0.85f, 0.70f, 0.25f);
     static readonly Color SleepColour = new(0.30f, 0.40f, 0.70f);
 
-    Guy _lastGuy;
     int _lastHour = -1;
 
-    public override void _Ready() => CustomMinimumSize = new Vector2(Hours * 12, 24);
+    public override void _Ready()
+    {
+        CustomMinimumSize = new Vector2(Hours * 12, 24);
+        if (Engine.IsEditorHint()) return;
+        Game.SelectedGuyChanged += OnSelectedGuyChanged;
+        OnSelectedGuyChanged(Game.SelectedGuy);
+    }
+
+    public override void _ExitTree()
+    {
+        if (!Engine.IsEditorHint()) Game.SelectedGuyChanged -= OnSelectedGuyChanged;
+    }
+
+    void OnSelectedGuyChanged(Guy guy) { Visible = guy != null; QueueRedraw(); }
 
     public override void _Process(double delta)
     {
-        if (Engine.IsEditorHint()) return; // editor: static preview, no binding
-        Visible = Game.SelectedGuy != null;
-        if (Game.SelectedGuy == _lastGuy && GameTime.HourOfDay == _lastHour) return; // redraw only on change
-        _lastGuy = Game.SelectedGuy;
-        _lastHour = GameTime.HourOfDay;
+        if (Engine.IsEditorHint() || Game.SelectedGuy == null || GameTime.HourOfDay == _lastHour) return;
+        _lastHour = GameTime.HourOfDay; // redraw only when the hour marker moves
         QueueRedraw();
     }
 
