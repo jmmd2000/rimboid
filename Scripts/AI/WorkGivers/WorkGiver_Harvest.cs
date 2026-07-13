@@ -5,6 +5,9 @@ using Godot;
 /// or a mature crop sitting in a grow zone, and returns a harvest job.</summary>
 public class WorkGiver_Harvest : WorkGiver
 {
+
+    public override WorkType Work => WorkType.Harvest;
+
     public override Job TryGiveJob(Guy guy)
     {
         var reachable = Game.Pathing.ReachableCells(guy.Cell);

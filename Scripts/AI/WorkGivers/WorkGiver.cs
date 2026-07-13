@@ -6,6 +6,9 @@ public abstract class WorkGiver
 {
     public abstract Job TryGiveJob(Guy guy);
 
+    /// <summary>Which work-giver this is, for a colonist's per-giver work settings.</summary>
+    public abstract WorkType Work { get; }
+
     /// <summary>How a guy reaches a target cell: standing on it, or on a neighbour.</summary>
     protected enum Reach { OnCell, Cardinal, Adjacent8 }
 

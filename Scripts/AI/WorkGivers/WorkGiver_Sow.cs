@@ -4,6 +4,9 @@ using Godot;
 /// <summary>Finds the nearest reachable empty cell in a grow zone and returns a sow job.</summary>
 public class WorkGiver_Sow : WorkGiver
 {
+
+    public override WorkType Work => WorkType.Sow;
+
     public override Job TryGiveJob(Guy guy)
     {
         var reachable = Game.Pathing.ReachableCells(guy.Cell);

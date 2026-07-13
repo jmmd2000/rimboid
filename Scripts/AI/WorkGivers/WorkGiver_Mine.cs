@@ -1,6 +1,9 @@
 /// <summary>Finds the nearest reachable mine designation and returns a mining job.</summary>
 public class WorkGiver_Mine : WorkGiver
 {
+
+    public override WorkType Work => WorkType.Mine;
+
     public override Job TryGiveJob(Guy guy)
     {
         var reachable = Game.Pathing.ReachableCells(guy.Cell);

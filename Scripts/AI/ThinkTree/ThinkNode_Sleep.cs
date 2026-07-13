@@ -15,7 +15,9 @@ public class ThinkNode_Sleep : IThinkNode
     public Job TryGiveJob(Guy guy)
     {
         float threshold = _urgent ? guy.Needs.Rest.CollapseThreshold : guy.Needs.Rest.TiredThreshold;
-        if (guy.Needs.Rest.Level >= threshold) return null;
+        bool tired = guy.Needs.Rest.Level < threshold;
+        bool sleepHour = !_urgent && guy.Schedule.BlockNow() == ScheduleBlock.Sleep; // bed down at night even if not tired
+        if (!tired && !sleepHour) return null;
 
         // when not about to collapse, make for a free bed; otherwise drop where standing
         if (!_urgent)

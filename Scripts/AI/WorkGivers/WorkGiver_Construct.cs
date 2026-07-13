@@ -8,6 +8,9 @@ using Godot;
 /// </summary>
 public class WorkGiver_Construct : WorkGiver
 {
+
+    public override WorkType Work => WorkType.Construct;
+
     public override Job TryGiveJob(Guy guy)
     {
         if (Game.Map.Frames.Count == 0) return null;

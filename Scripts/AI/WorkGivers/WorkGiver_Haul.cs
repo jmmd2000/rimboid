@@ -4,6 +4,9 @@ using Godot;
 /// <summary>Finds the nearest reachable loose item outside any stockpile and returns a hauling job.</summary>
 public class WorkGiver_Haul : WorkGiver
 {
+
+    public override WorkType Work => WorkType.Haul;
+
     public override Job TryGiveJob(Guy guy)
     {
         var reachable = Game.Pathing.ReachableCells(guy.Cell);
