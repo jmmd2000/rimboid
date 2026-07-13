@@ -2,45 +2,33 @@ using System.Collections.Generic;
 using Godot;
 
 /// <summary>Finds the nearest reachable plant to harvest, either one the player designated,
-/// or a mature crop sitting in a grow zone,  and returns a harvest job.</summary>
+/// or a mature crop sitting in a grow zone, and returns a harvest job.</summary>
 public class WorkGiver_Harvest : WorkGiver
 {
     public override Job TryGiveJob(Guy guy)
     {
         var reachable = Game.Pathing.ReachableCells(guy.Cell);
+        var best = NearestReachableCell(HarvestableCells(), guy, reachable, Reach.Adjacent8);
+        if (best == null) return null;
 
-        bool CanReach(Vector2I cell)
-        {
-            foreach (var d in Grid.Adjacent8)
-            {
-                if (reachable.Contains(cell + d)) return true;
-            }
-            return false;
-        }
-
-        Vector2I best = default;
-        int bestDist = int.MaxValue;
-        foreach (var cell in HarvestableCells())
-        {
-            var plant = Game.Map.PlantAt(cell);
-            if (plant == null || !plant.IsHarvestable) continue;
-            if (!CanReach(cell) || !Game.Map.Reservations.AvailableCell(cell, guy)) continue;
-            int dist = Grid.DistanceSquared(guy.Cell, cell);
-            if (dist < bestDist) { bestDist = dist; best = cell; }
-        }
-        if (bestDist == int.MaxValue) return null;
-
-        return new Job { Type = JobType.Harvest, TargetCell = best, ClaimsCell = true };
+        return new Job { Type = JobType.Harvest, TargetCell = best.Value, ClaimsCell = true };
     }
 
-    /// <summary>Cells worth checking: player harvest designations, plus every growzone cell</summary>
+    /// <summary>Cells with a plant ready to harvest: player harvest designations plus mature growzone crops.</summary>
     static IEnumerable<Vector2I> HarvestableCells()
     {
         foreach (var cell in Game.Map.Designations.CellsOfType(DesignationType.Harvest))
-            yield return cell;
+            if (IsHarvestable(cell)) yield return cell;
 
         foreach (var zone in Game.Map.GrowZones.Zones)
             foreach (var cell in zone.Cells)
-                yield return cell;
+                if (IsHarvestable(cell)) yield return cell;
+    }
+
+    /// <summary>True if the cell holds a plant that's ready to harvest.</summary>
+    static bool IsHarvestable(Vector2I cell)
+    {
+        var plant = Game.Map.PlantAt(cell);
+        return plant != null && plant.IsHarvestable;
     }
 }
