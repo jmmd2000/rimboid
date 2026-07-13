@@ -99,6 +99,7 @@ public partial class Main : Node2D
         {
             var guy = new Guy { Position = FindWalkableCell(taken) };
             guy.Attributes.Roll(rng);
+            guy.Schedule = Schedule.DayNight();
             taken.Add(guy.Cell);
             Game.Map.AddGuy(guy);
         }

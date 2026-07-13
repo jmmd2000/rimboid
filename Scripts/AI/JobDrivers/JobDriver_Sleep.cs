@@ -18,7 +18,8 @@ public class JobDriver_Sleep : JobDriver
         {
             OnStart = () => { guy.ClearPath(); guy.IsSleeping = true; },
             OnTick = () => guy.Needs.Rest.Add(RefillPerTick * RestFactorAt(guy.Cell)),
-            IsComplete = () => guy.Needs.Rest.Level >= 0.99f,
+            // wake when rested, but sit out the rest of a scheduled sleep block rather than bouncing up at full rest
+            IsComplete = () => guy.Needs.Rest.Level >= 0.99f && guy.Schedule.BlockNow() != ScheduleBlock.Sleep,
         };
     }
 

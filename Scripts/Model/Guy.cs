@@ -20,6 +20,7 @@ public class Guy
     public Attributes Attributes = new();
     public Social Social = new();
     public WorkSettings WorkSettings = new();
+    public Schedule Schedule = new();
     public bool IsSleeping;
 
     Vector2[] _path;

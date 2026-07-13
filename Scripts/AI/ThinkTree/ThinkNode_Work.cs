@@ -18,6 +18,7 @@ public class ThinkNode_Work : IThinkNode
 
     public Job TryGiveJob(Guy guy)
     {
+        if (guy.Schedule.BlockNow() == ScheduleBlock.Sleep) return null; // scheduled to sleep, not work
         foreach (var giver in _workGivers)
         {
             if (!guy.WorkSettings.Allows(giver.Work)) continue; // colonist has this work switched off

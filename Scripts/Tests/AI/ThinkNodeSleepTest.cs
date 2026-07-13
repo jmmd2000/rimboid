@@ -103,4 +103,17 @@ public class ThinkNodeSleepTest
         AssertObject(job).IsNotNull();
         AssertBool(job.ClaimsCell).IsFalse();
     }
+
+    [TestCase]
+    public void SleepsProactivelyInASleepBlockEvenWhenRested()
+    {
+        var guy = new Guy();
+        guy.Needs.Rest.Level = 1f; // fully rested
+        guy.Schedule.Set(GameTime.HourOfDay, ScheduleBlock.Sleep);
+
+        var job = new ThinkNode_Sleep(urgent: false).TryGiveJob(guy);
+
+        AssertObject(job).IsNotNull();
+        AssertBool(job.Type == JobType.Sleep).IsTrue();
+    }
 }

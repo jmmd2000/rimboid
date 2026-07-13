@@ -68,4 +68,14 @@ public class ThinkNodeWorkTest
 
         AssertBool(job.Type == JobType.Haul).IsTrue(); // falls through to the next allowed giver
     }
+
+    [TestCase]
+    public void NoWorkDuringAScheduledSleepBlock()
+    {
+        Game.Map.Designations.Add(DesignationType.Mine, new Vector2I(5, 5)); // work is available
+        var guy = new Guy { Position = Vector2.Zero };
+        guy.Schedule.Set(GameTime.HourOfDay, ScheduleBlock.Sleep); // this hour is scheduled sleep
+
+        AssertObject(new ThinkNode_Work().TryGiveJob(guy)).IsNull();
+    }
 }
