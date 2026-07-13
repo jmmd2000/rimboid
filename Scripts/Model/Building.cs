@@ -11,6 +11,19 @@ public class Building
     /// <summary>Every cell this building covers, derived from its origin and the def's size.</summary>
     public IEnumerable<Vector2I> OccupiedCells => Footprint.Cells(Cell, Def.Size, Rotation);
 
+    /// <summary>The centroid of the occupied cells, in cell space (a 1x2 at (5,5) gives (5.5, 6.0)). Views
+    /// scale this by tile size to place things over the footprint, e.g. the deconstruct marker or a light.</summary>
+    public Vector2 FootprintCentre
+    {
+        get
+        {
+            var sum = Vector2.Zero;
+            int count = 0;
+            foreach (var c in OccupiedCells) { sum += new Vector2(c.X + 0.5f, c.Y + 0.5f); count++; }
+            return sum / count;
+        }
+    }
+
     /// <summary>Runtime components built from the def's ComponentProperties</summary>
     public List<BuildingComponent> Components { get; } = new();
 

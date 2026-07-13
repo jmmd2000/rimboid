@@ -19,7 +19,9 @@ public partial class LightView : PointLight2D
         Color = light.Colour;
         TextureScale = light.Scale;
         ShadowEnabled = light.CastsShadow;
-        Position = FootprintCentreLocal(light.Building, tileSize);
+        // FootprintCentre is world-cell-space, subtract the origin cell because this view is a child of
+        // the building view, which already sits at the origin
+        Position = (light.Building.FootprintCentre - light.Building.Cell) * tileSize;
         _phase = light.Building.Cell.X * 12.9f + light.Building.Cell.Y * 78.2f;
     }
 
@@ -40,14 +42,6 @@ public partial class LightView : PointLight2D
         return 1f + _light.FlickerAmount * n;
     }
 
-
-    static Vector2 FootprintCentreLocal(Building b, int tileSize)
-    {
-        var sum = Vector2.Zero;
-        int n = 0;
-        foreach (var c in b.OccupiedCells) { sum += new Vector2(c.X - b.Cell.X + 0.5f, c.Y - b.Cell.Y + 0.5f); n++; }
-        return sum / n * tileSize;
-    }
 
     /// <summary>A smooth white radial falloff, built once and shared. Per-pixel, so no banding.</summary>
     static Texture2D DefaultTexture()

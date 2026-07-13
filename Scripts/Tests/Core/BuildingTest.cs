@@ -39,4 +39,19 @@ public class BuildingTest
 
         AssertBool(Game.Pathing.IsReachable(new Vector2I(0, 0), cell)).IsFalse();
     }
+
+    [TestCase]
+    public void FootprintCentreOfSingleCell()
+    {
+        var b = new Building { Def = new BuildingDef { Size = Vector2I.One }, Cell = new Vector2I(5, 5) };
+        AssertBool(b.FootprintCentre.IsEqualApprox(new Vector2(5.5f, 5.5f))).IsTrue();
+    }
+
+    [TestCase]
+    public void FootprintCentreOfMultiCellIsMidpoint()
+    {
+        // a 1x2 at (5,5) covers (5,5) and (5,6); the centre sits on their shared edge
+        var b = new Building { Def = new BuildingDef { Size = new Vector2I(1, 2) }, Cell = new Vector2I(5, 5) };
+        AssertBool(b.FootprintCentre.IsEqualApprox(new Vector2(5.5f, 6.0f))).IsTrue();
+    }
 }

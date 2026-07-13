@@ -6,6 +6,8 @@ public partial class BuildingView : Node2D
     public Building Building;
     protected int _tileSize;
     protected bool _selected;
+    Vector2I _footprintMin;  // rotated footprint, cached at Init since Def/Rotation never change
+    Vector2I _footprintSize;
 
     /// <summary>Positions this view at the building's cell.</summary>
     /// <param name="building">The building to display.</param>
@@ -16,6 +18,8 @@ public partial class BuildingView : Node2D
         _tileSize = tileSize;
         Position = new Vector2(building.Cell.X * tileSize, building.Cell.Y * tileSize);
         ZIndex = 1;
+        _footprintMin = Footprint.MinOffset(building.Def.Size, building.Rotation);
+        _footprintSize = Footprint.Rotated(building.Def.Size, building.Rotation);
         if (building.Def.OccludesLight) AddOccluder();
     }
 
@@ -23,10 +27,7 @@ public partial class BuildingView : Node2D
     /// this building. SDF collision stays on (default) so a future SDF lighting shader reads it for free.</summary>
     void AddOccluder()
     {
-        var def = Building.Def;
-        var min = Footprint.MinOffset(def.Size, Building.Rotation);
-        var size = Footprint.Rotated(def.Size, Building.Rotation);
-        var rect = new Rect2(min.X * _tileSize, min.Y * _tileSize, size.X * _tileSize, size.Y * _tileSize);
+        var rect = new Rect2(_footprintMin.X * _tileSize, _footprintMin.Y * _tileSize, _footprintSize.X * _tileSize, _footprintSize.Y * _tileSize);
 
         AddChild(new LightOccluder2D
         {
@@ -67,9 +68,7 @@ public partial class BuildingView : Node2D
 
         if (_selected)
         {
-            var min = Footprint.MinOffset(def.Size, Building.Rotation);
-            var size = Footprint.Rotated(def.Size, Building.Rotation);
-            DrawRect(new Rect2(min.X * _tileSize, min.Y * _tileSize, size.X * _tileSize, size.Y * _tileSize), Colors.White, filled: false, width: 1f);
+            DrawRect(new Rect2(_footprintMin.X * _tileSize, _footprintMin.Y * _tileSize, _footprintSize.X * _tileSize, _footprintSize.Y * _tileSize), Colors.White, filled: false, width: 1f);
         }
     }
 }

@@ -9,6 +9,8 @@ public partial class FrameView : Node2D
     int _lastMaterials = -1;
     float _lastWork = -1f;
     Label _label;
+    Vector2I _footprintMin;  // rotated footprint, cached at Init since Def/Rotation never change
+    Vector2I _footprintSize;
 
     /// <summary>Positions this view at the frame's cell and adds the material count label.</summary>
     /// <param name="frame">The frame to display.</param>
@@ -20,14 +22,14 @@ public partial class FrameView : Node2D
         Position = new Vector2(frame.Cell.X * tileSize, frame.Cell.Y * tileSize);
         ZIndex = 1;
 
-        var min = Footprint.MinOffset(frame.Def.Size, frame.Rotation);
-        var labelSize = Footprint.Rotated(frame.Def.Size, frame.Rotation);
+        _footprintMin = Footprint.MinOffset(frame.Def.Size, frame.Rotation);
+        _footprintSize = Footprint.Rotated(frame.Def.Size, frame.Rotation);
         _label = new Label
         {
             HorizontalAlignment = HorizontalAlignment.Center,
             VerticalAlignment = VerticalAlignment.Center,
-            Position = new Vector2(min.X * tileSize, min.Y * tileSize),
-            Size = new Vector2(labelSize.X * tileSize, labelSize.Y * tileSize)
+            Position = new Vector2(_footprintMin.X * tileSize, _footprintMin.Y * tileSize),
+            Size = new Vector2(_footprintSize.X * tileSize, _footprintSize.Y * tileSize)
         };
         _label.AddThemeColorOverride("font_color", Colors.White);
         _label.AddThemeFontSizeOverride("font_size", 8);
@@ -51,9 +53,7 @@ public partial class FrameView : Node2D
     public override void _Draw()
     {
         if (Frame == null) return;
-        var min = Footprint.MinOffset(Frame.Def.Size, Frame.Rotation);
-        var size = Footprint.Rotated(Frame.Def.Size, Frame.Rotation);
-        var rect = new Rect2(min.X * _tileSize, min.Y * _tileSize, size.X * _tileSize, size.Y * _tileSize);
+        var rect = new Rect2(_footprintMin.X * _tileSize, _footprintMin.Y * _tileSize, _footprintSize.X * _tileSize, _footprintSize.Y * _tileSize);
         var colour = Frame.Def.Colour;
 
         if (!Frame.MaterialsComplete)

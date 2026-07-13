@@ -85,23 +85,10 @@ public partial class MapView : Node2D
         var marker = new Sprite2D
         {
             Texture = ToolDefOf.Deconstruct.Icon,
-            Position = FootprintCentre(building),
+            Position = building.FootprintCentre * Game.TileSize,
         };
         DesignationLayer.AddChild(marker);
         _deconstructMarkers[origin] = marker;
-    }
-
-    /// <summary>The pixel centre of a building's footprint (the centroid of its occupied cells).</summary>
-    static Vector2 FootprintCentre(Building building)
-    {
-        var sum = Vector2.Zero;
-        int count = 0;
-        foreach (var c in building.OccupiedCells)
-        {
-            sum += new Vector2(c.X + 0.5f, c.Y + 0.5f);
-            count++;
-        }
-        return sum / count * Game.TileSize;
     }
 
     /// <summary>Places the stockpile overlay on a cell. </summary>
