@@ -75,4 +75,27 @@ public class WorkGiverConsolidateTest
 
         AssertObject(new WorkGiver_Consolidate().TryGiveJob(guy)).IsNull();
     }
+
+    [TestCase]
+    public void IgnoresPilesOutsideAnyStockpile()
+    {
+        // two mergeable partial piles, but neither sits in a stockpile
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(5, 5), 20);
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(6, 5), 30);
+        var guy = new Guy { Position = Vector2.Zero };
+
+        AssertObject(new WorkGiver_Consolidate().TryGiveJob(guy)).IsNull();
+    }
+
+    [TestCase]
+    public void NullForPilesOfDifferentDefs()
+    {
+        // two partial piles in the stockpile, but different defs, so nothing groups together to merge
+        StockpileAt(new Vector2I(0, 0), new Vector2I(1, 0));
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(0, 0), 20);
+        Game.Map.SpawnItem(ItemDefOf.Berries, new Vector2I(1, 0), 20);
+        var guy = new Guy { Position = Vector2.Zero };
+
+        AssertObject(new WorkGiver_Consolidate().TryGiveJob(guy)).IsNull();
+    }
 }

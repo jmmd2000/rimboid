@@ -68,4 +68,22 @@ public class JobDriverHaulTest
         AssertInt(Game.Map.ItemAt(new Vector2I(0, 0), ItemDefOf.Stone).Count).IsEqual(max); // topped off first
         AssertInt(Game.Map.ItemAt(new Vector2I(1, 0), ItemDefOf.Stone).Count).IsEqual(4); // remainder spilled here
     }
+
+    [TestCase]
+    public void DropsCargoWhenStockpileVanishesMidHaul()
+    {
+        var sp = Game.Map.Stockpiles.Create();
+        sp.Cells.Add(new Vector2I(0, 0));
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(5, 5), 3);
+        var guy = new Guy { Position = Vector2.Zero };
+        var job = new WorkGiver_Haul().TryGiveJob(guy);
+
+        sp.Cells.Clear(); // stockpile removed after the job is issued, before the guy can deposit
+
+        var status = Run(new JobDriver_Haul(), guy, job);
+
+        AssertBool(status == JobStatus.Completed).IsTrue();          // job ends cleanly
+        AssertObject(guy.Carrying).IsNull();                         // not left holding the cargo
+        AssertInt(Game.Map.CountStored(ItemDefOf.Stone)).IsEqual(3); // dropped on the floor, nothing lost
+    }
 }
