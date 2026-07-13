@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 
 /// <summary>Types of player-placed work designations.</summary>
@@ -9,7 +8,8 @@ public enum DesignationType { Mine, Harvest, Chop, Deconstruct };
 /// <summary>Tracks active designations on the map. Add, remove, query by type and cell.</summary>
 public class DesignationManager
 {
-    readonly List<Designation> _list = new();
+    // designated cells indexed by type: O(1) Has/Add/Remove, and CellsOfType hands back the set directly
+    readonly Dictionary<DesignationType, HashSet<Vector2I>> _byType = new();
 
     /// <summary>Raised when a designation is placed, so the view can mark the overlay.</summary>
     public event Action<DesignationType, Vector2I> Added;
@@ -17,34 +17,39 @@ public class DesignationManager
     /// <summary>Raised when a designation is cleared at a cell, so the view can erase the overlay.</summary>
     public event Action<Vector2I> Removed;
 
+    /// <summary>The cell set for a designation type, created on first use.</summary>
+    HashSet<Vector2I> CellsFor(DesignationType type)
+    {
+        if (!_byType.TryGetValue(type, out var set)) _byType[type] = set = new HashSet<Vector2I>();
+        return set;
+    }
+
     /// <summary>Adds a designation if one doesn't already exist at that cell.</summary>
     /// <param name="type">The designation type.</param>
     /// <param name="cell">The map cell to designate.</param>
     public void Add(DesignationType type, Vector2I cell)
     {
-        if (Has(type, cell)) return;
-        _list.Add(new Designation { Type = type, Cell = cell });
-        Added?.Invoke(type, cell);
+        if (CellsFor(type).Add(cell)) Added?.Invoke(type, cell); // HashSet.Add is false if already present
     }
 
-    /// <summary>Removes all designations of the given type at the cell.</summary>
+    /// <summary>Removes the designation of the given type at the cell.</summary>
     /// <param name="type">The designation type.</param>
     /// <param name="cell">The map cell to clear.</param>
     public void Remove(DesignationType type, Vector2I cell)
     {
-        if (_list.RemoveAll(d => d.Type == type && d.Cell == cell) > 0) Removed?.Invoke(cell);
+        if (_byType.TryGetValue(type, out var set) && set.Remove(cell)) Removed?.Invoke(cell);
     }
 
     /// <summary>Checks whether a designation of the given type exists at the cell.</summary>
     /// <param name="type">The designation type.</param>
     /// <param name="cell">The map cell to check.</param>
     /// <returns>True if a matching designation exists.</returns>
-    public bool Has(DesignationType type, Vector2I cell) => _list.Any(d => d.Type == type && d.Cell == cell);
+    public bool Has(DesignationType type, Vector2I cell) => _byType.TryGetValue(type, out var set) && set.Contains(cell);
 
     /// <summary>Returns all cells that have a designation of the given type.</summary>
     /// <param name="type">The designation type to filter by.</param>
-    /// <returns>Enumerable of designated cells.</returns>
-    public IEnumerable<Vector2I> CellsOfType(DesignationType type) => _list.Where(d => d.Type == type).Select(d => d.Cell);
+    /// <returns>The designated cells (empty if none).</returns>
+    public IEnumerable<Vector2I> CellsOfType(DesignationType type) => _byType.TryGetValue(type, out var set) ? set : Array.Empty<Vector2I>();
 
     /// <summary>True if any cardinal neighbour of the cell is walkable floor.</summary>
     static bool HasWalkableNeighbour(GameMap map, Vector2I cell)
@@ -113,21 +118,14 @@ public class DesignationManager
         var reachable = ReachableMines(map);
         var removed = new List<Vector2I>();
 
-        _list.RemoveAll(d =>
+        CellsFor(DesignationType.Mine).RemoveWhere(cell =>
         {
-            if (d.Type != DesignationType.Mine || reachable.Contains(d.Cell)) return false;
-            removed.Add(d.Cell);
+            if (reachable.Contains(cell)) return false;
+            removed.Add(cell);
             return true;
         });
 
         foreach (var cell in removed) Removed?.Invoke(cell);
         return removed;
     }
-}
-
-/// <summary>A single designation entry: a type paired with a map cell.</summary>
-public class Designation
-{
-    public DesignationType Type;
-    public Vector2I Cell;
 }
