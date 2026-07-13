@@ -16,9 +16,10 @@ public class GameMap
     public List<Guy> Guys = new();
     public ReservationManager Reservations = new();
 
-    // a flat list for iteration, plus a per-cell index for quicker lookup
+    // a flat list for iteration, plus per-cell and per-def indices for quicker lookup
     readonly List<Item> _looseItems = new();
     readonly Dictionary<Vector2I, List<Item>> _itemsByCell = new();
+    readonly Dictionary<ItemDef, List<Item>> _itemsByDef = new();
     public IReadOnlyList<Item> LooseItems => _looseItems;
 
     // components that opt into per-tick updates
@@ -149,6 +150,11 @@ public class GameMap
             list.Remove(item);
             if (list.Count == 0) _itemsByCell.Remove(item.Cell);
         }
+        if (_itemsByDef.TryGetValue(item.Def, out var defList))
+        {
+            defList.Remove(item);
+            if (defList.Count == 0) _itemsByDef.Remove(item.Def);
+        }
         ItemRemoved?.Invoke(item);
     }
 
@@ -169,6 +175,11 @@ public class GameMap
         return total;
     }
 
+    /// <summary>The loose piles of one item def (empty if none). Indexed, so a work giver scanning for a
+    /// particular material doesn't walk every pile on the map.</summary>
+    public IReadOnlyList<Item> LooseItemsOfDef(ItemDef def) =>
+        _itemsByDef.TryGetValue(def, out var list) ? list : Array.Empty<Item>();
+
     /// <summary>True if this exact item is still on the map.</summary>
     public bool HasItem(Item item) => _itemsByCell.TryGetValue(item.Cell, out var list) && list.Contains(item);
 
@@ -179,6 +190,12 @@ public class GameMap
             _itemsByCell[item.Cell] = list = new List<Item>();
         }
         list.Add(item);
+
+        if (!_itemsByDef.TryGetValue(item.Def, out var defList))
+        {
+            _itemsByDef[item.Def] = defList = new List<Item>();
+        }
+        defList.Add(item);
     }
 
     /// <summary>A free cell beside the given one to drop a yield onto (preferring the cell below),

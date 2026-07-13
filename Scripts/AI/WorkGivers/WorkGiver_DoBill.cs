@@ -56,10 +56,9 @@ public class WorkGiver_DoBill : WorkGiver
         foreach (var ing in recipe.Ingredients)
         {
             int total = 0;
-            foreach (var item in Game.Map.LooseItems)
+            foreach (var item in Game.Map.LooseItemsOfDef(ing.Item))
             {
                 if (total >= ing.Count) break;
-                if (item.Def != ing.Item) continue;
                 if (!reachable.Contains(item.Cell)) continue;
                 if (!Game.Map.Reservations.AvailableItem(item, guy)) continue;
                 picks.Add(item);

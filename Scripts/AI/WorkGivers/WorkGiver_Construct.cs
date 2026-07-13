@@ -41,10 +41,9 @@ public class WorkGiver_Construct : WorkGiver
         int needed = frame.Def.MaterialCost - frame.MaterialsDelivered;
         var picks = new List<Item>();
         int total = 0;
-        foreach (var item in Game.Map.LooseItems)
+        foreach (var item in Game.Map.LooseItemsOfDef(frame.Def.Materials))
         {
             if (total >= needed) break;
-            if (item.Def != frame.Def.Materials) continue;
             if (!reachable.Contains(item.Cell)) continue;
             if (!Game.Map.Reservations.AvailableItem(item, guy)) continue;
             picks.Add(item);

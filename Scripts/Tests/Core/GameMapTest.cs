@@ -189,4 +189,44 @@ public class GameMapTest
         AssertInt(overflow).IsEqual(4);
         AssertInt(map.LooseItems.Count).IsEqual(1);
     }
+
+    [TestCase]
+    public void LooseItemsOfDefBucketsByDef()
+    {
+        var map = new GameMap(10, 10);
+        map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), 5);
+        map.SpawnItem(ItemDefOf.Stone, new Vector2I(4, 4), 5);
+        map.SpawnItem(ItemDefOf.Berries, new Vector2I(5, 5), 5);
+
+        AssertInt(map.LooseItemsOfDef(ItemDefOf.Stone).Count).IsEqual(2);
+        AssertInt(map.LooseItemsOfDef(ItemDefOf.Berries).Count).IsEqual(1);
+    }
+
+    [TestCase]
+    public void LooseItemsOfDefEmptyForAbsentDef()
+    {
+        var map = new GameMap(10, 10);
+        map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), 5);
+        AssertInt(map.LooseItemsOfDef(ItemDefOf.Berries).Count).IsEqual(0);
+    }
+
+    [TestCase]
+    public void LooseItemsOfDefMergeDoesNotDoubleIndex()
+    {
+        var map = new GameMap(10, 10);
+        map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), 5);
+        map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), 3); // merges onto the same pile
+        AssertInt(map.LooseItemsOfDef(ItemDefOf.Stone).Count).IsEqual(1);
+    }
+
+    [TestCase]
+    public void LooseItemsOfDefUpdatesOnRemove()
+    {
+        var map = new GameMap(10, 10);
+        map.SpawnItem(ItemDefOf.Stone, new Vector2I(3, 3), 5);
+        map.SpawnItem(ItemDefOf.Stone, new Vector2I(4, 4), 5);
+
+        map.RemoveItem(map.LooseItemsOfDef(ItemDefOf.Stone)[0]);
+        AssertInt(map.LooseItemsOfDef(ItemDefOf.Stone).Count).IsEqual(1);
+    }
 }
