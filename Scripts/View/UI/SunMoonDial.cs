@@ -5,9 +5,16 @@ using Godot;
 [Tool]
 public partial class SunMoonDial : Control
 {
+    float _lastTimeOfDay = -1f;
+
     public override void _Ready() => CustomMinimumSize = new Vector2(40, 40);
 
-    public override void _Process(double delta) => QueueRedraw();
+    public override void _Process(double delta)
+    {
+        if (GameTime.TimeOfDay == _lastTimeOfDay) return; // same tick, nothing moved
+        _lastTimeOfDay = GameTime.TimeOfDay;
+        QueueRedraw();
+    }
 
     public override void _Draw()
     {
