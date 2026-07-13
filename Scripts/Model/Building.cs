@@ -1,5 +1,4 @@
 using System.Collections.Generic;
-using System.Linq;
 using Godot;
 
 /// <summary>A finished, placed building. Blocks movement when its def says so.</summary>
@@ -28,8 +27,14 @@ public class Building
         }
     }
 
-    /// <summary>The first component of the given type, or null </summary>
-    public T GetComponent<T>() where T : BuildingComponent => Components.OfType<T>().FirstOrDefault();
+    /// <summary>The first component of the given type, or null. Manual loop, no LINQ — this runs per-frame
+    /// from the bill UI, so it avoids the enumerator allocation.</summary>
+    public T GetComponent<T>() where T : BuildingComponent
+    {
+        foreach (var component in Components)
+            if (component is T match) return match;
+        return null;
+    }
 
     /// <summary>The workbench component if this building has one, else null </summary>
     public BuildingComponent_WorkBench WorkBench => GetComponent<BuildingComponent_WorkBench>();
