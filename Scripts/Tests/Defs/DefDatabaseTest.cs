@@ -20,9 +20,25 @@ public class DefDatabaseTest
     }
 
     [TestCase]
-    public void UnknownDefReturnsNull()
+    public void UnknownDefThrows()
     {
-        AssertObject(DefDatabase<ItemDef>.Get("NotAThing")).IsNull();
+        bool threw = false;
+        try { DefDatabase<ItemDef>.Get("NotAThing"); }
+        catch (System.Collections.Generic.KeyNotFoundException) { threw = true; }
+        AssertBool(threw).IsTrue();
+    }
+
+    [TestCase]
+    public void TryGetUnknownReturnsFalse()
+    {
+        AssertBool(DefDatabase<ItemDef>.TryGet("NotAThing", out _)).IsFalse();
+    }
+
+    [TestCase]
+    public void TryGetKnownReturnsTrueAndDef()
+    {
+        AssertBool(DefDatabase<ItemDef>.TryGet("Wheat", out var def)).IsTrue();
+        AssertObject(def).IsNotNull();
     }
 
     [TestCase]
