@@ -53,4 +53,19 @@ public class ThinkNodeWorkTest
         var guy = new Guy { Position = Vector2.Zero };
         AssertObject(new ThinkNode_Work().TryGiveJob(guy)).IsNull();
     }
+
+    [TestCase]
+    public void SkipsADisabledWorkGiver()
+    {
+        Game.Map.Designations.Add(DesignationType.Mine, new Vector2I(5, 5));
+        var sp = Game.Map.Stockpiles.Create();
+        sp.Cells.Add(new Vector2I(0, 0));
+        Game.Map.SpawnItem(ItemDefOf.Stone, new Vector2I(7, 7), 3);
+        var guy = new Guy { Position = Vector2.Zero };
+        guy.WorkSettings.Set(WorkType.Mine, false); // mining off, hauling still on
+
+        var job = new ThinkNode_Work().TryGiveJob(guy);
+
+        AssertBool(job.Type == JobType.Haul).IsTrue(); // falls through to the next allowed giver
+    }
 }

@@ -20,6 +20,7 @@ public class ThinkNode_Work : IThinkNode
     {
         foreach (var giver in _workGivers)
         {
+            if (!guy.WorkSettings.Allows(giver.Work)) continue; // colonist has this work switched off
             var job = giver.TryGiveJob(guy);
             if (job != null) return job;
         }

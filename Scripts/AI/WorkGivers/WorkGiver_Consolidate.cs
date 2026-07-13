@@ -2,6 +2,9 @@ using System.Linq;
 
 public class WorkGiver_Consolidate : WorkGiver
 {
+
+    public override WorkType Work => WorkType.Consolidate;
+
     public override Job TryGiveJob(Guy guy)
     {
         var reachable = Game.Pathing.ReachableCells(guy.Cell);

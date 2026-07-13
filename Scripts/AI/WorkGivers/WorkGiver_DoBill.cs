@@ -5,6 +5,9 @@ using Godot;
 /// reserves those piles, and returns a job to work that bill.</summary>
 public class WorkGiver_DoBill : WorkGiver
 {
+
+    public override WorkType Work => WorkType.Bills;
+
     public override Job TryGiveJob(Guy guy)
     {
         var reachable = Game.Pathing.ReachableCells(guy.Cell);

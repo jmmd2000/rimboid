@@ -1,6 +1,9 @@
 /// <summary>Finds the nearest reachable, unreserved deconstruct designation and returns a deconstruct job.</summary>
 public class WorkGiver_Deconstruct : WorkGiver
 {
+
+    public override WorkType Work => WorkType.Deconstruct;
+
     public override Job TryGiveJob(Guy guy)
     {
         var reachable = Game.Pathing.ReachableCells(guy.Cell);
