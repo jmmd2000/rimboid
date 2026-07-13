@@ -8,6 +8,13 @@
 [ext_resource type="Texture2D" uid="uid://bqxu8tou755i3" path="res://Assets/UI/designations.png" id="5_fos0i"]
 [ext_resource type="Texture2D" uid="uid://hrjp4uccuncc" path="res://Assets/UI/grow_zone.png" id="6_lgr22"]
 [ext_resource type="Script" uid="uid://c4fqywjf71q2b" path="res://Scripts/View/Entities/DayNightCycle.cs" id="8_trn2v"]
+[ext_resource type="PackedScene" uid="uid://b0n1yjc63om45" path="res://Scenes/NeedsPanel.tscn" id="9_j4qnp"]
+[ext_resource type="PackedScene" uid="uid://drun6va672yvr" path="res://Scenes/SkillsPanel.tscn" id="10_fpfj3"]
+[ext_resource type="PackedScene" uid="uid://wep3etpyoqrm" path="res://Scenes/AttributesPanel.tscn" id="11_sc1dx"]
+[ext_resource type="PackedScene" uid="uid://cw0t4dfv1g6nb" path="res://Scenes/BillPanel.tscn" id="12_kjvhd"]
+[ext_resource type="PackedScene" uid="uid://d3yw7l4biuxnc" path="res://Scenes/WorkDirectionPanel.tscn" id="13_5tuhn"]
+[ext_resource type="PackedScene" uid="uid://k2p2ayuhhbn1" path="res://Scenes/BuildMenu.tscn" id="14_2gh4u"]
+[ext_resource type="PackedScene" uid="uid://dr8rcd1wiphvh" path="res://Scenes/ToolBar.tscn" id="15_devvj"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_fos0i"]
 texture = ExtResource("2_cm0pq")
@@ -62,6 +69,46 @@ WarpStrength = 4.0
 PlantDensityThreshold = 0.35
 PlantCoverage = 0.3
 
+[node name="NeedsPanel" parent="." unique_id=2096982946 instance=ExtResource("9_j4qnp")]
+
+[node name="SkillsPanel" parent="." unique_id=1713119577 instance=ExtResource("10_fpfj3")]
+
+[node name="AttributesPanel" parent="." unique_id=38322835 instance=ExtResource("11_sc1dx")]
+
+[node name="BillPanel" parent="." unique_id=1595494458 instance=ExtResource("12_kjvhd")]
+
+[node name="Root" parent="BillPanel" index="0" unique_id=532294000]
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+offset_left = 0.0
+offset_top = -80.0
+offset_right = 240.0
+offset_bottom = 0.0
+grow_vertical = 0
+
+[node name="WorkDirectionPanel" parent="." unique_id=904401701 instance=ExtResource("13_5tuhn")]
+
+[node name="Box" parent="WorkDirectionPanel" index="0" unique_id=546955208]
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_left = 0.0
+offset_top = -155.5
+offset_right = 142.0
+offset_bottom = 155.5
+grow_vertical = 2
+
+[node name="BuildMenu" parent="." unique_id=1491718542 instance=ExtResource("14_2gh4u")]
+
+[node name="ToolBar" parent="." unique_id=1208970663 instance=ExtResource("15_devvj")]
+
+[node name="Panel" parent="ToolBar" index="0" unique_id=302315144]
+offset_left = -54.0
+offset_top = -58.0
+offset_right = 0.0
+offset_bottom = 0.0
+
 [node name="TerrainLayer" type="TileMapLayer" parent="." unique_id=957565875]
 tile_set = SubResource("TileSet_glv2v")
 
@@ -85,3 +132,11 @@ tile_set = SubResource("TileSet_lgr22")
 script = ExtResource("8_trn2v")
 DayGradient = SubResource("Gradient_03owx")
 VoidColour = Color(0.34901962, 0.49803922, 0.24313726, 1)
+
+[editable path="NeedsPanel"]
+[editable path="SkillsPanel"]
+[editable path="AttributesPanel"]
+[editable path="BillPanel"]
+[editable path="WorkDirectionPanel"]
+[editable path="BuildMenu"]
+[editable path="ToolBar"]

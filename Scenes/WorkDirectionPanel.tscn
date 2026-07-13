@@ -1,0 +1,13 @@
+[gd_scene format=3 uid="uid://d3yw7l4biuxnc"]
+
+[ext_resource type="Script" uid="uid://clyu0g4ihh76d" path="res://Scripts/View/UI/WorkDirectionPanel.cs" id="1_3fqhd"]
+
+[node name="WorkDirectionPanel" type="CanvasLayer" unique_id=904401701 node_paths=PackedStringArray("Box")]
+script = ExtResource("1_3fqhd")
+Box = NodePath("Box")
+
+[node name="Box" type="VBoxContainer" parent="." unique_id=546955208]
+offset_left = 10.0
+offset_top = 900.0
+offset_right = 152.0
+offset_bottom = 1211.0

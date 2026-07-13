@@ -51,10 +51,16 @@ public partial class Main : Node2D
     Stockpile _stockpile;
     GrowZone _growZone;
 
+    public override void _EnterTree()
+    {
+        // load defs before children _Ready: panels instanced in Main.tscn build their rows from the def
+        // database in their own _Ready, and Godot runs child _Ready before this node's _Ready
+        DefLoader.LoadAll();
+    }
+
     public override void _Ready()
     {
         _map = new GameMap(MapWidth, MapHeight);
-        DefLoader.LoadAll();
 
         // the view subscribes to the model before world-gen, so generated plants spawn their views via events
         var views = new ViewManager();
@@ -107,13 +113,6 @@ public partial class Main : Node2D
         var timeBar = GD.Load<PackedScene>("res://Scenes/TimeControlBar.tscn").Instantiate<TimeControlBar>();
         timeBar.Init(_tick);
         AddChild(timeBar);
-
-        AddChild(GD.Load<PackedScene>("res://Scenes/NeedsPanel.tscn").Instantiate());
-        AddChild(GD.Load<PackedScene>("res://Scenes/SkillsPanel.tscn").Instantiate());
-        AddChild(GD.Load<PackedScene>("res://Scenes/AttributesPanel.tscn").Instantiate());
-        AddChild(GD.Load<PackedScene>("res://Scenes/BillPanel.tscn").Instantiate());
-        AddChild(GD.Load<PackedScene>("res://Scenes/BuildMenu.tscn").Instantiate());
-        AddChild(GD.Load<PackedScene>("res://Scenes/ToolBar.tscn").Instantiate());
 
         AddChild(new DebugOverlay());
 
