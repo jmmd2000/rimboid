@@ -20,10 +20,16 @@ public class WorkGiver_Construct : WorkGiver
             CanReach(f) &&
             (!f.MaterialsComplete || Game.Pathing.NearestSafeWorkCell(f.Cell, guy.Cell) != null);
 
-        // nearest frame with a walkable neighbour
-        var frame = Game.Map.Frames
-            .OrderBy(f => guy.Cell.DistanceTo(f.Cell))
-            .FirstOrDefault(Workable);
+        // nearest workable frame in one pass, no OrderBy sort/allocation every think. The distance guard
+        // skips the (sometimes pathfinding) Workable check on any frame that can't beat the best so far.
+        Frame frame = null;
+        int bestDist = int.MaxValue;
+        foreach (var f in Game.Map.Frames)
+        {
+            int dist = Grid.DistanceSquared(guy.Cell, f.Cell);
+            if (dist >= bestDist) continue;
+            if (Workable(f)) { bestDist = dist; frame = f; }
+        }
         if (frame == null) return null;
 
         if (frame.MaterialsComplete)
