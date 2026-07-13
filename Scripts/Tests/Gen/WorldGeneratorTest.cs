@@ -52,4 +52,20 @@ public class WorldGeneratorTest
 
         AssertObject(map.Terrain[5, 5]).IsEqual(TerrainDefOf.Dirt);
     }
+
+    [TestCase]
+    public void LeavesUniformMapSmallerThanMinUntouched()
+    {
+        // the whole map is one region with no foreign border, so there's nothing to dissolve into: leave it
+        DefLoader.LoadAll();
+        var map = new GameMap(2, 2);
+        for (int x = 0; x < map.Width; x++)
+            for (int y = 0; y < map.Height; y++)
+                map.Terrain[x, y] = TerrainDefOf.Grass;
+
+        WorldGenerator.CleanupSmallRegions(map, 8); // whole map is 4 cells, below minSize
+
+        AssertObject(map.Terrain[0, 0]).IsEqual(TerrainDefOf.Grass);
+        AssertObject(map.Terrain[1, 1]).IsEqual(TerrainDefOf.Grass);
+    }
 }

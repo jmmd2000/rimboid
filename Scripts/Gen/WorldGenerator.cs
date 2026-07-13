@@ -105,6 +105,8 @@ public static class WorldGenerator
                 if (region.Count >= minSize) continue;
 
                 var replacement = DominantBorderTerrain(map, region);
+                // null only when the region has no foreign border, i.e. it's the whole (uniform) map:
+                // nothing to dissolve into, so leaving it as is is correct
                 if (replacement == null) continue;
                 foreach (var cell in region) map.Terrain[cell.X, cell.Y] = replacement;
             }
@@ -135,7 +137,8 @@ public static class WorldGenerator
         return region;
     }
 
-    /// <summary>The terrain type that borders the region most often, used to fill it in.</summary>
+    /// <summary>The terrain type that borders the region most often, used to fill it in. Null when the
+    /// region has no foreign border, which only happens when it's the whole (uniform) map.</summary>
     static TerrainDef DominantBorderTerrain(GameMap map, List<Vector2I> region)
     {
         var regionSet = new HashSet<Vector2I>(region);
