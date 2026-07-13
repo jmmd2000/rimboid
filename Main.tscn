@@ -8,6 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://bqxu8tou755i3" path="res://Assets/UI/designations.png" id="5_fos0i"]
 [ext_resource type="Texture2D" uid="uid://hrjp4uccuncc" path="res://Assets/UI/grow_zone.png" id="6_lgr22"]
 [ext_resource type="Script" uid="uid://c4fqywjf71q2b" path="res://Scripts/View/Entities/DayNightCycle.cs" id="8_trn2v"]
+[ext_resource type="PackedScene" uid="uid://dbjef3usxbtxu" path="res://ScheduleBar.tscn" id="9_fpfj3"]
 [ext_resource type="PackedScene" uid="uid://b0n1yjc63om45" path="res://Scenes/NeedsPanel.tscn" id="9_j4qnp"]
 [ext_resource type="PackedScene" uid="uid://drun6va672yvr" path="res://Scenes/SkillsPanel.tscn" id="10_fpfj3"]
 [ext_resource type="PackedScene" uid="uid://wep3etpyoqrm" path="res://Scenes/AttributesPanel.tscn" id="11_sc1dx"]
@@ -52,7 +53,7 @@ sources/0 = SubResource("TileSetAtlasSource_3dxm6")
 interpolation_mode = 2
 interpolation_color_space = 2
 offsets = PackedFloat32Array(0, 0.25, 0.5, 0.65, 0.8, 1)
-colors = PackedColorArray(0.25, 0.3, 0.48, 1, 0.8954843, 0.75831705, 0.7048162, 1, 0.8810723, 0.8810722, 0.8810722, 1, 0.88235295, 0.88235295, 0.88235295, 1, 0.95, 0.75, 0.55, 1, 0.2509804, 0.3019608, 0.47843137, 1)
+colors = PackedColorArray(0.25, 0.3, 0.48, 1, 0.7489464, 0.52251035, 0.8577717, 1, 0.8810723, 0.8810722, 0.8810722, 1, 0.88235295, 0.88235295, 0.88235295, 1, 0.95, 0.75, 0.55, 1, 0.2509804, 0.3019608, 0.47843137, 1)
 
 [node name="Main" type="Node2D" unique_id=523116754 node_paths=PackedStringArray("MapView", "TerrainLayer")]
 script = ExtResource("1_glv2v")
@@ -72,8 +73,10 @@ PlantCoverage = 0.3
 [node name="NeedsPanel" parent="." unique_id=2096982946 instance=ExtResource("9_j4qnp")]
 
 [node name="SkillsPanel" parent="." unique_id=1713119577 instance=ExtResource("10_fpfj3")]
+RowScene = null
 
 [node name="AttributesPanel" parent="." unique_id=38322835 instance=ExtResource("11_sc1dx")]
+RowScene = null
 
 [node name="BillPanel" parent="." unique_id=1595494458 instance=ExtResource("12_kjvhd")]
 
@@ -109,6 +112,15 @@ offset_top = -58.0
 offset_right = 0.0
 offset_bottom = 0.0
 
+[node name="ScheduleBar" parent="." unique_id=63483363 instance=ExtResource("9_fpfj3")]
+
+[node name="Control" parent="ScheduleBar" index="0" unique_id=996329753]
+custom_minimum_size = Vector2(288, 24)
+offset_left = 5.0
+offset_top = 1250.0
+offset_right = 293.0
+offset_bottom = 1290.0
+
 [node name="TerrainLayer" type="TileMapLayer" parent="." unique_id=957565875]
 tile_set = SubResource("TileSet_glv2v")
 
@@ -140,3 +152,4 @@ VoidColour = Color(0.34901962, 0.49803922, 0.24313726, 1)
 [editable path="WorkDirectionPanel"]
 [editable path="BuildMenu"]
 [editable path="ToolBar"]
+[editable path="ScheduleBar"]
