@@ -42,4 +42,26 @@ public class GridTest
         AssertInt(ring.Count).IsEqual(8);
         AssertBool(ring.Contains(new Vector2I(5, 6))).IsTrue();
     }
+
+    [TestCase]
+    public void CellsInRingRadiusZeroIsJustTheCentre()
+    {
+        var ring = Grid.CellsInRing(new Vector2I(5, 5), 0).ToList();
+        AssertInt(ring.Count).IsEqual(1);
+        AssertBool(ring[0] == new Vector2I(5, 5)).IsTrue();
+    }
+
+    [TestCase]
+    public void CellsInRingRadiusTwoIsTheSixteenCellPerimeter()
+    {
+        // outer ring of a 5x5 block = 25 - inner 3x3 (9) = 16
+        AssertInt(Grid.CellsInRing(new Vector2I(5, 5), 2).ToList().Count).IsEqual(16);
+    }
+
+    [TestCase]
+    public void DistanceSquaredIsEuclideanSquared()
+    {
+        AssertInt(Grid.DistanceSquared(new Vector2I(0, 0), new Vector2I(3, 4))).IsEqual(25);
+        AssertInt(Grid.DistanceSquared(new Vector2I(2, 2), new Vector2I(2, 2))).IsEqual(0);
+    }
 }
