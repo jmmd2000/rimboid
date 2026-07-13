@@ -1,3 +1,4 @@
+/// <summary>Code-referenced tool defs, bound from the database. Call Resolve() after DefLoader.LoadAll().</summary>
 public static class ToolDefOf
 {
     public static ToolDef Mine;

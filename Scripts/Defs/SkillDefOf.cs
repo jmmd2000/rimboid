@@ -1,3 +1,4 @@
+/// <summary>Code-referenced skill defs, bound from the database. Call Resolve() after DefLoader.LoadAll().</summary>
 public static class SkillDefOf
 {
     public static SkillDef Mining;

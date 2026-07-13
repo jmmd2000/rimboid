@@ -25,7 +25,7 @@ public partial class LightView : PointLight2D
 
     public override void _Process(double delta)
     {
-        _time += (float)delta;
+        _time = (_time + (float)delta) % 1000f; // wrapped, so it never drifts into float-precision loss
         float night = DayNight.NightFactor(GameTime.TimeOfDay);
         Enabled = night > 0f;                             // off in full daylight, no light/shadow work
         Energy = _light.Energy * night * FlickerFactor(); // night ramp + optional flicker

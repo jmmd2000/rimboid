@@ -7,7 +7,7 @@ public class WorkGiver_Mine : WorkGiver
     {
         var reachable = Game.Pathing.ReachableCells(guy.Cell);
 
-        // mineable if the guy can stand on any of the 8 neighbours to reach it
+        // mineable if the guy can stand on any of the 4 cardinal neighbours to reach it
         bool CanReach(Vector2I cell)
         {
             foreach (var d in Grid.Cardinal4)

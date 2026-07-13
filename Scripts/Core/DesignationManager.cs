@@ -46,12 +46,10 @@ public class DesignationManager
     /// <returns>Enumerable of designated cells.</returns>
     public IEnumerable<Vector2I> CellsOfType(DesignationType type) => _list.Where(d => d.Type == type).Select(d => d.Cell);
 
-    static readonly Vector2I[] Cardinals = { Vector2I.Up, Vector2I.Down, Vector2I.Left, Vector2I.Right };
-
     /// <summary>True if any cardinal neighbour of the cell is walkable floor.</summary>
     static bool HasWalkableNeighbour(GameMap map, Vector2I cell)
     {
-        foreach (var direction in Cardinals)
+        foreach (var direction in Grid.Cardinal4)
         {
             var n = cell + direction;
             if (map.InBounds(n) && map.Terrain[n.X, n.Y].Walkable) return true;
@@ -83,7 +81,7 @@ public class DesignationManager
         while (frontier.Count > 0)
         {
             var cell = frontier.Dequeue();
-            foreach (var direction in Cardinals)
+            foreach (var direction in Grid.Cardinal4)
             {
                 var n = cell + direction;
                 // Add returns false if already in
@@ -101,7 +99,7 @@ public class DesignationManager
         if (HasWalkableNeighbour(map, cell)) return true;
 
         var reachable = ReachableMines(map);
-        foreach (var direction in Cardinals)
+        foreach (var direction in Grid.Cardinal4)
         {
             if (reachable.Contains(cell + direction)) return true;
         }
