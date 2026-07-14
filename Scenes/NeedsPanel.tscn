@@ -3,17 +3,16 @@
 [ext_resource type="Script" uid="uid://xo23kn7ohn11" path="res://Scripts/View/UI/NeedsPanel.cs" id="1_d7qb2"]
 [ext_resource type="PackedScene" uid="uid://cik6kqvlg2qmi" path="res://Scenes/LabelledBar.tscn" id="2_srmgv"]
 
-[node name="NeedsPanel" type="CanvasLayer" unique_id=2096982946 node_paths=PackedStringArray("Box", "Rest", "Food")]
+[node name="NeedsPanel" type="PanelContainer" unique_id=460427512 node_paths=PackedStringArray("Box", "Rest", "Food")]
+offset_right = 120.0
+offset_bottom = 86.0
 script = ExtResource("1_d7qb2")
 Box = NodePath("Box")
 Rest = NodePath("Box/Rest")
 Food = NodePath("Box/Food")
 
 [node name="Box" type="VBoxContainer" parent="." unique_id=1956143173]
-offset_left = 10.0
-offset_top = 80.0
-offset_right = 50.0
-offset_bottom = 120.0
+layout_mode = 2
 
 [node name="Rest" parent="Box" unique_id=436568839 instance=ExtResource("2_srmgv")]
 layout_mode = 2

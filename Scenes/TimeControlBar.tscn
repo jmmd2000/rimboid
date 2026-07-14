@@ -3,7 +3,9 @@
 [ext_resource type="Script" uid="uid://depg8i58ppy5v" path="res://Scripts/View/UI/TimeControlBar.cs" id="1_aaix0"]
 [ext_resource type="Script" uid="uid://c03rc267xyif2" path="res://Scripts/View/UI/SunMoonDial.cs" id="2_81mhe"]
 
-[node name="TimeControlBar" type="CanvasLayer" unique_id=184477033 node_paths=PackedStringArray("Pause", "Fast", "Faster", "Fastest", "Clock")]
+[node name="TimeControlBar" type="Control" unique_id=1183541665 node_paths=PackedStringArray("Pause", "Fast", "Faster", "Fastest", "Clock")]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_aaix0")
 Pause = NodePath("Row/Pause")
 Fast = NodePath("Row/Fast")
@@ -12,6 +14,7 @@ Fastest = NodePath("Row/Fastest")
 Clock = NodePath("Clock")
 
 [node name="Row" type="HBoxContainer" parent="." unique_id=299060730]
+layout_mode = 0
 offset_left = 50.0
 offset_top = 10.0
 offset_right = 196.0
@@ -42,13 +45,14 @@ focus_mode = 0
 text = "▶▶▶"
 
 [node name="Clock" type="Label" parent="." unique_id=1766521787]
+layout_mode = 0
 offset_left = 42.0
 offset_top = 53.0
 offset_right = 82.0
 offset_bottom = 76.0
 
 [node name="Control" type="Control" parent="." unique_id=184781422]
-layout_mode = 3
+custom_minimum_size = Vector2(40, 40)
 anchors_preset = 0
 offset_left = 3.0
 offset_top = 10.0

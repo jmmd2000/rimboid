@@ -2,11 +2,7 @@
 
 [ext_resource type="Script" uid="uid://drig5pu4n4hc2" path="res://Scripts/View/UI/ScheduleBar.cs" id="1_hbsj3"]
 
-[node name="ScheduleBar" type="CanvasLayer" unique_id=63483363]
-
-[node name="Control" type="Control" parent="." unique_id=996329753]
+[node name="ScheduleBar" type="Control" unique_id=139493778]
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
 script = ExtResource("1_hbsj3")

@@ -2,13 +2,14 @@
 
 [ext_resource type="Script" uid="uid://ci2ccsng3ltkh" path="res://Scripts/View/UI/BuildMenu.cs" id="1_5m2dh"]
 
-[node name="BuildMenu" type="CanvasLayer" unique_id=1491718542 node_paths=PackedStringArray("ButtonBar")]
-offset = Vector2(10, -10)
-transform = Transform2D(1, 0, 0, 1, 10, -10)
+[node name="BuildMenu" type="Control" unique_id=883735484 node_paths=PackedStringArray("ButtonBar")]
+layout_mode = 3
+anchors_preset = 0
 script = ExtResource("1_5m2dh")
 ButtonBar = NodePath("PanelContainer/ButtonBar")
 
 [node name="PanelContainer" type="PanelContainer" parent="." unique_id=1427322351]
+layout_mode = 1
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0

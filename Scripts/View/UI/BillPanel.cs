@@ -1,7 +1,7 @@
 using Godot;
 
 /// <summary>HUD panel for managing the bills on the selected workbench.</summary>
-public partial class BillPanel : CanvasLayer
+public partial class BillPanel : Control
 {
     [Export] public Control Root;
     [Export] public Container Box;
