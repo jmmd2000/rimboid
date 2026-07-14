@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://daweh74kkrmtk"]
 
 [ext_resource type="PackedScene" uid="uid://b0n1yjc63om45" path="res://Scenes/NeedsPanel.tscn" id="1_b5b84"]
+[ext_resource type="Theme" path="res://Scenes/HUDTheme.tres" id="1_fbb48"]
 [ext_resource type="PackedScene" uid="uid://drun6va672yvr" path="res://Scenes/SkillsPanel.tscn" id="2_fbb48"]
 [ext_resource type="PackedScene" uid="uid://wep3etpyoqrm" path="res://Scenes/AttributesPanel.tscn" id="3_o2vyp"]
 [ext_resource type="PackedScene" uid="uid://d3yw7l4biuxnc" path="res://Scenes/WorkDirectionPanel.tscn" id="4_hhtw7"]
@@ -20,6 +21,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme = ExtResource("1_fbb48")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="Screen" unique_id=1853468285]
 layout_mode = 1
@@ -45,6 +47,8 @@ layout_mode = 2
 layout_mode = 2
 
 [node name="ScheduleBar" parent="Screen/VBoxContainer" unique_id=63483363 instance=ExtResource("5_w5mne")]
+custom_minimum_size = Vector2(288, 24)
+layout_mode = 2
 
 [node name="BillPanel" parent="Screen" unique_id=1354715321 instance=ExtResource("6_xuldq")]
 layout_mode = 0
