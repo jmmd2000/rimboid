@@ -8,6 +8,7 @@ public static class Game
     public static Pathing Pathing;
     public static MapView MapView;
     public static ViewManager Views;
+    public static TickManager Tick;
 
     static Guy _selectedGuy;
     /// <summary>The player-selected colonist, or null. Assigning a different value raises SelectedGuyChanged.</summary>

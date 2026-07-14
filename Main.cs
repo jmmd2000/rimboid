@@ -110,9 +110,9 @@ public partial class Main : Node2D
         _tick = new TickManager();
         _tick.Tick += () => Game.Map.Tick();
         AddChild(_tick);
+        Game.Tick = _tick;
 
         var timeBar = GD.Load<PackedScene>("res://Scenes/TimeControlBar.tscn").Instantiate<TimeControlBar>();
-        timeBar.Init(_tick);
         AddChild(timeBar);
 
         AddChild(new DebugOverlay());
