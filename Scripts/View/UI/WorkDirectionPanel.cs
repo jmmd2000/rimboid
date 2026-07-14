@@ -3,7 +3,7 @@ using Godot;
 
 /// <summary>HUD panel to switch each kind of work on or off for the selected colonist.</summary>
 [Tool]
-public partial class WorkDirectionPanel : CanvasLayer
+public partial class WorkDirectionPanel : Control
 {
     [Export] public Container Box;
 

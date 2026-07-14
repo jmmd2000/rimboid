@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Godot;
 
 /// <summary>HUD panel showing the selected colonist's skills, each as a level with an XP bar.</summary>
-public partial class SkillsPanel : CanvasLayer
+public partial class SkillsPanel : Control
 {
     [Export] public Container Box;
 

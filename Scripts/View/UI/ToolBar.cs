@@ -3,7 +3,7 @@ using System.Linq;
 using Godot;
 
 /// <summary>Bottom-right tool bar</summary>
-public partial class ToolBar : CanvasLayer
+public partial class ToolBar : Control
 {
     [Export] public Container OrdersBar;
     [Export] public Container ZonesBar;

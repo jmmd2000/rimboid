@@ -1,7 +1,7 @@
 using Godot;
 
 ///<summary>On-screen time controls and their keyboard shortcuts.</summary>
-public partial class TimeControlBar : CanvasLayer
+public partial class TimeControlBar : Control
 {
     [Export] public Button Pause;
     [Export] public Button Fast;

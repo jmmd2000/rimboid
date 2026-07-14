@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Godot;
 
 /// <summary>HUD panel showing the selected colonist's attributes: each one's level, its stat-chain factor, and the XP creeping toward the next level.</summary>
-public partial class AttributesPanel : CanvasLayer
+public partial class AttributesPanel : Control
 {
     [Export] public Container Box;
 

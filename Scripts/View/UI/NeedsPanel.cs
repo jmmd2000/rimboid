@@ -1,7 +1,7 @@
 using Godot;
 
 /// <summary>HUD panel showing a colonist's needs as bars.</summary>
-public partial class NeedsPanel : CanvasLayer
+public partial class NeedsPanel : Control
 {
     [Export] public Container Box;
     [Export] public LabelledBar Rest;

@@ -1,0 +1,70 @@
+[gd_scene format=3 uid="uid://daweh74kkrmtk"]
+
+[ext_resource type="PackedScene" uid="uid://b0n1yjc63om45" path="res://Scenes/NeedsPanel.tscn" id="1_b5b84"]
+[ext_resource type="PackedScene" uid="uid://drun6va672yvr" path="res://Scenes/SkillsPanel.tscn" id="2_fbb48"]
+[ext_resource type="PackedScene" uid="uid://wep3etpyoqrm" path="res://Scenes/AttributesPanel.tscn" id="3_o2vyp"]
+[ext_resource type="PackedScene" uid="uid://d3yw7l4biuxnc" path="res://Scenes/WorkDirectionPanel.tscn" id="4_hhtw7"]
+[ext_resource type="PackedScene" uid="uid://dbjef3usxbtxu" path="res://ScheduleBar.tscn" id="5_w5mne"]
+[ext_resource type="PackedScene" uid="uid://cw0t4dfv1g6nb" path="res://Scenes/BillPanel.tscn" id="6_xuldq"]
+[ext_resource type="PackedScene" uid="uid://ccvibbxgf1opg" path="res://Scenes/TimeControlBar.tscn" id="7_g6jqq"]
+[ext_resource type="PackedScene" uid="uid://k2p2ayuhhbn1" path="res://Scenes/BuildMenu.tscn" id="8_5ouvn"]
+[ext_resource type="PackedScene" uid="uid://dr8rcd1wiphvh" path="res://Scenes/ToolBar.tscn" id="9_w0blg"]
+
+[node name="HUD" type="CanvasLayer" unique_id=1179204935]
+
+[node name="Screen" type="Control" parent="." unique_id=337398440]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="Screen" unique_id=1853468285]
+layout_mode = 1
+anchors_preset = 4
+anchor_top = 0.5
+anchor_bottom = 0.5
+offset_top = -20.0
+offset_right = 40.0
+offset_bottom = 20.0
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="NeedsPanel" parent="Screen/VBoxContainer" unique_id=547844444 instance=ExtResource("1_b5b84")]
+layout_mode = 2
+
+[node name="SkillsPanel" parent="Screen/VBoxContainer" unique_id=1950123415 instance=ExtResource("2_fbb48")]
+layout_mode = 2
+
+[node name="AttributesPanel" parent="Screen/VBoxContainer" unique_id=654611443 instance=ExtResource("3_o2vyp")]
+layout_mode = 2
+
+[node name="WorkDirectionPanel" parent="Screen/VBoxContainer" unique_id=1044504616 instance=ExtResource("4_hhtw7")]
+layout_mode = 2
+
+[node name="ScheduleBar" parent="Screen/VBoxContainer" unique_id=63483363 instance=ExtResource("5_w5mne")]
+
+[node name="BillPanel" parent="Screen" unique_id=1354715321 instance=ExtResource("6_xuldq")]
+layout_mode = 0
+
+[node name="TimeControlBar" parent="Screen" unique_id=1183541665 instance=ExtResource("7_g6jqq")]
+layout_mode = 1
+
+[node name="BuildMenu" parent="Screen" unique_id=883735484 instance=ExtResource("8_5ouvn")]
+layout_mode = 1
+anchors_preset = 2
+anchor_top = 1.0
+anchor_bottom = 1.0
+grow_vertical = 0
+
+[node name="ToolBar" parent="Screen" unique_id=92855504 instance=ExtResource("9_w0blg")]
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 0
+grow_vertical = 0
